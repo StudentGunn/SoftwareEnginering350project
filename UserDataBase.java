@@ -37,6 +37,8 @@ public class UserDataBase {
 
         try (Connection c = DriverManager.getConnection(url);
              Statement s = c.createStatement()) {
+            
+            // Create the users table if it doesn't exist
             s.executeUpdate("CREATE TABLE IF NOT EXISTS users ("
                     + "username TEXT PRIMARY KEY,"
                     + "password_hash TEXT NOT NULL,"
@@ -47,6 +49,39 @@ public class UserDataBase {
                     + "admin_hash TEXT,"
                     + "created_at INTEGER"
                     + ")");
+            
+            // Handle migration: Add user_type column if it doesn't exist (for existing databases)
+            try {
+                s.executeUpdate("ALTER TABLE users ADD COLUMN user_type TEXT DEFAULT 'CUSTOMER'");
+                System.out.println("Added user_type column to existing users table");
+            } catch (SQLException e) {
+                // Column probably already exists, which is fine
+                if (!e.getMessage().contains("duplicate column name")) {
+                    throw e;
+                }
+            }
+            
+            // Handle migration: Add phone column if it doesn't exist
+            try {
+                s.executeUpdate("ALTER TABLE users ADD COLUMN phone TEXT");
+                System.out.println("Added phone column to existing users table");
+            } catch (SQLException e) {
+                // Column probably already exists, which is fine
+                if (!e.getMessage().contains("duplicate column name")) {
+                    throw e;
+                }
+            }
+            
+            // Handle migration: Add admin_hash column if it doesn't exist
+            try {
+                s.executeUpdate("ALTER TABLE users ADD COLUMN admin_hash TEXT");
+                System.out.println("Added admin_hash column to existing users table");
+            } catch (SQLException e) {
+                // Column probably already exists, which is fine
+                if (!e.getMessage().contains("duplicate column name")) {
+                    throw e;
+                }
+            }
             
             // Add performance indexes
             s.executeUpdate("CREATE INDEX IF NOT EXISTS idx_users_type ON users(user_type)");

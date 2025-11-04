@@ -7,7 +7,7 @@ public class OrderingSystem{
     * This will be submitted to the store of store.ID
     * to be put in a queue of unaccpeted orders*/
     public boolean preOderCheck(Customer customer, double total, Store store){
-        if (total >= customer.paymentInformation.balance){
+        if (total >= customer.balance){
             return false;
         }
         return store.status;
