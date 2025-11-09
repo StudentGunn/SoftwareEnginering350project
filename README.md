@@ -77,6 +77,9 @@ Food Dash is a food delivery management system that connects customers, drivers,
 
 # Installation and Setup
 
+# Remove UNesary files
+1. Remove Phase 4 from file directory as it is not needed, *Duplicate Files*
+
 1. **Clone the Repository**, ("If using github Desktop or Website")
    ```bash
    git clone https://github.com/[username]/SoftwareEnginering350project.git
