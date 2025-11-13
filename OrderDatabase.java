@@ -52,6 +52,22 @@ public class OrderDatabase {
                 }
             }
 
+            // Check if payment_type column exists
+            boolean needsPaymentType = false;
+            try (ResultSet rs = s.executeQuery("SELECT payment_type FROM orders LIMIT 1")) {
+                // If this succeeds, the column exists
+            } catch (SQLException ex) {
+                needsPaymentType = true;
+            }
+
+            if (needsPaymentType) {
+                try {
+                    s.executeUpdate("ALTER TABLE orders ADD COLUMN payment_type TEXT");
+                } catch (SQLException ex) {
+                    // Column might have been added by another process, ignore
+                }
+            }
+
             // Create orders table
             s.executeUpdate("CREATE TABLE IF NOT EXISTS orders ("
                     + "order_id INTEGER PRIMARY KEY AUTOINCREMENT,"
