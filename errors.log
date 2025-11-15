@@ -1,0 +1,10 @@
+-----
+Time: 2025-11-14T22:27:21.885643400
+java.lang.ArithmeticException: / by zero
+	at TestLogger.main(TestLogger.java:5)
+
+-----
+Time: 2025-11-14T22:27:21.903225
+java.lang.NullPointerException
+	at TestLogger.main(TestLogger.java:14)
+
