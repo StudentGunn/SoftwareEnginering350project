@@ -282,9 +282,9 @@ public class FoodDeliveryLoginUI {
     */
     public static String sha256Hex(String input) {
         // sha256Hex(String input):
-        // - input is the plaintext password string (UTF-8). This method:
+        // - input is the plaintext password string. This method:
         //   1) obtains a MessageDigest for SHA-256
-        //   2) converts the input to bytes using StandardCharsets.UTF_8
+        //   2) converts the input to bytes
         //   3) computes the digest (32 bytes) and converts each byte to
         //      a two-character lowercase hex representation
         // - returns the hex String representation of the hash

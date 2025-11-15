@@ -8,3 +8,67 @@ Time: 2025-11-14T22:27:21.903225
 java.lang.NullPointerException
 	at TestLogger.main(TestLogger.java:14)
 
+-----
+Time: 2025-11-14T22:27:21.903225
+Manully thrown exception for Database connection failure
+	Database initialization failed: [SQLITE_ERROR] SQL error or missing database (no such column: user_type)
+	at DatabaseConnector.initializeDatabase(DatabaseConnector.java:45)
+
+-----
+Time: 2025-11-14T22:27:21.903225
+java.io.FileNotFoundException: config.properties (No such file or directory)
+	at ConfigLoader.loadConfig(ConfigLoader.java:22)
+
+-----
+Time: 2025-11-14T22:27:21.903225
+maunally thrown exception for invalid user input
+	Invalid input provided: Age must be a positive integer.
+	at UserInputValidator.validateAge(UserInputValidator.java:30)
+
+-----
+Time: 2025-11-14T22:27:21.903225
+maunally thrown exception for LoginUI Failure *Due to phase 4 being regonzied as extra files
+The Type LoginUi is already defined
+	at LoginUI.<init>(LoginUI.java:12)
+
+-----
+Time: 2025-11-14T22:27:21.903225
+maunally thrown exception for ResturantScreen Failure *Due to phase 4 being regonzied as extra files
+The Type ResturantScreen is already defined
+	at ResturantScreen.<init>(ResturantScreen.java:15)
+-----
+Time: 2025-11-14T22:27:21.903225
+maunally thrown error exception due to adminScreen.java
+The method cancelOrder(long) is underfined for the userDatabase object
+	at AdminScreen.cancelOrder(AdminScreen.java:78)
+
+-----
+Time: 2025-11-14T22:27:21.903225
+maunally thrown error exception due to userDatabase.java
+ tryig to fix the restuernat screen error * Would not update with code, " New buttons or features may not function as intended."
+	at UserDatabase.getUserById(UserDatabase.java:34)
+
+-----
+Time: 2025-11-14T22:27:21.903225
+maunally thrown error exception due to ResturantScreen.java
+ New buttons or features may not function as intended.
+	at ResturantScreen.updateMenu(ResturantScreen.java:56)
+-----
+Time: 2025-11-14T22:27:21.903225
+Maunally Throwed SQl Error exception for DatabaseConnector method *try*
+Database failed to initialization
+	at DatabaseConnector.initialize(DatabaseConnector.java:40)
+
+-----
+Time: 2025-11-14T22:27:21.903225
+Maunally Throwed IO Error exception for ConfigLoader method *VSCode*- Old .Jar Files compiled giving false old Screen when new .class files compile failed 
+Configuration file could not be loaded
+	at ConfigLoader.load(ConfigLoader.java:18)
+
+-----
+Time: 2025-11-14T22:27:21.903225
+configure files failed still giving false old screen, no updated methods, Removed old .jar files, revert back to previous version 1.1 version
+	at ConfigLoader.load(ConfigLoader.java:25)	
+
+
+

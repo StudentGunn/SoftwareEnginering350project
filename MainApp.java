@@ -54,7 +54,7 @@ public class MainApp {
             }
             try {
                 // choose any picture you want, copy the path and then paste it below "To be changed later if not wanted"
-                app.setBackgroundImage(java.nio.file.Paths.get("C:\\Users\\skylg\\OneDrive\\Desktop\\Food Deilvery app.jpg"), true);
+                app.setBackgroundImage(java.nio.file.Paths.get(""), true);
             } catch (IOException ex) {
                 String errorMsg = "Failed to load background image: " + ex.getMessage();
                 System.err.println(errorMsg);

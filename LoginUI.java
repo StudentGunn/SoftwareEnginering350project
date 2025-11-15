@@ -156,7 +156,11 @@ public class LoginUI {
                 } else {
                     // For customers, open MainScreen
                     MainScreen mainScreen = new MainScreen(parent, user);
-                    parent.getSceneSorter().addScene("MainScreen", mainScreen);
+                    try {
+                        parent.getSceneSorter().addScene("MainScreen", mainScreen);
+                    } catch (IllegalArgumentException ex) {
+                        // Scene already exists, ignore and just switch
+                    }
                     parent.getSceneSorter().switchPage("MainScreen");
                 }
             } else { // authentication failed

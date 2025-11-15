@@ -1,4 +1,4 @@
-// ResturantScreen.java
+// ResturantScreen.java 
 import java.awt.*;
 import java.sql.SQLException;
 import javax.swing.*;
@@ -21,6 +21,7 @@ public class ResturantScreen extends JPanel {
         initUI();
     }
 
+        
     private void initUI() {
         setLayout(new BorderLayout(5,5));
         
@@ -28,23 +29,49 @@ public class ResturantScreen extends JPanel {
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBorder(BorderFactory.createEmptyBorder(8,10,8,10));
         headerPanel.setBackground(new Color(245, 245, 245));
-        // Add header label
+        
+        // Header title
         JLabel header = new JLabel("Available Restaurants - " + zip, SwingConstants.LEFT);
         header.setFont(header.getFont().deriveFont(Font.BOLD, 14f));
         headerPanel.add(header, BorderLayout.CENTER);
+
+        // Back button in header (styled like "Order Here")
+        JButton backBtnHeader = new JButton("Back");
+        backBtnHeader.setFont(backBtnHeader.getFont().deriveFont(Font.BOLD, 12f));
+        backBtnHeader.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(0, 123, 255), 1),
+            BorderFactory.createEmptyBorder(8, 16, 8, 16)));
+        backBtnHeader.setBackground(new Color(0, 123, 255));
+        backBtnHeader.setForeground(Color.WHITE);
+        backBtnHeader.setOpaque(true);
+        backBtnHeader.setFocusPainted(false);
+        backBtnHeader.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        backBtnHeader.addActionListener(e -> {
+            MainScreen mainScreen = new MainScreen(parent, username);
+            try {
+                parent.getSceneSorter().addScene("MainScreen", mainScreen);
+            } catch (IllegalArgumentException ex) {
+                // Scene already exists; ignore and just switch
+            }
+            parent.getSceneSorter().switchPage("MainScreen");
+        });
+        headerPanel.add(backBtnHeader, BorderLayout.EAST);
         add(headerPanel, BorderLayout.NORTH);
 
-        // Content panel with compact spacing
+        // Content panel with improved spacing and subtle background
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
-        content.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        content.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        content.setBackground(new Color(250, 250, 250));
         // Sample restaurants based on zip code * bridgewater zip for demo *
         if ("02325".equals(zip)) {
             content.add(createRestaurantRow("Crimson Dining", "125 Burrill Ave"));
-            content.add(Box.createVerticalStrut(4)); // Reduced spacing
+            content.add(Box.createVerticalStrut(6));
             content.add(createRestaurantRow("Barrett's Alehouse Bridgewater", "425 Bedford St"));
-            content.add(Box.createVerticalStrut(4)); // Reduced spacing
+            content.add(Box.createVerticalStrut(6));
             content.add(createRestaurantRow("Greyhound Tavern", "39 Broad Street"));
+            // space before footer back button
+            content.add(Box.createVerticalStrut(8));
         } else { // No restaurants for other zip codes in this demo * for now *
             JPanel noResultsPanel = new JPanel(new BorderLayout());
             noResultsPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
@@ -55,18 +82,29 @@ public class ResturantScreen extends JPanel {
             
             noResultsPanel.add(none, BorderLayout.CENTER);
             content.add(noResultsPanel);
+            // space before footer back button
+            content.add(Box.createVerticalStrut(8));
         }
 
         JScrollPane scroll = new JScrollPane(content);
+        scroll.getViewport().setBackground(content.getBackground());
         add(scroll, BorderLayout.CENTER);
+
+        
     }
     // Creates a row panel for a restaurant entry
     private JPanel createRestaurantRow(String name, String address) {
-        JPanel row = new JPanel(new BorderLayout(8,8));
-        row.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        JPanel row = new JPanel(new BorderLayout(8,6));
+        row.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(220, 220, 220)),
+            BorderFactory.createEmptyBorder(6, 10, 6, 10)));
+        row.setBackground(Color.WHITE);
+        row.setOpaque(true);
         // Info panel with name and address
         JPanel info = new JPanel();
         info.setLayout(new BoxLayout(info, BoxLayout.Y_AXIS));
+        info.setOpaque(false);
+        info.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 8));
         
         // Restaurant name in bold
         JLabel nameLabel = new JLabel(name);
@@ -75,18 +113,22 @@ public class ResturantScreen extends JPanel {
         
         // Address in smaller font
         JLabel addressLabel = new JLabel(address);
-        addressLabel.setFont(addressLabel.getFont().deriveFont(11f));
+        addressLabel.setFont(addressLabel.getFont().deriveFont(10f));
         addressLabel.setForeground(Color.DARK_GRAY);
         info.add(addressLabel);
         
         row.add(info, BorderLayout.CENTER);
-        // "Order here" button, *make it easier to read*, messing with Dimension
-        JButton orderBtn = new JButton("Order here");
-        orderBtn.setPreferredSize(new Dimension(90, 25));
-        orderBtn.setFont(orderBtn.getFont().deriveFont(11f));
+        // "Order here" button styled consistently
+        JButton orderBtn = new JButton("Order Here");
+        orderBtn.setFont(orderBtn.getFont().deriveFont(Font.BOLD, 12f));
+        orderBtn.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(0, 123, 255), 1),
+            BorderFactory.createEmptyBorder(6, 14, 6, 14)));
+        orderBtn.setBackground(new Color(0, 123, 255));
+        orderBtn.setForeground(Color.WHITE);
+        orderBtn.setOpaque(true);
         orderBtn.addActionListener(e -> createOrder(name));
         row.add(orderBtn, BorderLayout.EAST);
-        row.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         return row;
     }
     // Opens the order dialog for the selected restaurant, and shows what food is there to order *place holder for all restaurants*
