@@ -133,6 +133,22 @@ public class ResturantScreen extends JPanel {
     }
     // Opens the order dialog for the selected restaurant, and shows what food is there to order *place holder for all restaurants*
     private void createOrder(String restaurantName) {
+        // Restaurant addresses mapped to names
+        String restaurantAddress;
+        switch (restaurantName) {
+            case "Crimson Dining":
+                restaurantAddress = "125 Burrill Ave";
+                break;
+            case "Barrett's Alehouse Bridgewater":
+                restaurantAddress = "425 Bedford St";
+                break;
+            case "Greyhound Tavern":
+                restaurantAddress = "39 Broad Street";
+                break;
+            default:
+                restaurantAddress = "Address not available";
+                break;
+        }
         // Show menu options (simplified for demo)
         String[] menuItems = {
             "Burger - $12.99",
@@ -242,7 +258,7 @@ public class ResturantScreen extends JPanel {
                     }
 
                     // Create the order in the database
-                    long orderId = parent.orderDb.createOrder(username, restaurantName, 
+                    long orderId = parent.orderDb.createOrder(username, restaurantName, restaurantAddress,
                         "123 Main St", // TODO: Get actual delivery address
                         "No special instructions", // TODO: Add special instructions field
                         total,

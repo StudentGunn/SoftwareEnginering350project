@@ -68,6 +68,23 @@ public class OrderDatabase {
                 }
             }
 
+            // Check if restaurant_address column exists
+            boolean needsRestaurantAddress = false;
+            try (ResultSet rs = s.executeQuery("SELECT restaurant_address FROM orders LIMIT 1")) {
+                // If this succeeds, the column exists
+            } catch (SQLException ex) {
+                needsRestaurantAddress = true;
+            }
+
+            if (needsRestaurantAddress) {
+                try {
+                    s.executeUpdate("ALTER TABLE orders ADD COLUMN restaurant_address TEXT");
+                    System.out.println("Added restaurant_address column to orders table");
+                } catch (SQLException ex) {
+                    // Column might have been added by another process, ignore
+                }
+            }
+
             // Create orders table
             s.executeUpdate("CREATE TABLE IF NOT EXISTS orders ("
                     + "order_id INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -139,23 +156,25 @@ public class OrderDatabase {
         }
     }
 
-    public long createOrder(String customerUsername, String restaurantName, String deliveryAddress, 
-                          String specialInstructions, double totalAmount, int itemCount, String paymentType) throws SQLException {
-        String sql = "INSERT INTO orders (customer_username, restaurant_name, status, total_amount, "
+    public long createOrder(String customerUsername, String restaurantName, String restaurantAddress,
+                          String deliveryAddress, String specialInstructions, double totalAmount, 
+                          int itemCount, String paymentType) throws SQLException {
+        String sql = "INSERT INTO orders (customer_username, restaurant_name, restaurant_address, status, total_amount, "
                   + "created_at, delivery_address, special_instructions, estimated_minutes, item_count, payment_type) "
-                  + "VALUES (?, ?, 'PENDING', ?, ?, ?, ?, ?, ?, ?)";
+                  + "VALUES (?, ?, ?, 'PENDING', ?, ?, ?, ?, ?, ?, ?)";
         
         try (Connection c = DriverManager.getConnection(url);
              PreparedStatement p = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             p.setString(1, customerUsername);
             p.setString(2, restaurantName);
-            p.setDouble(3, totalAmount);
-            p.setLong(4, Instant.now().getEpochSecond());
-            p.setString(5, deliveryAddress);
-            p.setString(6, specialInstructions);
-            p.setInt(7, estimateDeliveryTime(totalAmount));
-            p.setInt(8, itemCount);
-            p.setString(9, paymentType);
+            p.setString(3, restaurantAddress);
+            p.setDouble(4, totalAmount);
+            p.setLong(5, Instant.now().getEpochSecond());
+            p.setString(6, deliveryAddress);
+            p.setString(7, specialInstructions);
+            p.setInt(8, estimateDeliveryTime(totalAmount));
+            p.setInt(9, itemCount);
+            p.setString(10, paymentType);
             p.executeUpdate();
             
             try (ResultSet rs = p.getGeneratedKeys()) {
