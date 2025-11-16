@@ -7,25 +7,35 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Instant;
 
-/**
- * SQLite-backed payment database helper
+/*
+ --> Manages payment methods and transactions in the database
+ --> Creates payment_methods and payment_transactions tables if they don't exist
+ --> Provides methods to add payment methods, create transactions, and update transaction status
+ --> Uses foreign keys to link payment methods to users and transactions to orders
+ --> Includes data integrity checks and performance indexes * Hard I hated doing this *
+ --> Throws SQLException for any database errors
  */
 public class PaymentDatabase {
+    //Set varaibles; can't be changed
     private final Path dbPath;
     private final String url;
-
+    //set database path and connection URL
     public PaymentDatabase(Path dbPath) {
         this.dbPath = dbPath;
         this.url = "jdbc:sqlite:" + dbPath.toAbsolutePath().toString();
     }
-
+    // Get the connection URL for the database
+    public String getConnectionUrl() {
+        return url;
+    }
+// Initialize the database by creating necessary tables and indexes
     public void init() throws SQLException {
         try {
-            Class.forName("org.sqlite.JDBC");
+            Class.forName("org.sqlite.JDBC"); // Load SQLite JDBC driver
         } catch (ClassNotFoundException e) {
-            throw new SQLException("SQLite JDBC driver not found on classpath", e);
+            throw new SQLException("SQLite JDBC driver not found on classpath", e); // throw SQLException if driver not found
         }
-
+        // Create tables and indexes
         try (Connection c = DriverManager.getConnection(url);
              Statement s = c.createStatement()) {
             
@@ -95,7 +105,12 @@ public class PaymentDatabase {
             }
         }
     }
-
+    /*
+     --> Adds a bank payment method for the given username
+        --> Returns the generated payment method ID
+        --> generates a new payment method entry in the payment_methods table with type 'BANK'
+        -->throws SQLException for any database errors
+     */
     public long addBankPayment(String username, String routingNumber, String accountNumber, String bankName) throws SQLException {
         String sql = "INSERT INTO payment_methods (username, payment_type, bank_routing, bank_account, bank_name, created_at) "
                   + "VALUES (?, 'BANK', ?, ?, ?, ?)";
@@ -116,7 +131,12 @@ public class PaymentDatabase {
             }
         }
     }
-
+    
+    /*
+     --> Retrieves the active payment method for the given username
+        --> Returns a PaymentInformation object with the payment details, or null if none found
+        --> throws SQLException for any database errors
+     */
     public PaymentInformation getActivePaymentMethod(String username) throws SQLException {
         String sql = "SELECT payment_type, card_number, card_expiry, card_name, "
                   + "bank_routing, bank_account, bank_name FROM payment_methods "
@@ -143,7 +163,11 @@ public class PaymentDatabase {
             }
         }
     }
-
+    
+    /*
+     --> Deactivates all payment methods for the given username
+        --> throws SQLException for any database errors
+     */
     public void deactivateAllPaymentMethods(String username) throws SQLException {
         String sql = "UPDATE payment_methods SET is_active = 0 WHERE username = ?";
         try (Connection c = DriverManager.getConnection(url);
@@ -152,7 +176,11 @@ public class PaymentDatabase {
             p.executeUpdate();
         }
     }
-
+    /*
+     --> Creates a new payment transaction
+        --> Returns the generated transaction ID
+        --> throws SQLException for any database errors
+     */
     public long createTransaction(long paymentMethodId, Long orderId, double amount) throws SQLException {
         String sql = "INSERT INTO payment_transactions (payment_method_id, order_id, amount, status, created_at) "
                   + "VALUES (?, ?, ?, 'PENDING', ?)";
@@ -176,7 +204,11 @@ public class PaymentDatabase {
             }
         }
     }
-
+    /*
+     --> Updates the status of a payment transaction
+        --> Sets the completed_at timestamp and error message if provided
+        --> throws SQLException for any database errors
+     */
     public void updateTransactionStatus(long transactionId, String status, String errorMessage) throws SQLException {
         String sql = "UPDATE payment_transactions SET status = ?, completed_at = ?, error_message = ? WHERE id = ?";
         try (Connection c = DriverManager.getConnection(url);

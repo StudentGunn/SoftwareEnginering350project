@@ -1,12 +1,21 @@
+// PaymentInformation.java
+
+/*  
+ *--> Class to hold payment information for customers
+ *--> Supports both card and bank payment methods
+ --> Contains getters and setters for payment details
+ *--> Methods to check payment type
+ */
 public class PaymentInformation {
-    private String paymentType;  // 'CARD' or 'BANK'
+    // Fields for payment information
+    private String paymentType;  
     private String cardNumber;
     private String cardExpiry;
     private String cardName;
     private String routingNumber;
     private String accountNumber;
     private String bankName;
-
+    //Getter and Setter methods; getPaymentType, setPaymentType, getCardNumber, setCardNumber, getCardExpiry, setCardExpiry, getCardName, setCardName, getRoutingNumber, setRoutingNumber, getAccountNumber, setAccountNumber, getBankName, setBankName
     public String getPaymentType() {
         return paymentType;
     }

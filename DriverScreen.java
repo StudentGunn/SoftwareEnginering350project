@@ -83,9 +83,16 @@ public class DriverScreen extends JPanel {
 		}
 		parent.getSceneSorter().switchPage("DriverHistory"); // Switch to DriverHistory screen
 	});
-	// Payment History button (not implemented) *work in progress*
-	paymentHistoryBtn.addActionListener(e -> JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(this),
-		"Payment history not implemented yet.", "Payment History", JOptionPane.INFORMATION_MESSAGE));
+	// Payment History button -> navigate to DriverPaymentHistory screen
+	paymentHistoryBtn.addActionListener(e -> {
+		DriverPaymentHistory paymentHistoryScreen = new DriverPaymentHistory(parent, username);
+		try {
+			parent.getSceneSorter().addScene("DriverPaymentHistory", paymentHistoryScreen);
+		} catch (IllegalArgumentException ex) {
+			// Scene already exists
+		}
+		parent.getSceneSorter().switchPage("DriverPaymentHistory");
+	});
 	// Payment Method button
 	paymentMethodBtn.addActionListener(e -> { // Navigate to DriverSetPaymentMethod screen
 		DriverSetPaymentMethod paymentMethodScreen = new DriverSetPaymentMethod(parent, username);

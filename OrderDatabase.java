@@ -155,14 +155,18 @@ public class OrderDatabase {
             s.executeUpdate("CREATE INDEX IF NOT EXISTS idx_payment_trans_order ON payment_transactions(order_id)");
         }
     }
-
+    /*
+     * Create a new order and return its generated order ID.
+     * @return generated order ID
+     * @throws SQLException if a database access error occurs
+     */
     public long createOrder(String customerUsername, String restaurantName, String restaurantAddress,
                           String deliveryAddress, String specialInstructions, double totalAmount, 
                           int itemCount, String paymentType) throws SQLException {
         String sql = "INSERT INTO orders (customer_username, restaurant_name, restaurant_address, status, total_amount, "
                   + "created_at, delivery_address, special_instructions, estimated_minutes, item_count, payment_type) "
                   + "VALUES (?, ?, ?, 'PENDING', ?, ?, ?, ?, ?, ?, ?)";
-        
+        // connect to database and grab, CustomeruserName, RestaurantName, RestaurantAddress, DeliveryAddress, SpecialInstructions, TotalAmount, ItemCount, PaymentType
         try (Connection c = DriverManager.getConnection(url);
              PreparedStatement p = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             p.setString(1, customerUsername);
@@ -175,7 +179,7 @@ public class OrderDatabase {
             p.setInt(8, estimateDeliveryTime(totalAmount));
             p.setInt(9, itemCount);
             p.setString(10, paymentType);
-            p.executeUpdate();
+            p.executeUpdate(); // update database at the end
             
             try (ResultSet rs = p.getGeneratedKeys()) {
                 if (rs.next()) {
@@ -188,7 +192,11 @@ public class OrderDatabase {
             }
         }
     }
-
+    /*
+      --> Add an item to an existing order.
+      --> update the order_items table with the new item details.
+      --> @throws SQLException if a database access error occurs
+     */
     public void addOrderItem(long orderId, String itemName, int quantity, 
                            double unitPrice, String specialRequests) throws SQLException {
         String sql = "INSERT INTO order_items (order_id, item_name, quantity, unit_price, special_requests) "
@@ -203,7 +211,11 @@ public class OrderDatabase {
             p.executeUpdate();
         }
     }
-
+    /*
+      --> Assign a driver to an order.
+      --> Update the orders table with the driver username and status.
+      --> @throws SQLException if a database access error occurs
+     */
     public void assignDriver(long orderId, String driverUsername) throws SQLException {
         String sql = "UPDATE orders SET driver_username = ?, status = 'ASSIGNED', assigned_at = ? "
                   + "WHERE order_id = ?";
@@ -218,60 +230,64 @@ public class OrderDatabase {
             recordOrderUpdate(orderId, "ASSIGNED", "Driver assigned: " + driverUsername, driverUsername);
         }
     }
-
+    /* 
+      --> Update the status of an order.
+      --> Update timestamp fields based on status changes.
+      --> @throws SQLException if a database access error occurs
+     */
     public void updateOrderStatus(long orderId, String status, String username) throws SQLException {
         String sql = "UPDATE orders SET status = ?";
         
         // Add timestamp updates based on status
         if (status.equals("IN_PROGRESS")) {
-            sql += ", picked_up_at = ?";
+            sql += ", picked_up_at = ?"; // set picked up time
         } else if (status.equals("DELIVERED")) {
-            sql += ", delivered_at = ?, actual_minutes = ?";
+            sql += ", delivered_at = ?, actual_minutes = ?";// set delivered time and actual minutes
         }
         
         sql += " WHERE order_id = ?";
-        
+       // connect to database and update order status
         try (Connection c = DriverManager.getConnection(url);
              PreparedStatement p = c.prepareStatement(sql)) {
-            int paramIndex = 1;
-            p.setString(paramIndex++, status);
-            
-            long now = Instant.now().getEpochSecond();
+            int paramIndex = 1; // parameter index starts at 1
+            p.setString(paramIndex++, status); // set status
+            // Set timestamps if applicable
+            long now = Instant.now().getEpochSecond();// get current time
             if (status.equals("IN_PROGRESS")) {
                 p.setLong(paramIndex++, now);
             } else if (status.equals("DELIVERED")) {
                 p.setLong(paramIndex++, now);
                 // Calculate actual delivery time
                 try (PreparedStatement p2 = c.prepareStatement(
-                        "SELECT created_at FROM orders WHERE order_id = ?")) {
-                    p2.setLong(1, orderId);
+                        "SELECT created_at FROM orders WHERE order_id = ?")) { //
+                    p2.setLong(1, orderId); // set orderId
                     ResultSet rs = p2.executeQuery();
-                    if (rs.next()) {
-                        long createdAt = rs.getLong(1);
-                        int actualMinutes = (int)((now - createdAt) / 60);
-                        p.setInt(paramIndex++, actualMinutes);
+                    if (rs.next()) { // should always be true
+                        long createdAt = rs.getLong(1);// get created at time
+                        int actualMinutes = (int)((now - createdAt) / 60); // in minutes
+                        p.setInt(paramIndex++, actualMinutes); // set actual_minutes
                     }
                 }
             }
             
-            p.setLong(paramIndex, orderId);
-            p.executeUpdate();
+            p.setLong(paramIndex, orderId); // set orderId at the end
+            p.executeUpdate(); // update database
             
-            recordOrderUpdate(orderId, status, "Status updated to: " + status, username);
+            recordOrderUpdate(orderId, status, "Status updated to: " + status, username); // log status change
         }
     }
 
     private void recordOrderUpdate(long orderId, String status, String notes, String username) throws SQLException {
         String sql = "INSERT INTO order_updates (order_id, status, notes, updated_at, updated_by) "
-                  + "VALUES (?, ?, ?, ?, ?)";
-        try (Connection c = DriverManager.getConnection(url);
+                  + "VALUES (?, ?, ?, ?, ?)"; // insert into order_updates table
+        try (Connection c = DriverManager.getConnection(url); // connect to database
              PreparedStatement p = c.prepareStatement(sql)) {
-            p.setLong(1, orderId);
-            p.setString(2, status);
-            p.setString(3, notes);
-            p.setLong(4, Instant.now().getEpochSecond());
-            p.setString(5, username);
-            p.executeUpdate();
+            p.setLong(1, orderId); // set orderId
+            p.setString(2, status); // set status
+            p.setString(3, notes); // set notes
+            p.setLong(4, Instant.now().getEpochSecond()); // set updated_at
+            p.setString(5, username); // set updated_by
+            p.executeUpdate(); // execute insert
         }
     }
 
