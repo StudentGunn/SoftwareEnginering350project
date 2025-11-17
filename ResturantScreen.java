@@ -54,7 +54,7 @@ public class ResturantScreen extends JPanel {
         content.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
         content.setBackground(new Color(250, 250, 250));
 
-        // bridgewater zip for demo
+        // bridgewater zip for demo// if not 02325 display nothing
         if ("02325".equals(zip)) {
             content.add(createRestaurantRow("Crimson Dining", "125 Burrill Ave", 41.98656, 70.96437));
             content.add(Box.createVerticalStrut(6));
@@ -66,7 +66,7 @@ public class ResturantScreen extends JPanel {
             // no restaurants for other zips yet
             JPanel noResultsPanel = new JPanel(new BorderLayout());
             noResultsPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
-
+            // TODO: Here should have a update instance  
             JLabel none = new JLabel("No restaurants available in " + zip, SwingConstants.CENTER);
             none.setFont(new Font("Arial", Font.PLAIN, 12));
             none.setForeground(Color.GRAY);

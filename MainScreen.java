@@ -164,7 +164,7 @@ public class MainScreen extends JPanel {
         }
         parent.getSceneSorter().switchPage("RestaurantScreen");
     }
-
+    
     private void promptZipCode() {
         String input = JOptionPane.showInputDialog(SwingUtilities.getWindowAncestor(this),
                 "Enter your 5-digit zip code:", zipCode.isEmpty() ? "" : zipCode);
