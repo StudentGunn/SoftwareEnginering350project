@@ -19,7 +19,7 @@ public class MainScreen extends JPanel {
         setLayout(new BorderLayout(0, 0));
         setBackground(new Color(245, 245, 245));
 
-        // header bar w green
+        // green header bar 
         JPanel headerBar = new JPanel(new BorderLayout(10, 0));
         headerBar.setBackground(new Color(46, 125, 50));
         headerBar.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
@@ -246,21 +246,7 @@ public class MainScreen extends JPanel {
                 return;
             }
 
-            if (!cardNumber.matches("\\d{13,19}")) {
-                JOptionPane.showMessageDialog(this, "Invalid card number. Must be 13-19 digits.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            // check if card is valid
-            if (!isValidCardNumber(cardNumber)) {
-                JOptionPane.showMessageDialog(this, "Invalid card number. Failed checksum validation.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            if (!expiry.matches("\\d{2}/\\d{2}")) {
-                JOptionPane.showMessageDialog(this, "Invalid expiry format. Use MM/YY.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+            // validation removed -> accept any input for demonstrating
 
             try {
                 parent.paymentDb.deactivateAllPaymentMethods(username);
