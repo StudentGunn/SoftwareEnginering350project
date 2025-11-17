@@ -53,12 +53,14 @@ public class DriverScreen extends JPanel {
         JButton deliveryHistoryBtn = new JButton("Delivery History");
         JButton paymentHistoryBtn = new JButton("Payment History");
         JButton paymentMethodBtn = new JButton("Payment Method");
+        JButton confirmDropoffBtn = new JButton("Confrim Food Drop off");
 
         // style buttons
         styleButton(getOrderBtn);
         styleButton(deliveryHistoryBtn);
         styleButton(paymentHistoryBtn);
         styleButton(paymentMethodBtn);
+        styleButton(confirmDropoffBtn);
 
         // add buttons with spacing
         buttonsPanel.add(getOrderBtn);
@@ -68,6 +70,8 @@ public class DriverScreen extends JPanel {
         buttonsPanel.add(paymentHistoryBtn);
         buttonsPanel.add(Box.createVerticalStrut(15));
         buttonsPanel.add(paymentMethodBtn);
+        buttonsPanel.add(Box.createVerticalStrut(15));
+        buttonsPanel.add(confirmDropoffBtn);
 
         contentPanel.add(buttonsPanel);
         add(contentPanel, BorderLayout.CENTER);
@@ -112,6 +116,32 @@ public class DriverScreen extends JPanel {
                 // catches already exists
             }
             parent.getSceneSorter().switchPage("DriverSetPaymentMethod");
+        });
+
+        // confirm drop-off: prompt for order ID and mark delivered
+        confirmDropoffBtn.addActionListener(e -> {
+            String input = JOptionPane.showInputDialog(this, "Enter delivered order ID:", "Confirm Drop-off", JOptionPane.QUESTION_MESSAGE);
+            if (input == null) return; // cancelled
+            input = input.trim();
+            if (input.isEmpty() || !input.matches("\\d+")) {
+                JOptionPane.showMessageDialog(this, "Please enter a valid numeric order ID.", "Invalid Input", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            long orderId = Long.parseLong(input);
+            int confirm = JOptionPane.showConfirmDialog(this,
+                "Mark order #" + orderId + " as DELIVERED?",
+                "Confirm Delivery",
+                JOptionPane.YES_NO_OPTION);
+            if (confirm != JOptionPane.YES_OPTION) return;
+            try {
+                parent.orderDb.updateOrderStatus(orderId, "DELIVERED", username);
+                try {
+                    parent.driverDb.updateDriverStatus(username, "AVAILABLE");
+                } catch (Exception ignored) { }
+                JOptionPane.showMessageDialog(this, "Order #" + orderId + " marked as DELIVERED.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error updating order: " + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         logoutBtn.addActionListener(e -> logout());

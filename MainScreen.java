@@ -8,6 +8,7 @@ public class MainScreen extends JPanel {
     private String zipCode = "";
     private String email = "you@example.com";
     private FoodDeliveryLoginUI parent;
+    private javax.swing.Timer deliveredCheckTimer;
 
     public MainScreen(FoodDeliveryLoginUI parent, String username) {
         this.parent = parent;
@@ -92,10 +93,35 @@ public class MainScreen extends JPanel {
         profileBtn.addActionListener(e -> openProfileDialog());
         paymentBtn.addActionListener(e -> openPaymentMethodDialog());
         logoutBtn.addActionListener(e -> logout());
+
+        // One-time immediate check for delivered orders not yet notified
+        try {
+            if (parent.orderDb.hasUnnotifiedDelivered(username)) {
+                parent.showNotification("Your food has been delivered!", new Color(46, 125, 50), Color.WHITE, 5000);
+                parent.orderDb.markDeliveredNotified(username);
+            }
+        } catch (SQLException ex) {
+            // ignore banner errors for now
+        }
+
+        // Periodic check while this screen is shown
+        deliveredCheckTimer = new javax.swing.Timer(5000, e -> {
+            try {
+                if (parent.orderDb.hasUnnotifiedDelivered(username)) {
+                    parent.showNotification("Your food has been delivered!", new Color(46, 125, 50), Color.WHITE, 5000);
+                    parent.orderDb.markDeliveredNotified(username);
+                }
+            } catch (SQLException ignored) { }
+        });
+        deliveredCheckTimer.start();
     }
 
     // logout and go back to login
     private void logout() {
+        if (deliveredCheckTimer != null) {
+            deliveredCheckTimer.stop();
+            deliveredCheckTimer = null;
+        }
         int confirm = JOptionPane.showConfirmDialog(this,
             "Are you sure you want to logout?",
             "Logout",

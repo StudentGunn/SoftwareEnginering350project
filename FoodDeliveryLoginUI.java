@@ -112,6 +112,21 @@ public class FoodDeliveryLoginUI {
         main.repaint();
     }
 
+    // simple notification banner at bottom; auto-clears after durationMs
+    public void showNotification(String message, Color bg, Color fg, int durationMs) {
+        messageLabel.setText(message);
+        messageLabel.setOpaque(true);
+        if (bg != null) messageLabel.setBackground(bg);
+        if (fg != null) messageLabel.setForeground(fg);
+        javax.swing.Timer t = new javax.swing.Timer(Math.max(1000, durationMs), e -> {
+            messageLabel.setText(" ");
+            messageLabel.setOpaque(false);
+            messageLabel.repaint();
+        });
+        t.setRepeats(false);
+        t.start();
+    }
+
     
     // setCardOpacity
     // - alpha is an integer 0..255 representing the translucency 

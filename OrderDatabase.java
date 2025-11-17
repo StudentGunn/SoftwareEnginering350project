@@ -81,6 +81,19 @@ public class OrderDatabase {
                 }
             }
 
+            //  make as a delivered_notified flag (for customer notifications- easy way to do it before .db convertion)
+            boolean needsDeliveredNotified = false;
+            try (ResultSet rs = stmt.executeQuery("SELECT delivered_notified FROM orders LIMIT 1")) {
+            } catch (SQLException ex) {
+                needsDeliveredNotified = true;
+            }
+            if (needsDeliveredNotified) {
+                try {
+                    stmt.executeUpdate("ALTER TABLE orders ADD COLUMN delivered_notified INTEGER DEFAULT 0");
+                } catch (SQLException ex) {
+                }
+            }
+
             // main orders table - stores all the order info
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS orders ("
                     + "order_id INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -100,6 +113,7 @@ public class OrderDatabase {
                     + "item_count INTEGER NOT NULL DEFAULT 0,"
                     + "payment_type TEXT,"
                     + "payment_status TEXT DEFAULT 'PENDING',"
+                    + "delivered_notified INTEGER DEFAULT 0,"
                     + "FOREIGN KEY (customer_username) REFERENCES users(username) ON DELETE RESTRICT ON UPDATE CASCADE,"
                     + "FOREIGN KEY (driver_username) REFERENCES drivers(username) ON DELETE RESTRICT ON UPDATE CASCADE,"
                     + "CHECK (payment_type IN ('CARD', 'BANK'))"
@@ -367,6 +381,28 @@ public class OrderDatabase {
             }
 
             recordOrderUpdate(orderId, "CANCELLED", "Order cancelled by admin", "admin");
+        }
+    }
+
+    // check if a customer has any delivered orders that haven't been notified yet
+    public boolean hasUnnotifiedDelivered(String customerUsername) throws SQLException {
+        String sql = "SELECT EXISTS(SELECT 1 FROM orders WHERE customer_username = ? AND status = 'DELIVERED' AND COALESCE(delivered_notified,0) = 0)";
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, customerUsername);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() && rs.getInt(1) == 1;
+            }
+        }
+    }
+
+    // mark all delivered orders as notified;to avoid repeat notifications
+    public void markDeliveredNotified(String customerUsername) throws SQLException {
+        String sql = "UPDATE orders SET delivered_notified = 1 WHERE customer_username = ? AND status = 'DELIVERED' AND COALESCE(delivered_notified,0) = 0";
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, customerUsername);
+            ps.executeUpdate();
         }
     }
 }
