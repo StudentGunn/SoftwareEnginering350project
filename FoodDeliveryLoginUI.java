@@ -22,8 +22,6 @@ public class FoodDeliveryLoginUI {
     public SceneSorter getSceneSorter() {
         return sceneSorter;
     }
-    // expose title so we can toggle opacity when admin wants the image to cover whole UI
-    private final ShadowLabel titleLabel = new ShadowLabel("Welcome to ordering with Food Delivery Service");
     private final JPanel centerPanel = new JPanel(new GridBagLayout());
     // a card panel so form controls are readable over image backgrounds
     private final JPanel cardPanel = new JPanel(new GridBagLayout());
@@ -40,7 +38,6 @@ public class FoodDeliveryLoginUI {
     LoginUI log = new LoginUI(this);
     sceneSorter.addScene("Login", log.buildLoginPanel());
 
-        main.add(new ShadowLabel("Welcome to ordering with Food Delivery Service!"), BorderLayout.NORTH);
         main.add(sceneSorter.getCardsPanel(), BorderLayout.CENTER);
         sceneSorter.switchPage("Login");
         main.add(messageLabel, BorderLayout.SOUTH);
@@ -77,18 +74,15 @@ public class FoodDeliveryLoginUI {
         if (img != null) {
             main.setBackgroundImage(img);
             main.setOverlayAlpha(0f);
-            // if coverUI, make card and title non-opaque so image shows through everywhere
+            // if coverUI, make card non-opaque so image shows through everywhere
             if (coverUI) {
                 cardPanel.setOpaque(false);
                 cardPanel.setBackground(new Color(0,0,0,0));
-                titleLabel.setOpaque(false);
                 messageLabel.setOpaque(false);
             } else {
                 // restore translucent card
                 cardPanel.setOpaque(true);
                 cardPanel.setBackground(new Color(255,255,255,220));
-                titleLabel.setOpaque(true);
-                titleLabel.setBackground(main.getBackground());
                 messageLabel.setOpaque(true);
                 messageLabel.setBackground(main.getBackground());
             }
@@ -128,8 +122,7 @@ public class FoodDeliveryLoginUI {
         alpha = Math.max(0, Math.min(255, alpha));
         cardPanel.setOpaque(alpha > 0);
         cardPanel.setBackground(new Color(255,255,255, alpha));
-        // ensure title/message backgrounds track card if they are opaque
-        if (titleLabel.isOpaque()) titleLabel.setBackground(cardPanel.getBackground());
+        // ensure message backgrounds track card if opaque
         if (messageLabel.isOpaque()) messageLabel.setBackground(cardPanel.getBackground());
         main.repaint();
     }

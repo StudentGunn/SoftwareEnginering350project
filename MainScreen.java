@@ -2,16 +2,11 @@
 import java.awt.*;
 import java.sql.SQLException;
 import javax.swing.*;
-/*
- * MainScreen.java
- * This class represents the main screen of the food delivery application.
- * It displays the user's profile information and provides buttons for
- * ordering food and entering a zip code.
- */
+
 public class MainScreen extends JPanel {
     private String username;
     private String zipCode = "";
-    private String email = "you@example.com"; // placeholder profile field
+    private String email = "you@example.com";
     private FoodDeliveryLoginUI parent;
 
     public MainScreen(FoodDeliveryLoginUI parent, String username) {
@@ -19,75 +14,112 @@ public class MainScreen extends JPanel {
         this.username = (username == null || username.isEmpty()) ? "User" : username;
         initUI();
     }
-    /*
-     * Initializes the user interface components.
-     * Sets up the layout and adds all necessary components to the panel.
-     * Connects action listeners to the buttons.
-     * Initializes any other required settings, like default values
-     * Sets the initial state of the UI components.
-     */
 
     private void initUI() {
-        setLayout(new BorderLayout(10, 10));
+        setLayout(new BorderLayout(0, 0));
+        setBackground(new Color(245, 245, 245));
 
-        // Top panel for welcome message and profile button
-        JPanel topPanel = new JPanel(new BorderLayout(10, 0));
-        topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
-        
-        JLabel welcomeLabel = new JLabel("Welcome, " + username + "!", SwingConstants.LEFT);
-        welcomeLabel.setFont(welcomeLabel.getFont().deriveFont(18f));
-        
-        // Create a smaller profile button
+        // header bar w green
+        JPanel headerBar = new JPanel(new BorderLayout(10, 0));
+        headerBar.setBackground(new Color(46, 125, 50));
+        headerBar.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
+
+        JLabel welcomeLabel = new JLabel("Welcome, " + username + "!");
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        welcomeLabel.setForeground(Color.WHITE);
+
+        // profile and logout buttons
+        JPanel headerButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        headerButtons.setOpaque(false);
+
         JButton profileBtn = new JButton("My Profile");
-        profileBtn.setPreferredSize(new Dimension(100, 30));
-        
-        // Add welcome label and profile button to top panel
-        topPanel.add(welcomeLabel, BorderLayout.WEST);
-        topPanel.add(profileBtn, BorderLayout.EAST);
-        add(topPanel, BorderLayout.NORTH);
+        profileBtn.setFont(new Font("Arial", Font.BOLD, 12));
+        profileBtn.setBackground(Color.WHITE);
+        profileBtn.setForeground(new Color(46, 125, 50));
+        profileBtn.setOpaque(true);
+        profileBtn.setBorderPainted(false);
+        profileBtn.setFocusPainted(false);
+        profileBtn.setPreferredSize(new Dimension(110, 32));
 
-        // Create left side panel for Order and Zip Code buttons
-        JPanel leftPanel = new JPanel();
-        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-        leftPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        //Create buttons
-        JButton orderBtn = new JButton("Order");
-        JButton zipBtn = new JButton("Enter Zip Code");
+        JButton logoutBtn = new JButton("Logout");
+        logoutBtn.setFont(new Font("Arial", Font.BOLD, 12));
+        logoutBtn.setBackground(Color.WHITE);
+        logoutBtn.setForeground(new Color(46, 125, 50));
+        logoutBtn.setOpaque(true);
+        logoutBtn.setBorderPainted(false);
+        logoutBtn.setFocusPainted(false);
+        logoutBtn.setPreferredSize(new Dimension(90, 32));
+
+        headerButtons.add(profileBtn);
+        headerButtons.add(logoutBtn);
+
+        headerBar.add(welcomeLabel, BorderLayout.WEST);
+        headerBar.add(headerButtons, BorderLayout.EAST);
+        add(headerBar, BorderLayout.NORTH);
+
+        // main buttons area
+        JPanel contentPanel = new JPanel(new GridBagLayout());
+        contentPanel.setBackground(new Color(245, 245, 245));
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
+
+        JPanel buttonsPanel = new JPanel();
+        buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
+        buttonsPanel.setBackground(new Color(245, 245, 245));
+
+        // make the buttons
+        JButton orderBtn = new JButton("Order Food");
+        JButton zipBtn = new JButton("Set Zip Code");
         JButton paymentBtn = new JButton("Payment Methods");
-        
-        // Set preferred size for consistency
-        orderBtn.setMaximumSize(new Dimension(200, 40));
-        orderBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
-        zipBtn.setMaximumSize(new Dimension(200, 40));
-        zipBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
-        paymentBtn.setMaximumSize(new Dimension(200, 40));
-        paymentBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
-        // Add spacing between buttons * avoid messing alignment
-        leftPanel.add(orderBtn);
-        leftPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        leftPanel.add(zipBtn);
-        leftPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        leftPanel.add(paymentBtn);
 
-        // Add the left panel to a more concise layout for alignment
-        JPanel leftWrapper = new JPanel(new BorderLayout());
-        leftWrapper.add(leftPanel, BorderLayout.WEST);
-        add(leftWrapper, BorderLayout.CENTER);
+        // style them
+        styleButton(orderBtn);
+        styleButton(zipBtn);
+        styleButton(paymentBtn);
 
-        // Actions
+        // add buttons w spacing between
+        buttonsPanel.add(orderBtn);
+        buttonsPanel.add(Box.createVerticalStrut(15));
+        buttonsPanel.add(zipBtn);
+        buttonsPanel.add(Box.createVerticalStrut(15));
+        buttonsPanel.add(paymentBtn);
+
+        contentPanel.add(buttonsPanel);
+        add(contentPanel, BorderLayout.CENTER);
+
+        // button clicks
         orderBtn.addActionListener(e -> openOrderScreen());
         zipBtn.addActionListener(e -> promptZipCode());
         profileBtn.addActionListener(e -> openProfileDialog());
         paymentBtn.addActionListener(e -> openPaymentMethodDialog());
+        logoutBtn.addActionListener(e -> logout());
     }
-    /*
-     * Opens the order screen if zip code is set; otherwise prompts for zip code.
-     * If the zip code is valid, it proceeds to the restaurant screen.
-     * if not, it shows a warning message.
-     */
+
+    // logout and go back to login
+    private void logout() {
+        int confirm = JOptionPane.showConfirmDialog(this,
+            "Are you sure you want to logout?",
+            "Logout",
+            JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            parent.getSceneSorter().switchPage("Login");
+        }
+    }
+
+    // makes buttons look the same
+    private void styleButton(JButton button) {
+        button.setFont(new Font("Arial", Font.BOLD, 14));
+        button.setBackground(new Color(46, 125, 50));
+        button.setForeground(Color.WHITE);
+        button.setOpaque(true);
+        button.setBorderPainted(false);
+        button.setFocusPainted(false);
+        button.setPreferredSize(new Dimension(220, 45));
+        button.setMaximumSize(new Dimension(220, 45));
+        button.setAlignmentX(Component.CENTER_ALIGNMENT);
+    }
+
+    // opens order screen if zip is set
     private void openOrderScreen() {
         if (zipCode.isEmpty()) {
             JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(this),
@@ -120,12 +152,8 @@ public class MainScreen extends JPanel {
             }
         }
     }
-    /*
-     * Opens the profile dialog displaying user information.
-     * Allows editing of email address.
-     * Shows options to edit email or close the the window.
-     * If the email is changed, it updates the email variable, so new email is reflected next time.
-     */
+
+    // shows profile info, can edit email
     private void openProfileDialog() {
         String message = String.format("Username: %s%nEmail: %s%nZip Code: %s",
                 username, email, zipCode.isEmpty() ? "(not set)" : zipCode);
@@ -147,20 +175,16 @@ public class MainScreen extends JPanel {
         }
     }
 
-    /*
-     * Opens a dialog for managing payment methods.
-     * Allows customers to add credit card or bank account payment methods.
-     * Payment information is stored securely in the payments.db database.
-     */
+    // payment method stuff
     private void openPaymentMethodDialog() {
         try {
-            // First, check if there's an active payment method
+            // check if they have payment method
             PaymentInformation activeMethod = parent.paymentDb.getActivePaymentMethod(username);
-            
+
             String currentMethod = "No payment method on file";
             if (activeMethod != null) {
                 if ("CARD".equals(activeMethod.getPaymentType())) {
-                    // Mask card number for security
+                    // hide most of card number
                     String cardNum = activeMethod.getCardNumber();
                     String masked = "****-****-****-" + (cardNum.length() >= 4 ? cardNum.substring(cardNum.length() - 4) : cardNum);
                     currentMethod = "Credit Card: " + masked + " (Exp: " + activeMethod.getCardExpiry() + ")";
@@ -170,8 +194,7 @@ public class MainScreen extends JPanel {
                     currentMethod = "Bank Account: " + masked + " (" + activeMethod.getBankName() + ")";
                 }
             }
-            
-            // Show dialog with options
+
             String message = "Current Payment Method:\n" + currentMethod + "\n\nWhat would you like to do?";
             int option = JOptionPane.showOptionDialog(SwingUtilities.getWindowAncestor(this),
                     message,
@@ -195,9 +218,7 @@ public class MainScreen extends JPanel {
         }
     }
 
-    /*
-     * Prompts user to enter credit card information and saves it to the database.
-     */
+    // add credit card
     private void addCreditCard() {
         JPanel panel = new JPanel(new GridLayout(3, 2, 5, 5));
         JTextField cardNumberField = new JTextField(16);
@@ -219,7 +240,7 @@ public class MainScreen extends JPanel {
             String expiry = expiryField.getText().trim();
             String name = nameField.getText().trim();
 
-            // Basic validation
+            // check if empty
             if (cardNumber.isEmpty() || expiry.isEmpty() || name.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "All fields are required.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -230,7 +251,7 @@ public class MainScreen extends JPanel {
                 return;
             }
 
-            // Validate card number using Luhn algorithm
+            // check if card is valid
             if (!isValidCardNumber(cardNumber)) {
                 JOptionPane.showMessageDialog(this, "Invalid card number. Failed checksum validation.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -242,7 +263,6 @@ public class MainScreen extends JPanel {
             }
 
             try {
-                // Deactivate existing payment methods and add new one
                 parent.paymentDb.deactivateAllPaymentMethods(username);
                 parent.paymentDb.addCardPayment(username, cardNumber, expiry, name);
                 JOptionPane.showMessageDialog(this, "Credit card added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -255,35 +275,29 @@ public class MainScreen extends JPanel {
         }
     }
 
-    /*
-     * Validates credit card number using Luhn algorithm (mod 10 check).
-     * This is the industry standard for validating credit card numbers.
-     */
+    // luhn algorithm to check if card num is valid
     private boolean isValidCardNumber(String cardNumber) {
         int sum = 0;
         boolean alternate = false;
-        
-        // Process digits from right to left
+
         for (int i = cardNumber.length() - 1; i >= 0; i--) {
             int digit = Character.getNumericValue(cardNumber.charAt(i));
-            
+
             if (alternate) {
                 digit *= 2;
                 if (digit > 9) {
                     digit -= 9;
                 }
             }
-            
+
             sum += digit;
             alternate = !alternate;
         }
-        
+
         return (sum % 10 == 0);
     }
 
-    /*
-     * Prompts user to enter bank account information and saves it to the database.
-     */
+    // add bank account
     private void addBankAccount() {
         JPanel panel = new JPanel(new GridLayout(3, 2, 5, 5));
         JTextField routingField = new JTextField(9);
@@ -305,7 +319,6 @@ public class MainScreen extends JPanel {
             String account = accountField.getText().trim();
             String bankName = bankNameField.getText().trim();
 
-            // Basic validation
             if (routing.isEmpty() || account.isEmpty() || bankName.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "All fields are required.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -322,7 +335,6 @@ public class MainScreen extends JPanel {
             }
 
             try {
-                // Deactivate existing payment methods and add new one
                 parent.paymentDb.deactivateAllPaymentMethods(username);
                 parent.paymentDb.addBankPayment(username, routing, account, bankName);
                 JOptionPane.showMessageDialog(this, "Bank account added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);

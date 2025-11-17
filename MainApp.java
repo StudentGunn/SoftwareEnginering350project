@@ -52,14 +52,6 @@ public class MainApp {
                 JOptionPane.showMessageDialog(null, errorMsg, "Database Error", JOptionPane.ERROR_MESSAGE);
                 System.exit(1);
             }
-            try {
-                // choose any picture you want, copy the path and then paste it below "To be changed later if not wanted"
-                app.setBackgroundImage(java.nio.file.Paths.get(""), true);
-            } catch (IOException ex) {
-                String errorMsg = "Failed to load background image: " + ex.getMessage();
-                System.err.println(errorMsg);
-                JOptionPane.showMessageDialog(null, errorMsg, "Image load error", JOptionPane.ERROR_MESSAGE);
-            }
             app.createAndShow();
         });
     }
