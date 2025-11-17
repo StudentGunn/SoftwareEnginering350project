@@ -157,9 +157,10 @@ Version 1.1 includes core functionality. Future updates will focus on:
 
 ## Authors
 - Alex
-- Marc  
+- Mark
 - Sky
 - Josiah
+- Anthony
 
 
 
