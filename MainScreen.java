@@ -101,7 +101,7 @@ public class MainScreen extends JPanel {
                 parent.orderDb.markDeliveredNotified(username);
             }
         } catch (SQLException ex) {
-            // ignore banner errors for now
+            // implement proper error handling/logging as needed later
         }
 
         // Periodic check while this screen is shown
@@ -160,7 +160,7 @@ public class MainScreen extends JPanel {
         try {
             parent.getSceneSorter().addScene("RestaurantScreen", restaurantScreen);
         } catch (IllegalArgumentException ex) {
-            // Scene already exists; reuse existing instance
+            // Scene already exists; reuse existing instance *for now*
         }
         parent.getSceneSorter().switchPage("RestaurantScreen");
     }
