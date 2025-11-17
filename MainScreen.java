@@ -131,7 +131,11 @@ public class MainScreen extends JPanel {
         
         // Create and show the restaurant screen
         ResturantScreen restaurantScreen = new ResturantScreen(parent, username, zipCode);
-        parent.getSceneSorter().addScene("RestaurantScreen", restaurantScreen);
+        try {
+            parent.getSceneSorter().addScene("RestaurantScreen", restaurantScreen);
+        } catch (IllegalArgumentException ex) {
+            // Scene already exists; reuse existing instance
+        }
         parent.getSceneSorter().switchPage("RestaurantScreen");
     }
 

@@ -278,7 +278,11 @@ public class ResturantScreen extends JPanel {
 
                     // go back to main screen
                     MainScreen mainScreen = new MainScreen(parent, username);
-                    parent.getSceneSorter().addScene("MainScreen", mainScreen);
+                    try {
+                        parent.getSceneSorter().addScene("MainScreen", mainScreen);
+                    } catch (IllegalArgumentException ex) {
+                        // already exists; reuse
+                    }
                     parent.getSceneSorter().switchPage("MainScreen");
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(this,
