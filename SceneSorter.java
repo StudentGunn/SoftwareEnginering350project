@@ -1,7 +1,7 @@
 import java.awt.*;
-import javax.swing.JPanel;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.JPanel;
 
 public class SceneSorter {
     private final JPanel cardsPanel;

@@ -70,5 +70,56 @@ Time: 2025-11-14T22:27:21.903225
 configure files failed still giving false old screen, no updated methods, Removed old .jar files, revert back to previous version 1.1 version
 	at ConfigLoader.load(ConfigLoader.java:25)	
 
-
+Time: 2025-11-14T22:27:21.903225
+java.lang.ClassNotFoundException: LoginUI
+	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:641)
+	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:188)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:520)
+	at java.base/java.lang.Class.forName0(Native Method)
+	at java.base/java.lang.Class.forName(Class.java:467)
+	at MainApp.main(MainApp.java:10)
+-----
+Time: 2025-11-14T22:27:21.903225
+java.lang.ClassNotFoundException: ResturantScreen
+	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:641)
+	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:188)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:520)
+	at java.base/java.lang.Class.forName0(Native Method)
+	at java.base/java.lang.Class.forName(Class.java:467)
+	at MainApp.main(MainApp.java:12)
+-----
+Time: 2025-11-14T22:27:21.903225
+java.lang.NoSuchMethodError: 'void AdminScreen.cancelOrder(long)'
+	at MainApp.main(MainApp.java:14)	
+-----
+Time: 2025-11-14T22:27:21.903225
+java.lang.NoSuchMethodError: 'User UserDatabase.getUserById(long)'
+	at MainApp.main(MainApp.java:16)
+-----
+Time: 2025-11-14T22:27:21.903225
+java.lang.NoSuchMethodError: 'void ResturantScreen.updateMenu()'
+	at MainApp.main(MainApp.java:18)
+-----
+Time: 2025-11-14T22:27:21.903225
+java.sql.SQLException: Database initialization failed: [SQLITE_ERROR] SQL error or missing database (no such column: user_type)
+	at MainApp.main(MainApp.java:20)
+-----
+Time: 2025-11-14T22:27:21.903225
+java.io.IOException: Configuration file could not be loaded
+	at MainApp.main(MainApp.java:22)
+-----
+Time: 2025-11-14T22:27:21.903225
+Manully thrown exception for screen loading failure
+	Failed to load LoginUI screen: The Type LoginUi is already defined
+	at MainApp.main(MainApp.java:24)
+-----	
+Time: 2025-11-14T22:27:21.903225
+Manully thrown exception for screen duplicate; Screen already exists
+	Failed to load ResturantScreen screen: The Type ResturantScreen is already defined
+	at MainApp.main(MainApp.java:26)
+-----
+Time: 2025-11-14T22:27:21.903225
+Manully thrown exception for method not found
+	Failed to cancel order: The method cancelOrder(long) is underfined for the userDatabase object
+	at MainApp.main(MainApp.java:28)
 

@@ -3,6 +3,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "CheckAdmin",
+      "request": "launch",
+      "mainClass": "CheckAdmin",
+      "projectName": "SoftwareEnginering350project_886a00"
+    },
+    {
+      "type": "java",
       "name": "Run MainApp",
       "request": "launch",
       "mainClass": "MainApp",

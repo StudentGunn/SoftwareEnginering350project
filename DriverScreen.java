@@ -2,101 +2,173 @@
 import java.awt.*;
 import javax.swing.*;
 
-/* This class represents the screen displayed to drivers after they log in.
- * It provides options for drivers to manage their orders, view history, and update their payment methods.
- * Allows them to navigate to different driver-related functionalities.
- * payment methods.
- * order history, and update their payment methods.
- * make sure it is a JPanel, instead of JFrame, dont want multiple frames open
- */
 public class DriverScreen extends JPanel {
-	// Reference to the parent UI and the driver's username
     private final FoodDeliveryLoginUI parent;
     private final String username;
-//create the driver screen with buttons to navigate to different functionalities
-    //create the driver screen with buttons to navigate to different functionalities
+
     public DriverScreen(FoodDeliveryLoginUI parent, String username) {
-	this.parent = parent;
-	this.username = username == null || username.isEmpty() ? "Driver" : username;
-	initUI();
+        this.parent = parent;
+        this.username = username == null || username.isEmpty() ? "Driver" : username;
+        initUI();
     }
 
     private void initUI() {
-	setLayout(new BorderLayout(8,8));
-	setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-		// Title
-	JLabel title = new JLabel("Welcome Driver " + username, SwingConstants.LEFT);
-	title.setFont(title.getFont().deriveFont(Font.BOLD, 16f));
-	add(title, BorderLayout.NORTH);
-// Center panel with buttons
-	JPanel center = new JPanel();
-	center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
-	center.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));
-		//Create buttons; get order, delivery history, payment history, payment method
-	JButton getOrderBtn = new JButton("GetOrder");
-	JButton deliveryHistoryBtn = new JButton("Delivery History");
-	JButton paymentHistoryBtn = new JButton("Payment History");
-	JButton paymentMethodBtn = new JButton("Payment Method");
-// Set uniform size and alignment for buttons, *tricky*
-	Dimension btnSize = new Dimension(160, 30);
-	getOrderBtn.setMaximumSize(btnSize);
-	deliveryHistoryBtn.setMaximumSize(btnSize);
-	paymentHistoryBtn.setMaximumSize(btnSize);
-	paymentMethodBtn.setMaximumSize(btnSize);
-		// Align buttons to the left
-	getOrderBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
-	deliveryHistoryBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
-	paymentHistoryBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
-	paymentMethodBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
-		// Add buttons to center panel with spacing, so its neat
-	center.add(getOrderBtn);
-	center.add(Box.createRigidArea(new Dimension(0,6)));
-	center.add(deliveryHistoryBtn);
-	center.add(Box.createRigidArea(new Dimension(0,6)));
-	center.add(paymentHistoryBtn);
-	center.add(Box.createRigidArea(new Dimension(0,6)));
-	center.add(paymentMethodBtn);
+        setLayout(new BorderLayout(0, 0));
+        setBackground(new Color(245, 245, 245));
 
-	add(center, BorderLayout.CENTER);
+       // header
+        JPanel headerBar = new JPanel(new BorderLayout(10, 0));
+        headerBar.setBackground(new Color(46, 125, 50));
+        headerBar.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
 
-	
+        JLabel welcomeLabel = new JLabel("Welcome, " + username + "!");
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        welcomeLabel.setForeground(Color.WHITE);
 
-	
+        // logout button
+        JButton logoutBtn = new JButton("Logout");
+        logoutBtn.setFont(new Font("Arial", Font.BOLD, 12));
+        logoutBtn.setBackground(Color.WHITE);
+        logoutBtn.setForeground(new Color(46, 125, 50));
+        logoutBtn.setOpaque(true);
+        logoutBtn.setBorderPainted(false);
+        logoutBtn.setFocusPainted(false);
+        logoutBtn.setPreferredSize(new Dimension(90, 32));
 
-	// Connect to DriverGetOrder screen
-	getOrderBtn.addActionListener(e -> { // Navigate to DriverGetOrder screen
-		DriverGetOrder getOrderScreen = new DriverGetOrder(parent, username);
-		try {
-			parent.getSceneSorter().addScene("DriverGetOrder", getOrderScreen);
-		} catch (IllegalArgumentException ex) {
-			// Scene already exists, that's fine
-		}
-		parent.getSceneSorter().switchPage("DriverGetOrder");
-	});
+        headerBar.add(welcomeLabel, BorderLayout.WEST);
+        headerBar.add(logoutBtn, BorderLayout.EAST);
+        add(headerBar, BorderLayout.NORTH);
 
-	deliveryHistoryBtn.addActionListener(e -> { // Navigate to DriverHistory screen
-		DriveryHistory historyScreen = new DriveryHistory(parent, username);
-		try {
-			parent.getSceneSorter().addScene("DriverHistory", historyScreen);
-		} catch (IllegalArgumentException ex) {
-			// Scene already exists, that's fine
-		}
-		parent.getSceneSorter().switchPage("DriverHistory"); // Switch to DriverHistory screen
-	});
-	// Payment History button (not implemented) *work in progress*
-	paymentHistoryBtn.addActionListener(e -> JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(this),
-		"Payment history not implemented yet.", "Payment History", JOptionPane.INFORMATION_MESSAGE));
-	// Payment Method button
-	paymentMethodBtn.addActionListener(e -> { // Navigate to DriverSetPaymentMethod screen
-		DriverSetPaymentMethod paymentMethodScreen = new DriverSetPaymentMethod(parent, username);
-		try {// Add the scene if it doesn't already exist
-			parent.getSceneSorter().addScene("DriverSetPaymentMethod", paymentMethodScreen);
-		} catch (IllegalArgumentException ex) {
-			// Scene already exists, that's fine
-		}
-		parent.getSceneSorter().switchPage("DriverSetPaymentMethod");// Switch to DriverSetPaymentMethod screen
-		
-	});
-	
+        // main buttons 
+        JPanel contentPanel = new JPanel(new GridBagLayout());
+        contentPanel.setBackground(new Color(245, 245, 245));
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
+
+        JPanel buttonsPanel = new JPanel();
+        buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
+        buttonsPanel.setBackground(new Color(245, 245, 245));
+
+        // driver buttons
+        JButton getOrderBtn = new JButton("Get Order");
+        JButton deliveryHistoryBtn = new JButton("Delivery History");
+        JButton paymentHistoryBtn = new JButton("Payment History");
+        JButton paymentMethodBtn = new JButton("Payment Method");
+        JButton confirmDropoffBtn = new JButton("Confrim Food Drop off");
+
+        // style buttons
+        styleButton(getOrderBtn);
+        styleButton(deliveryHistoryBtn);
+        styleButton(paymentHistoryBtn);
+        styleButton(paymentMethodBtn);
+        styleButton(confirmDropoffBtn);
+
+        // add buttons with spacing
+        buttonsPanel.add(getOrderBtn);
+        buttonsPanel.add(Box.createVerticalStrut(15));
+        buttonsPanel.add(deliveryHistoryBtn);
+        buttonsPanel.add(Box.createVerticalStrut(15));
+        buttonsPanel.add(paymentHistoryBtn);
+        buttonsPanel.add(Box.createVerticalStrut(15));
+        buttonsPanel.add(paymentMethodBtn);
+        buttonsPanel.add(Box.createVerticalStrut(15));
+        buttonsPanel.add(confirmDropoffBtn);
+
+        contentPanel.add(buttonsPanel);
+        add(contentPanel, BorderLayout.CENTER);
+
+
+        // button actionss
+        getOrderBtn.addActionListener(e -> {
+            DriverGetOrder getOrderScreen = new DriverGetOrder(parent, username);
+            try {
+                parent.getSceneSorter().addScene("DriverGetOrder", getOrderScreen);
+            } catch (IllegalArgumentException ex) {
+                // catches already exists
+            }
+            parent.getSceneSorter().switchPage("DriverGetOrder");
+        });
+
+        deliveryHistoryBtn.addActionListener(e -> {
+            DriveryHistory historyScreen = new DriveryHistory(parent, username);
+            try {
+                parent.getSceneSorter().addScene("DriverHistory", historyScreen);
+            } catch (IllegalArgumentException ex) {
+                // catches already exists
+            }
+            parent.getSceneSorter().switchPage("DriverHistory");
+        });
+
+        paymentHistoryBtn.addActionListener(e -> {
+            DriverPaymentHistory paymentHistoryScreen = new DriverPaymentHistory(parent, username);
+            try {
+                parent.getSceneSorter().addScene("DriverPaymentHistory", paymentHistoryScreen);
+            } catch (IllegalArgumentException ex) {
+                // catches already exists
+            }
+            parent.getSceneSorter().switchPage("DriverPaymentHistory");
+        });
+
+        paymentMethodBtn.addActionListener(e -> {
+            DriverSetPaymentMethod paymentMethodScreen = new DriverSetPaymentMethod(parent, username);
+            try {
+                parent.getSceneSorter().addScene("DriverSetPaymentMethod", paymentMethodScreen);
+            } catch (IllegalArgumentException ex) {
+                // catches already exists
+            }
+            parent.getSceneSorter().switchPage("DriverSetPaymentMethod");
+        });
+
+        // confirm drop-off: prompt for order ID and mark delivered
+        confirmDropoffBtn.addActionListener(e -> {
+            String input = JOptionPane.showInputDialog(this, "Enter delivered order ID:", "Confirm Drop-off", JOptionPane.QUESTION_MESSAGE);
+            if (input == null) return; // cancelled
+            input = input.trim();
+            if (input.isEmpty() || !input.matches("\\d+")) {
+                JOptionPane.showMessageDialog(this, "Please enter a valid numeric order ID.", "Invalid Input", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            long orderId = Long.parseLong(input);
+            int confirm = JOptionPane.showConfirmDialog(this,
+                "Mark order #" + orderId + " as DELIVERED?",
+                "Confirm Delivery",
+                JOptionPane.YES_NO_OPTION);
+            if (confirm != JOptionPane.YES_OPTION) return;
+            try {
+                parent.orderDb.updateOrderStatus(orderId, "DELIVERED", username);
+                try {
+                    parent.driverDb.updateDriverStatus(username, "AVAILABLE");
+                } catch (Exception ignored) { }
+                JOptionPane.showMessageDialog(this, "Order #" + orderId + " marked as DELIVERED.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error updating order: " + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        logoutBtn.addActionListener(e -> logout());
+    }
+
+    // logout and go back to login
+    private void logout() {
+        int confirm = JOptionPane.showConfirmDialog(this,
+            "Are you sure you want to logout?",
+            "Logout",
+            JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            parent.getSceneSorter().switchPage("Login");
+        }
+    }
+
+    // makes buttons look the same
+    private void styleButton(JButton button) {
+        button.setFont(new Font("Arial", Font.BOLD, 14));
+        button.setBackground(new Color(46, 125, 50));
+        button.setForeground(Color.WHITE);
+        button.setOpaque(true);
+        button.setBorderPainted(false);
+        button.setFocusPainted(false);
+        button.setPreferredSize(new Dimension(220, 45));
+        button.setMaximumSize(new Dimension(220, 45));
+        button.setAlignmentX(Component.CENTER_ALIGNMENT);
     }
 }

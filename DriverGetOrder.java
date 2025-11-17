@@ -18,7 +18,7 @@ public class DriverGetOrder extends JPanel {
 
         // Create table model
         String[] columns = {
-            "Order ID", "Restaurant", "Items", "Total", "Driver Pay", 
+            "Order ID", "Restaurant", "Address", "Items", "Total", "Driver Pay", 
             "Ready In", "Delivery Time", "Status"
         };
         
@@ -76,7 +76,7 @@ public class DriverGetOrder extends JPanel {
         
         try (Connection conn = DriverManager.getConnection(parent.orderDb.getConnectionUrl());
              PreparedStatement stmt = conn.prepareStatement(
-                "SELECT o.order_id, o.restaurant_name, o.total_amount, " +
+                "SELECT o.order_id, o.restaurant_name, o.restaurant_address, o.total_amount, " +
                 "o.estimated_minutes, o.status, o.created_at, " +
                 "GROUP_CONCAT(oi.item_name || ' x' || oi.quantity) as items, " +
                 "SUM(oi.quantity) as item_count " +
@@ -99,6 +99,7 @@ public class DriverGetOrder extends JPanel {
                 Object[] row = {
                     rs.getLong("order_id"),
                     rs.getString("restaurant_name"),
+                    rs.getString("restaurant_address"),
                     items != null ? items : "No items",
                     currencyFormat.format(totalAmount),
                     currencyFormat.format(driverPay),
@@ -128,11 +129,12 @@ public class DriverGetOrder extends JPanel {
 
         long orderId = (long)ordersTable.getValueAt(selectedRow, 0);
         String restaurant = (String)ordersTable.getValueAt(selectedRow, 1);
-        String driverPay = (String)ordersTable.getValueAt(selectedRow, 4);
+        String address = (String)ordersTable.getValueAt(selectedRow, 2);
+        String driverPay = (String)ordersTable.getValueAt(selectedRow, 5);
 
         int confirm = JOptionPane.showConfirmDialog(this,
-            String.format("Accept order #%d from %s?\nYou will earn %s for this delivery.",
-                orderId, restaurant, driverPay),
+            String.format("Accept order #%d from %s?\nAddress: %s\nYou will earn %s for this delivery.",
+                orderId, restaurant, address, driverPay),
             "Confirm Order Acceptance",
             JOptionPane.YES_NO_OPTION);
 
@@ -142,7 +144,7 @@ public class DriverGetOrder extends JPanel {
                 // Update driver status to ON_DELIVERY
                 parent.driverDb.updateDriverStatus(username, "ON_DELIVERY");
                 JOptionPane.showMessageDialog(this,
-                    "Order accepted successfully! Head to " + restaurant + " to pick up the order.",
+                    "Order accepted successfully! Head to " + restaurant + " at " + address + " to pick up the order.",
                     "Order Accepted",
                     JOptionPane.INFORMATION_MESSAGE);
                 refreshOrders();

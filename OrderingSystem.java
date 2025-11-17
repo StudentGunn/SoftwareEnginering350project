@@ -25,13 +25,18 @@ public class OrderingSystem{
         acceptedOrders.add(order);
         order.status = 1;
     }
-    /*Just stores to use update an order status
-    * Should also change where it does in the database*/
+    /*
+    --> Just stores to use update an order status
+    --> Should also change where it does in the database
+    */
     public void updateStatus(int newStatus, Orders order){
         order.status = newStatus;
         cancelOrder(order);
     }
-
+    /*  
+     --> Cancels an order if its status is 5 (canceled)
+     --> Removes it from unacceptedOrders if no driver assigned
+     */
     private void cancelOrder (Orders order){
         if (order.status == 5){
             if (order.driverID == 0){

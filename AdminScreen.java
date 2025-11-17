@@ -138,6 +138,7 @@ public class AdminScreen extends JPanel {
                 }
             }
         }
+        // Handle SQL exceptions
     } catch (SQLException ex) {
         JOptionPane.showMessageDialog(this,
             "Error fetching customers: " + ex.getMessage(),
@@ -146,36 +147,38 @@ public class AdminScreen extends JPanel {
     }
 
     // Connect to grab order info from orders.db 
-    try (Connection orderConn = DriverManager.getConnection("jdbc:sqlite:orders.db")) {
-        try (PreparedStatement orderStmt = orderConn.prepareStatement(
+    try (Connection orderConn = DriverManager.getConnection("jdbc:sqlite:orders.db")) { // Hardcoded path to orders.db
+        try (PreparedStatement orderStmt = orderConn.prepareStatement( // Query to get order details
                 "SELECT o.order_id, o.customer_username, o.restaurant_name, o.status, " +
                 "o.total_amount, o.item_count, o.estimated_minutes, " +
                 "((o.created_at + (o.estimated_minutes * 60)) - strftime('%s', 'now')) / 60 as minutes_remaining " +
                 "FROM orders o " +
-                "ORDER BY o.created_at DESC")) {
-            
+                "ORDER BY o.created_at DESC"))  { 
+            // Execute query and populate orders table
             try (ResultSet rs = orderStmt.executeQuery()) {
-                while (rs.next()) {
-                    String etaDisplay = "N/A";
+                while (rs.next()) { // Iterate through results
+                    String etaDisplay = "N/A"; // Default ETA display
                     if (!"CANCELLED".equals(rs.getString("status")) && 
-                        !"DELIVERED".equals(rs.getString("status"))) {
-                        int minutesRemaining = rs.getInt("minutes_remaining");
-                        etaDisplay = minutesRemaining > 0 ? minutesRemaining + " min" : "Due now";
+                        !"DELIVERED".equals(rs.getString("status"))) { // Only calculate ETA for active orders
+                        int minutesRemaining = rs.getInt("minutes_remaining"); // Get calculated minutes remaining
+                        etaDisplay = minutesRemaining > 0 ? minutesRemaining + " min" : "Due now"; // Format ETA display
                     }
-                    
-                    Object[] rowData = {
-                        rs.getLong("order_id"),
-                        rs.getString("customer_username"),
-                        rs.getString("restaurant_name"),
-                        rs.getString("status"),
-                        String.format("$%.2f", rs.getDouble("total_amount")),
-                        rs.getInt("item_count"),
-                        etaDisplay
+                    // Prepare row data for orders table
+                    Object[] rowData = { 
+                        rs.getLong("order_id"),// Order ID
+                        rs.getString("customer_username"),// Customer username
+                        rs.getString("restaurant_name"),// Restaurant name
+                        rs.getString("status"),// Order status
+                        String.format("$%.2f", rs.getDouble("total_amount")),// Total amount
+                        rs.getInt("item_count"),// Item count
+                        etaDisplay// Estimated time of arrival display
                     };
+                    // Add row to orders table model
                     ordersModel.addRow(rowData);
                 }
             }
         }
+        // Handle SQL exceptions
     } catch (SQLException ex) {
         JOptionPane.showMessageDialog(this,
             "Error fetching orders: " + ex.getMessage(),
@@ -193,53 +196,53 @@ public class AdminScreen extends JPanel {
      */
 
     private void cancelSelectedOrder() {
-        int selectedRow = ordersTable.getSelectedRow();
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this,
-                "Please select an order to cancel.",
+        int selectedRow = ordersTable.getSelectedRow();// Get selected row index
+        if (selectedRow == -1) { // No row selected
+            JOptionPane.showMessageDialog(this, // Show warning dialog
+                "Please select an order to cancel.", // Warning message
                 "No Order Selected",
                 JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        long orderId = Long.parseLong(ordersTable.getValueAt(selectedRow, 0).toString());
-        String customer = ordersTable.getValueAt(selectedRow, 1).toString();
-        String currentStatus = ordersTable.getValueAt(selectedRow, 3).toString();
+        long orderId = Long.parseLong(ordersTable.getValueAt(selectedRow, 0).toString()); // Get order ID
+        String customer = ordersTable.getValueAt(selectedRow, 1).toString(); // Get customer username
+        String currentStatus = ordersTable.getValueAt(selectedRow, 3).toString(); // Get current order status
 
-        if ("CANCELLED".equals(currentStatus)) {
-            JOptionPane.showMessageDialog(this,
-                "This order is already cancelled.",
-                "Order Status",
-                JOptionPane.INFORMATION_MESSAGE);
+        if ("CANCELLED".equals(currentStatus)) {// Already cancelled
+            JOptionPane.showMessageDialog(this, // Show info dialog
+                "This order is already cancelled.", // Info message
+                "Order Status", // Dialog title
+                JOptionPane.INFORMATION_MESSAGE); // Information message type
             return;
         }
 
         if ("DELIVERED".equals(currentStatus)) {
-            JOptionPane.showMessageDialog(this,
-                "Cannot cancel a delivered order.",
-                "Order Status",
-                JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, // Show warning dialog
+                "Cannot cancel a delivered order.", // Warning message
+                "Order Status", // Dialog title
+                JOptionPane.WARNING_MESSAGE); // Warning message type
             return;
         }
-
-        int confirm = JOptionPane.showConfirmDialog(this,
+        // Confirm cancellation
+        int confirm = JOptionPane.showConfirmDialog(this, // Show confirmation dialog
             "Are you sure you want to cancel order #" + orderId + " for customer " + customer + "?",
             "Confirm Cancellation",
             JOptionPane.YES_NO_OPTION);
-
+            // If confirmed, proceed with cancellation
         if (confirm == JOptionPane.YES_OPTION) {
-            try {
+            try { // Attempt to cancel order in database
                 parent.orderDb.cancelOrder(orderId);
                 refreshData(); // Refresh to show updated status
                 JOptionPane.showMessageDialog(this,
                     "Order #" + orderId + " has been cancelled.",
                     "Order Cancelled",
-                    JOptionPane.INFORMATION_MESSAGE);
-            } catch (SQLException ex) {
+                    JOptionPane.INFORMATION_MESSAGE); // Information message type
+            } catch (SQLException ex) { // Handle SQL exceptions
                 JOptionPane.showMessageDialog(this,
-                    "Error cancelling order: " + ex.getMessage(),
-                    "Database Error",
-                    JOptionPane.ERROR_MESSAGE);
+                    "Error cancelling order: " + ex.getMessage(),// Show error dialog
+                    "Database Error",// Dialog title
+                    JOptionPane.ERROR_MESSAGE);// Error message type
             }
         }
     }
