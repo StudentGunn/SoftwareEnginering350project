@@ -56,11 +56,11 @@ public class ResturantScreen extends JPanel {
 
         // bridgewater zip for demo
         if ("02325".equals(zip)) {
-            content.add(createRestaurantRow("Crimson Dining", "125 Burrill Ave"));
+            content.add(createRestaurantRow("Crimson Dining", "125 Burrill Ave", 41.98656, 70.96437));
             content.add(Box.createVerticalStrut(6));
-            content.add(createRestaurantRow("Barrett's Alehouse Bridgewater", "425 Bedford St"));
+            content.add(createRestaurantRow("Barrett's Alehouse Bridgewater", "425 Bedford St", 41.97653, 70.97556));
             content.add(Box.createVerticalStrut(6));
-            content.add(createRestaurantRow("Greyhound Tavern", "39 Broad Street"));
+            content.add(createRestaurantRow("Greyhound Tavern", "39 Broad Street", 41.99093, 70.97487));
             content.add(Box.createVerticalStrut(8));
         } else {
             // no restaurants for other zips yet
@@ -82,7 +82,7 @@ public class ResturantScreen extends JPanel {
     }
 
     // makes each restaurant row
-    private JPanel createRestaurantRow(String name, String address) {
+    private JPanel createRestaurantRow(String name, String address, double lat, double lon) {
         JPanel row = new JPanel(new BorderLayout(8,6));
         row.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(220, 220, 220)),
@@ -117,6 +117,22 @@ public class ResturantScreen extends JPanel {
         orderBtn.setFocusPainted(false);
         orderBtn.addActionListener(e -> createOrder(name));
         row.add(orderBtn, BorderLayout.EAST);
+
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 15, 0));
+        bottomPanel.setOpaque(false);
+
+        // Miles/ETA
+        double miles = MapCalculator.calculateMiles(41.98621, 70.96555, lat, lon);
+        JLabel distanceLabel = new JLabel(String.format("%.1f miles away", miles));
+        distanceLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+        distanceLabel.setForeground(new Color(46, 125, 50));
+        distanceLabel.setOpaque(false);
+        distanceLabel.setBorder(BorderFactory.createCompoundBorder());
+
+        bottomPanel.add(distanceLabel);
+        row.add(bottomPanel, BorderLayout.SOUTH);
+
         return row;
     }
     // shows menu and places order

@@ -15,7 +15,8 @@ public class MapCalculator {
         // Now we need to find the speed. This can be done by dividing distance by how fast a car is going.
         // The average global speed for a car is 30 km.
         double temp = distanceKm/30;
-        return temp * 60; // Converting hours to minutes.
+        temp=temp * 60; // Converting hours to minutes.
+        return (double) Math.round(temp * 10) /10; // Rounding makes it more readable
     }
     public static double calculateMiles (double lat1, double lon1, double lat2, double lon2){
             // Redoing the first calculation prevents headaches.
@@ -29,6 +30,7 @@ public class MapCalculator {
         double c = 2 * Math.asin(Math.sqrt(a));
         double distanceKm = EARTH_RADIUS_KM * c; // Distance in kilometers
         // We can now convert the kilometers to miles, since this app is based within Massachusetts.
-        return distanceKm/1.609;
+        double miles = distanceKm/1.609;
+        return (double) Math.round(miles * 10) /10; // Used to ensure miles only have a singular decimal point.
     }
 }
