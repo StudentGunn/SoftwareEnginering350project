@@ -54,6 +54,7 @@ public class DriverScreen extends JPanel {
         JButton paymentHistoryBtn = new JButton("Payment History");
         JButton paymentMethodBtn = new JButton("Payment Method");
         JButton confirmDropoffBtn = new JButton("Confrim Food Drop off");
+        JButton cashOutBtn = new JButton("Collect payment"); 
 
         // style buttons
         styleButton(getOrderBtn);
@@ -61,6 +62,8 @@ public class DriverScreen extends JPanel {
         styleButton(paymentHistoryBtn);
         styleButton(paymentMethodBtn);
         styleButton(confirmDropoffBtn);
+        styleButton(cashOutBtn);
+        
 
         // add buttons with spacing
         buttonsPanel.add(getOrderBtn);
@@ -72,6 +75,8 @@ public class DriverScreen extends JPanel {
         buttonsPanel.add(paymentMethodBtn);
         buttonsPanel.add(Box.createVerticalStrut(15));
         buttonsPanel.add(confirmDropoffBtn);
+        buttonsPanel.add(Box.createVerticalStrut(15));
+        buttonsPanel.add(cashOutBtn);
 
         contentPanel.add(buttonsPanel);
         add(contentPanel, BorderLayout.CENTER);
@@ -86,6 +91,11 @@ public class DriverScreen extends JPanel {
                 // catches already exists
             }
             parent.getSceneSorter().switchPage("DriverGetOrder");
+        });
+        
+        cashOutBtn.addActionListener(e->{
+            JOptionPane.showMessageDialog(null,("Giving you your money"));
+        
         });
 
         deliveryHistoryBtn.addActionListener(e -> {

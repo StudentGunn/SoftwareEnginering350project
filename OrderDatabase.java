@@ -265,7 +265,6 @@ public class OrderDatabase {
                     }
                 }
             }
-
             ps.setLong(paramIndex, orderId);
             ps.executeUpdate();
 
