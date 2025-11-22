@@ -1,5 +1,6 @@
 //DriverScreen.java
 import java.awt.*;
+import java.sql.*;
 import javax.swing.*;
 
 public class DriverScreen extends JPanel {
@@ -92,10 +93,60 @@ public class DriverScreen extends JPanel {
             }
             parent.getSceneSorter().switchPage("DriverGetOrder");
         });
-        
-        cashOutBtn.addActionListener(e->{
-            JOptionPane.showMessageDialog(null,("Giving you your money"));
-        
+        // cash out button action
+        cashOutBtn.addActionListener(e -> {
+            String input = JOptionPane.showInputDialog(this, "Enter order ID to collect payment for:", "Collect Payment", JOptionPane.QUESTION_MESSAGE);
+            if (input == null) return; // cancelled
+            input = input.trim();
+            if (input.isEmpty() || !input.matches("\\d+")) {
+                JOptionPane.showMessageDialog(this, "Please enter a valid numeric order ID.", "Invalid Input", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            long orderId = Long.parseLong(input);
+
+            // load order to compute driver pay
+            ResultSet rs = null;
+            try {
+                rs = parent.orderDb.getOrderDetails(orderId);
+                if (!rs.next()) {
+                    JOptionPane.showMessageDialog(this, "Order not found: " + orderId, "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                double total = rs.getDouble("total_amount");
+                // driver commission same as DriverGetOrder
+                double driverPay = Math.round(total * 0.30 * 100.0) / 100.0;
+
+                Long pmId = parent.paymentDb.getActivePaymentMethodId(username);
+                if (pmId == null) {
+                    JOptionPane.showMessageDialog(this, "No active payment method found for driver. Please set one up.", "Payment Method Required", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                long txId = parent.paymentDb.createTransaction(pmId, orderId, driverPay);
+                parent.paymentDb.updateTransactionStatus(txId, "COMPLETED", null);
+
+                JOptionPane.showMessageDialog(this, "Collected " + String.format("$%.2f", driverPay) + " for order #" + orderId, "Payment Collected", JOptionPane.INFORMATION_MESSAGE);
+
+                // Open payment history so driver sees the new entry
+                DriverPaymentHistory paymentHistoryScreen = new DriverPaymentHistory(parent, username);
+                try {
+                    parent.getSceneSorter().addScene("DriverPaymentHistory", paymentHistoryScreen);
+                } catch (IllegalArgumentException ex) {
+                    // already exists
+                }
+                parent.getSceneSorter().switchPage("DriverPaymentHistory");
+
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error collecting payment: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            } finally {
+                if (rs != null) {
+                    try {
+                        rs.getStatement().close();
+                        rs.getStatement().getConnection().close();
+                        rs.close();
+                    } catch (Exception ignored) { }
+                }
+            }
         });
 
         deliveryHistoryBtn.addActionListener(e -> {

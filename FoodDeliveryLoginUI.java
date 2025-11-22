@@ -21,7 +21,7 @@ public class FoodDeliveryLoginUI {
     private final JPanel cardPanel = new JPanel(new GridBagLayout());
     private final JFrame frame = new JFrame("Food Delivery Service");
 
-    // database references
+    // load and hold database connections
     public UserDataBase userDb;
     public PaymentDatabase paymentDb;
     public DriverDatabase driverDb;

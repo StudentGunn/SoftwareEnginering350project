@@ -152,6 +152,25 @@ public class PaymentDatabase {
         }
     }
 
+    /*
+    --> Connects to the database and retrieves the most recent active payment method ID for the specified user.
+    --> Asks for username as parameter to identify the user.
+    --> Connects to to payment database.
+    --> Return the id of the most-recent active payment method for a user, or null if none. 
+    --> create coloum in payment_methods table to store is_active boolean
+     */
+    public Long getActivePaymentMethodId(String username) throws SQLException {
+        String sql = "SELECT id FROM payment_methods WHERE username = ? AND is_active = 1 ORDER BY id DESC LIMIT 1";
+        try (Connection c = DriverManager.getConnection(url);
+             PreparedStatement p = c.prepareStatement(sql)) {
+            p.setString(1, username);
+            try (ResultSet rs = p.executeQuery()) {
+                if (rs.next()) return rs.getLong(1);
+                return null;
+            }
+        }
+    }
+
     // turns off all payment methods for a user (like if theyre switching to a new one)
     public void deactivateAllPaymentMethods(String username) throws SQLException {
         String sql = "UPDATE payment_methods SET is_active = 0 WHERE username = ?";
