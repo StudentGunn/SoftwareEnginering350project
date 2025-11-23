@@ -110,6 +110,7 @@ public class DriverGetOrder extends JPanel {
                 ordersModel.addRow(row);
             }
         } catch (SQLException ex) {
+            Logger.catchAndLogBug(ex, "DriverGetOrder");
             JOptionPane.showMessageDialog(this,
                 "Error loading orders: " + ex.getMessage(),
                 "Database Error",
@@ -149,6 +150,7 @@ public class DriverGetOrder extends JPanel {
                     JOptionPane.INFORMATION_MESSAGE);
                 refreshOrders();
             } catch (SQLException ex) {
+                Logger.catchAndLogBug(ex, "DriverGetOrder");
                 JOptionPane.showMessageDialog(this,
                     "Error accepting order: " + ex.getMessage(),
                     "Database Error",

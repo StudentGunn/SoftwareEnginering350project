@@ -301,6 +301,7 @@ public class ResturantScreen extends JPanel {
                     }
                     parent.getSceneSorter().switchPage("MainScreen");
                 } catch (SQLException ex) {
+                    Logger.catchAndLogBug(ex, "ResturantScreen");
                     JOptionPane.showMessageDialog(this,
                         "Error creating order: " + ex.getMessage(),
                         "Order Error",

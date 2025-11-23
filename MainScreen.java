@@ -241,6 +241,7 @@ public class MainScreen extends JPanel {
                 addBankAccount();
             }
         } catch (SQLException ex) {
+            Logger.catchAndLogBug(ex, "MainScreen");
             JOptionPane.showMessageDialog(this,
                     "Error accessing payment database: " + ex.getMessage(),
                     "Database Error",
@@ -283,6 +284,7 @@ public class MainScreen extends JPanel {
                 parent.paymentDb.addCardPayment(username, cardNumber, expiry, name);
                 JOptionPane.showMessageDialog(this, "Credit card added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
             } catch (SQLException ex) {
+                Logger.catchAndLogBug(ex, "MainScreen");
                 JOptionPane.showMessageDialog(this,
                         "Error saving payment method: " + ex.getMessage(),
                         "Database Error",
@@ -355,6 +357,7 @@ public class MainScreen extends JPanel {
                 parent.paymentDb.addBankPayment(username, routing, account, bankName);
                 JOptionPane.showMessageDialog(this, "Bank account added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
             } catch (SQLException ex) {
+                Logger.catchAndLogBug(ex, "MainScreen");
                 JOptionPane.showMessageDialog(this,
                         "Error saving payment method: " + ex.getMessage(),
                         "Database Error",

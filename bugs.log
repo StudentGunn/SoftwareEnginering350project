@@ -1,0 +1,52 @@
+================================================================================
+BUG ID: 1001
+Date: 2025-11-23 12:37:27
+Module: TestJira
+Severity: MEDIUM
+Status: OPEN
+--------------------------------------------------------------------------------
+Description:
+  Automated test bug created by TestJira
+
+Steps to Reproduce:
+  1) Run TestJira
+2) Observe bugs.log and Jira (if enabled)
+
+Expected Result:
+  No exception expected
+
+Actual Result:
+  This is a synthetic test for Jira integration
+
+================================================================================
+
+[Jira POST FAILED] HTTP 400
+{"errorMessages":[],"errors":{"project":"valid project is required"}}
+
+
+================================================================================
+BUG ID: 1001
+Date: 2025-11-23 12:38:45
+Module: TestJira
+Severity: MEDIUM
+Status: OPEN
+--------------------------------------------------------------------------------
+Description:
+  Automated test bug created by TestJira
+
+Steps to Reproduce:
+1) Run TestJira
+2) Observe bugs.log and Jira (if enabled)
+
+Expected Result:
+  No exception expected
+
+Actual Result:
+  This is a synthetic test for Jira integration
+
+================================================================================
+
+[Jira POST FAILED] HTTP 400
+{"errorMessages":[],"errors":{"project":"valid project is required"}}
+
+

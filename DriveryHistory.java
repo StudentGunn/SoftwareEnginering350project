@@ -109,6 +109,7 @@ public class DriveryHistory extends JPanel {
                 }
             }
         } catch (SQLException ex) {
+            Logger.catchAndLogBug(ex, "DriveryHistory");
             JOptionPane.showMessageDialog(this,
                 "Error loading delivery history: " + ex.getMessage(),
                 "Database Error",

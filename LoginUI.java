@@ -124,6 +124,7 @@ public class LoginUI {
                 parent.getSceneSorter().switchPage("AdminScreen");
                 return;
             } catch (SQLException ex) {
+                Logger.catchAndLogBug(ex, "LoginUI");
                 JOptionPane.showMessageDialog(null, "Database error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -164,6 +165,7 @@ public class LoginUI {
                 JOptionPane.showMessageDialog(null, "Invalid username or password.", "Login Failed", JOptionPane.ERROR_MESSAGE);
             }
         } catch (SQLException ex) {
+            Logger.catchAndLogBug(ex, "LoginUI");
             JOptionPane.showMessageDialog(null, "Database error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -290,6 +292,7 @@ public class LoginUI {
                 JOptionPane.showMessageDialog(null, "Registered successfully. You can now login.", "Success", JOptionPane.INFORMATION_MESSAGE);
             }
         } catch (SQLException ex) {
+            Logger.catchAndLogBug(ex, "LoginUI");
             JOptionPane.showMessageDialog(null, "Failed to save user: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }

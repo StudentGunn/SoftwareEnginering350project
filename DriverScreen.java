@@ -57,7 +57,7 @@ public class DriverScreen extends JPanel {
         JButton confirmDropoffBtn = new JButton("Confrim Food Drop off");
         JButton cashOutBtn = new JButton("Collect payment"); 
 
-        // style buttons
+        // style buttons 
         styleButton(getOrderBtn);
         styleButton(deliveryHistoryBtn);
         styleButton(paymentHistoryBtn);
@@ -137,6 +137,7 @@ public class DriverScreen extends JPanel {
                 parent.getSceneSorter().switchPage("DriverPaymentHistory");
 
             } catch (Exception ex) {
+                Logger.catchAndLogBug(ex, "DriverScreen");
                 JOptionPane.showMessageDialog(this, "Error collecting payment: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             } finally {
                 if (rs != null) {
@@ -201,6 +202,7 @@ public class DriverScreen extends JPanel {
                 } catch (Exception ignored) { }
                 JOptionPane.showMessageDialog(this, "Order #" + orderId + " marked as DELIVERED.", "Success", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception ex) {
+                Logger.catchAndLogBug(ex, "DriverScreen");
                 JOptionPane.showMessageDialog(this, "Error updating order: " + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
             }
         });

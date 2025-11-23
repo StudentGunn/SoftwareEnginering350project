@@ -186,6 +186,7 @@ public class DriverSetPaymentMethod extends JPanel {
                 "Success",
                 JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException ex) {
+            Logger.catchAndLogBug(ex, "DriverSetPaymentMethod");
             JOptionPane.showMessageDialog(this,
                 "Error saving card details: " + ex.getMessage(),
                 "Error",
@@ -214,6 +215,7 @@ public class DriverSetPaymentMethod extends JPanel {
                 "Success",
                 JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException ex) {
+            Logger.catchAndLogBug(ex, "DriverSetPaymentMethod");
             JOptionPane.showMessageDialog(this,
                 "Error saving bank details: " + ex.getMessage(),
                 "Error",
@@ -268,6 +270,7 @@ public class DriverSetPaymentMethod extends JPanel {
                 }
             }
         } catch (SQLException ex) {
+            Logger.catchAndLogBug(ex, "DriverSetPaymentMethod");
             JOptionPane.showMessageDialog(this,
                 "Error loading payment details: " + ex.getMessage(),
                 "Error",

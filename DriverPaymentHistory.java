@@ -122,6 +122,7 @@ public class DriverPaymentHistory extends JPanel {
 			}
             // If any SQL error occurs, show error dialog
 		} catch (SQLException ex) {
+			Logger.catchAndLogBug(ex, "DriverPaymentHistory");
 			JOptionPane.showMessageDialog(this,
 				"Error loading payment history: " + ex.getMessage(),
 				"Database Error",
