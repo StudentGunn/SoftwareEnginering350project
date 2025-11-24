@@ -193,6 +193,7 @@ public class OrderDatabase {
                 }
                 throw new SQLException("Failed to retrieve generated order ID");
             }
+            
         }
     }
     // adds an item to an existing order
