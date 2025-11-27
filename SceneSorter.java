@@ -1,27 +1,30 @@
+// SceneSorter.java
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JPanel;
+/*
+ --> SceneSorter is responsible for managing different UI scenes in the application.
+    --> It uses a CardLayout to switch between different JPanel scenes.
+    --> Scenes are added with a unique name and can be switched to by that name.
+    --> This allows for easy navigation between different parts of the application (e.g., login, driver screen, admin panel).
+*/
 
 public class SceneSorter {
     private final JPanel cardsPanel;
-    // cardsPanel is directly tied to SceneSorter, and makes it easy to swap between "cards" easily.
-    // Imagine the UI elements as cards, and this JPanel as a stage.
-    // Cards can be easily swapped, but the stage cannot.
-    // The stage is able to hold all cards, and allows easy switching between different UI elements.
     private final CardLayout cardLayout;
-    // If you're imagining cardsPanel as the stage, and the scenes as the cards, imagine cardLayout as the magician.
-    // CardLayout controls which card is currently visible.
-    // So when something manipulates the cardLayout, it's changing which UI element is currently visible.
-    // If cardLayout is told to use "Login", then it will bring up the login page.
     private final Map<String, JPanel> scenes = new HashMap<>();
-    // And here's the card deck. Cards are stored here, and can be called by name to swap out cards.
+    
 
     public SceneSorter() {
         this.cardLayout = new CardLayout();
         this.cardsPanel = new JPanel(cardLayout);
     }
-    // cardsPanel is created as a new cardLayout, and will be used to switch between and show scenes.
+    /*
+    --> Allows the ability to add a new scene (JPanel) with a unique name
+    --> scenes are stored in a map for easy retrieval
+    --> if a duplicate scene exists, an exception is thrown
+    */
 
     public void addScene(String name, JPanel scene) {
         if (scenes.containsKey(name)) {
@@ -30,14 +33,11 @@ public class SceneSorter {
         scenes.put(name, scene);
         cardsPanel.add(scene, name);
     }
-    // addScene is used to tie a method to create a UI scene to a single element (switchPage).
-    // For instance, the Login logic (buildLoginPage) is currently tied to a scene titled "Login."
-    // Rather than recreating the entire logic, we only need to call
-    // sceneSorter.switchPage("Login");
-    // To swap to the login page.
-    // a scene must be added to the list using addScene before it can be swapped to.
-
-    // This saves each scene to the scenes map, and the cardsPanel.
+    /*
+    --> switchPage method; allows to switch to a different scene by name
+    --> Switches to the scene with the given name
+    --> if the scene does not exist, an exception is thrown
+    */
 
     public void switchPage(String name) {
         if (!scenes.containsKey(name)) {
@@ -45,11 +45,11 @@ public class SceneSorter {
         }
         cardLayout.show(cardsPanel, name);
     }
-    // Once a scene is added using addScene, it can be swapped to using switchPage.
-    // the layout will switch to whichever scene is requested as long as it's been saved in the cardsPanel and scenes map.
+    /*
+    --> getCardsPanel method; returns the main panel containing all scenes
+    --> used to integrate the SceneSorter into the main application UI
+    */
     public JPanel getCardsPanel() {
         return cardsPanel;
     }
-    // The cardsPanel has been explained above.
-    // This line means we can easily set it up first and foremost in the createAndShow method.
 }

@@ -1,13 +1,21 @@
 // ResturantScreen.java
 import java.awt.*;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.*;
 
 public class ResturantScreen extends JPanel {
     private FoodDeliveryLoginUI parent;
     private String username;
     private String zip;
-
+    /*
+    --> Sets Resturant Screen, calls initUI to initialize the user interface
+    --> Parameters:
+        - FoodDeliveryLoginUI parent: the main UI frame
+        - String username: the username of the logged-in user
+        - String zip: the zip code to display restaurants for
+     */
     public ResturantScreen(FoodDeliveryLoginUI parent, String username, String zip) {
         this.parent = parent;
         this.username = username;
@@ -24,13 +32,13 @@ public class ResturantScreen extends JPanel {
         headerPanel.setBackground(new Color(46, 125, 50));
 
         JLabel header = new JLabel("Restaurants - " + zip, SwingConstants.LEFT);
-        header.setFont(new Font("Arial", Font.BOLD, 16));
+        header.setFont(new Font("Times New Roman", Font.BOLD, 16));
         header.setForeground(Color.WHITE);
         headerPanel.add(header, BorderLayout.CENTER);
 
         // back button
         JButton backBtn = new JButton("Back");
-        backBtn.setFont(new Font("Arial", Font.BOLD, 12));
+        backBtn.setFont(new Font("Times New Roman", Font.BOLD, 12));
         backBtn.setBackground(Color.WHITE);
         backBtn.setForeground(new Color(46, 125, 50));
         backBtn.setOpaque(true);
@@ -45,6 +53,7 @@ public class ResturantScreen extends JPanel {
             }
             parent.getSceneSorter().switchPage("MainScreen");
         });
+
         headerPanel.add(backBtn, BorderLayout.EAST);
         add(headerPanel, BorderLayout.NORTH);
 
@@ -90,18 +99,18 @@ public class ResturantScreen extends JPanel {
         row.setBackground(Color.WHITE);
         row.setOpaque(true);
 
-        // restaurant info
+        // restaurant info, creation panel
         JPanel info = new JPanel();
         info.setLayout(new BoxLayout(info, BoxLayout.Y_AXIS));
         info.setOpaque(false);
         info.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 8));
 
         JLabel nameLabel = new JLabel(name);
-        nameLabel.setFont(new Font("Arial", Font.BOLD, 12));
+        nameLabel.setFont(new Font("Times New Roman", Font.BOLD, 12));
         info.add(nameLabel);
 
         JLabel addressLabel = new JLabel(address);
-        addressLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+        addressLabel.setFont(new Font("Times New Roman", Font.PLAIN, 10));
         addressLabel.setForeground(Color.DARK_GRAY);
         info.add(addressLabel);
 
@@ -109,7 +118,7 @@ public class ResturantScreen extends JPanel {
 
         // order button
         JButton orderBtn = new JButton("Order Here");
-        orderBtn.setFont(new Font("Arial", Font.BOLD, 12));
+        orderBtn.setFont(new Font("Times New Roman", Font.BOLD, 12));
         orderBtn.setBackground(new Color(46, 125, 50));
         orderBtn.setForeground(Color.WHITE);
         orderBtn.setOpaque(true);
@@ -125,7 +134,7 @@ public class ResturantScreen extends JPanel {
         // Miles/ETA
         double miles = MapCalculator.calculateMiles(41.98621, 70.96555, lat, lon);
         JLabel distanceLabel = new JLabel(String.format("%.1f miles away", miles));
-        distanceLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+        distanceLabel.setFont(new Font("Times New Roman", Font.PLAIN, 10));
         distanceLabel.setForeground(new Color(46, 125, 50));
         distanceLabel.setOpaque(false);
         distanceLabel.setBorder(BorderFactory.createCompoundBorder());
@@ -137,33 +146,57 @@ public class ResturantScreen extends JPanel {
     }
     // shows menu and places order
     private void createOrder(String restaurantName) {
-        // get restaurant address
-        String restaurantAddress;
-        switch (restaurantName) {
-            case "Crimson Dining":
-                restaurantAddress = "125 Burrill Ave";
-                break;
-            case "Barrett's Alehouse Bridgewater":
-                restaurantAddress = "425 Bedford St";
-                break;
-            case "Greyhound Tavern":
-                restaurantAddress = "39 Broad Street";
-                break;
-            default:
-                restaurantAddress = "Address not available";
-                break;
-        }
-
-        // menu items
-        String[] menuItems = {
-            "Burger - $12.99",
-            "Pizza - $15.99",
-            "Salad - $8.99",
-            "Pasta - $13.99",
-            "Sandwich - $9.99"
-        };
+        String restaurantAddress = getRestaurantAddress(restaurantName);
+        String[] menuItems = {"Burger - $12.99", "Pizza - $15.99", "Salad - $8.99", "Pasta - $13.99", "Sandwich - $9.99"};
         double[] prices = {12.99, 15.99, 8.99, 13.99, 9.99};
 
+        MenuSelectionPanel menuPanel = buildMenuPanel(restaurantName, menuItems);
+        int result = JOptionPane.showConfirmDialog(this, menuPanel.panel,
+                "Order from " + restaurantName,
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE);
+
+        if (result == JOptionPane.OK_OPTION) {
+            OrderCalculation calc = calculateOrderTotal(menuItems, prices, menuPanel.checkBoxes, menuPanel.quantities);
+            
+            if (!calc.anySelected) {
+                JOptionPane.showMessageDialog(this,
+                    "Please select at least one item to order.",
+                    "No Items Selected",
+                    JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            int confirm = JOptionPane.showConfirmDialog(this,
+                calc.orderDetails,
+                "Confirm Order",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.INFORMATION_MESSAGE);
+
+            if (confirm == JOptionPane.OK_OPTION) {
+                try {
+                    saveOrderToDatabase(restaurantName, restaurantAddress, menuItems, prices, menuPanel.checkBoxes, menuPanel.quantities, calc.total);
+                    navigateBackToMain();
+                } catch (SQLException ex) {
+                    Logger.catchAndLogBug(ex, "ResturantScreen");
+                    JOptionPane.showMessageDialog(this,
+                        "Error creating order: " + ex.getMessage(),
+                        "Order Error",
+                        JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
+    }
+
+    private String getRestaurantAddress(String restaurantName) {
+        Map<String, String> restaurantAddresses = new HashMap<>();
+        restaurantAddresses.put("Crimson Dining", "125 Burrill Ave");
+        restaurantAddresses.put("Barrett's Alehouse Bridgewater", "425 Bedford St");
+        restaurantAddresses.put("Greyhound Tavern", "39 Broad Street");
+        return restaurantAddresses.getOrDefault(restaurantName, "Address not available");
+    }
+
+    private MenuSelectionPanel buildMenuPanel(String restaurantName, String[] menuItems) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -196,118 +229,120 @@ public class ResturantScreen extends JPanel {
         }
 
         JLabel noteLabel = new JLabel("* Use spinners to select quantity (1-10)");
-        noteLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+        noteLabel.setFont(new Font("Times New Roman", Font.PLAIN, 10));
         noteLabel.setForeground(Color.GRAY);
         noteLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.add(Box.createVerticalStrut(10));
         panel.add(noteLabel);
 
-        int result = JOptionPane.showConfirmDialog(this, panel,
-                "Order from " + restaurantName,
-                JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE);
+        return new MenuSelectionPanel(panel, checkBoxes, quantities);
+    }
 
-        if (result == JOptionPane.OK_OPTION) {
-            double total = 0.0;
-            boolean anySelected = false;
+    private OrderCalculation calculateOrderTotal(String[] menuItems, double[] prices, JCheckBox[] checkBoxes, JSpinner[] quantities) {
+        double total = 0.0;
+        boolean anySelected = false;
+        StringBuilder orderDetails = new StringBuilder();
+        orderDetails.append("Order Summary:\n\n");
 
-            StringBuilder orderDetails = new StringBuilder();
-            orderDetails.append("Order Summary:\n\n");
-
-            for (int i = 0; i < checkBoxes.length; i++) {
-                if (checkBoxes[i].isSelected()) {
-                    anySelected = true;
-                    int quantity = (Integer)quantities[i].getValue();
-                    double itemTotal = prices[i] * quantity;
-                    total += itemTotal;
-                    orderDetails.append(String.format("%dx %s: $%.2f\n",
-                        quantity, menuItems[i].split(" - ")[0], itemTotal));
-                }
+        for (int i = 0; i < checkBoxes.length; i++) {
+            if (checkBoxes[i].isSelected()) {
+                anySelected = true;
+                int quantity = (Integer)quantities[i].getValue();
+                double itemTotal = prices[i] * quantity;
+                total += itemTotal;
+                orderDetails.append(String.format("%dx %s: $%.2f\n",
+                    quantity, menuItems[i].split(" - ")[0], itemTotal));
             }
+        }
 
-            if (!anySelected) {
-                JOptionPane.showMessageDialog(this,
-                    "Please select at least one item to order.",
-                    "No Items Selected",
-                    JOptionPane.WARNING_MESSAGE);
-                return;
+        orderDetails.append(String.format("\nTotal: $%.2f", total));
+        return new OrderCalculation(total, anySelected, orderDetails.toString());
+    }
+
+    private void saveOrderToDatabase(String restaurantName, String restaurantAddress, String[] menuItems, 
+                                     double[] prices, JCheckBox[] checkBoxes, JSpinner[] quantities, double total) throws SQLException {
+        // Check payment method
+        PaymentInformation paymentInfo = parent.paymentDb.getActivePaymentMethod(username);
+        if (paymentInfo == null) {
+            JOptionPane.showMessageDialog(this,
+                "Please set up a payment method first.",
+                "Payment Required",
+                JOptionPane.WARNING_MESSAGE);
+            throw new SQLException("No payment method available");
+        }
+
+        // Count total items
+        int totalItems = 0;
+        for (int i = 0; i < checkBoxes.length; i++) {
+            if (checkBoxes[i].isSelected()) {
+                totalItems += (Integer)quantities[i].getValue();
             }
+        }
 
-            orderDetails.append(String.format("\nTotal: $%.2f", total));
+        // Create order in database
+        long orderId = parent.orderDb.createOrder(username, restaurantName, restaurantAddress,
+            "123 Main St",
+            "No special instructions",
+            total,
+            totalItems,
+            paymentInfo.getPaymentType());
 
-            int confirm = JOptionPane.showConfirmDialog(this,
-                orderDetails.toString(),
-                "Confirm Order",
-                JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.INFORMATION_MESSAGE);
-
-            if (confirm == JOptionPane.OK_OPTION) {
-                try {
-                    // count items
-                    int totalItems = 0;
-                    for (int i = 0; i < checkBoxes.length; i++) {
-                        if (checkBoxes[i].isSelected()) {
-                            totalItems += (Integer)quantities[i].getValue();
-                        }
-                    }
-
-                    // check payment method
-                    PaymentInformation paymentInfo = parent.paymentDb.getActivePaymentMethod(username);
-                    if (paymentInfo == null) {
-                        JOptionPane.showMessageDialog(this,
-                            "Please set up a payment method first.",
-                            "Payment Required",
-                            JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
-
-                    // create order in db
-                    long orderId = parent.orderDb.createOrder(username, restaurantName, restaurantAddress,
-                        "123 Main St",
-                        "No special instructions",
-                        total,
-                        totalItems,
-                        paymentInfo.getPaymentType());
-
-                    // add items to order
-                    for (int i = 0; i < checkBoxes.length; i++) {
-                        if (checkBoxes[i].isSelected()) {
-                            int quantity = (Integer)quantities[i].getValue();
-                            String itemName = menuItems[i].split(" - ")[0];
-                            double price = prices[i];
-                            parent.orderDb.addOrderItem(orderId, itemName, quantity, price, null);
-                        }
-                    }
-
-                    // show eta
-                    ETA eta = new ETA((int)orderId, totalItems);
-                    String confirmMessage = String.format(
-                        "Order #%d placed successfully!\n" +
-                        "Total: $%.2f\n\n" +
-                        "%s",
-                        orderId, total, eta.getETAMessage());
-
-                    JOptionPane.showMessageDialog(this,
-                        confirmMessage,
-                        "Order Confirmation",
-                        JOptionPane.INFORMATION_MESSAGE);
-
-                    // go back to main screen
-                    MainScreen mainScreen = new MainScreen(parent, username);
-                    try {
-                        parent.getSceneSorter().addScene("MainScreen", mainScreen);
-                    } catch (IllegalArgumentException ex) {
-                        // already exists; reuse
-                    }
-                    parent.getSceneSorter().switchPage("MainScreen");
-                } catch (SQLException ex) {
-                    Logger.catchAndLogBug(ex, "ResturantScreen");
-                    JOptionPane.showMessageDialog(this,
-                        "Error creating order: " + ex.getMessage(),
-                        "Order Error",
-                        JOptionPane.ERROR_MESSAGE);
-                }
+        // Add items to order
+        for (int i = 0; i < checkBoxes.length; i++) {
+            if (checkBoxes[i].isSelected()) {
+                int quantity = (Integer)quantities[i].getValue();
+                String itemName = menuItems[i].split(" - ")[0];
+                double price = prices[i];
+                parent.orderDb.addOrderItem(orderId, itemName, quantity, price, null);
             }
+        }
+
+        // Show ETA confirmation
+        ETA eta = new ETA((int)orderId, totalItems);
+        String confirmMessage = String.format(
+            "Order #%d placed successfully!\n" +
+            "Total: $%.2f\n\n" +
+            "%s",
+            orderId, total, eta.getETAMessage());
+
+        JOptionPane.showMessageDialog(this,
+            confirmMessage,
+            "Order Confirmation",
+            JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void navigateBackToMain() {
+        MainScreen mainScreen = new MainScreen(parent, username);
+        try {
+            parent.getSceneSorter().addScene("MainScreen", mainScreen);
+        } catch (IllegalArgumentException ex) {
+            // already exists; reuse
+        }
+        parent.getSceneSorter().switchPage("MainScreen");
+    }
+
+    // Inner classes to encapsulate related data
+    private static class MenuSelectionPanel {
+        JPanel panel;
+        JCheckBox[] checkBoxes;
+        JSpinner[] quantities;
+
+        MenuSelectionPanel(JPanel panel, JCheckBox[] checkBoxes, JSpinner[] quantities) {
+            this.panel = panel;
+            this.checkBoxes = checkBoxes;
+            this.quantities = quantities;
+        }
+    }
+
+    private static class OrderCalculation {
+        double total;
+        boolean anySelected;
+        String orderDetails;
+
+        OrderCalculation(double total, boolean anySelected, String orderDetails) {
+            this.total = total;
+            this.anySelected = anySelected;
+            this.orderDetails = orderDetails;
         }
     }
 }

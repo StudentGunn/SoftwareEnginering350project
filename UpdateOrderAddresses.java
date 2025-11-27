@@ -1,10 +1,11 @@
+// UpdateOrderAddresses.java
 import java.sql.*;
 /*  
  --> Updates existing orders in the database to set restaurant addresses based on restaurant names
  --> connect to database orders.db
  --> for each order, if restaurant_name matches known names, set restaurant_address accordingly
  --> print out success message with number of updated orders
- --> catcjh and print any SQL exceptions if fails
+ --> catch and print any SQL exceptions if fails
  */
 
 public class UpdateOrderAddresses {
