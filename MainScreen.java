@@ -71,11 +71,13 @@ public class MainScreen extends JPanel {
         JButton orderBtn = new JButton("Order Food");
         JButton zipBtn = new JButton("Set Zip Code");
         JButton paymentBtn = new JButton("Payment Methods");
+        JButton historyBtn = new JButton("Order History");
 
         // style them
         styleButton(orderBtn);
         styleButton(zipBtn);
         styleButton(paymentBtn);
+        styleButton(historyBtn);
 
         // add buttons w spacing between
         buttonsPanel.add(orderBtn);
@@ -83,6 +85,8 @@ public class MainScreen extends JPanel {
         buttonsPanel.add(zipBtn);
         buttonsPanel.add(Box.createVerticalStrut(15));
         buttonsPanel.add(paymentBtn);
+        buttonsPanel.add(Box.createVerticalStrut(15));
+        buttonsPanel.add(historyBtn);
 
         contentPanel.add(buttonsPanel);
         add(contentPanel, BorderLayout.CENTER);
@@ -92,6 +96,7 @@ public class MainScreen extends JPanel {
         zipBtn.addActionListener(e -> promptZipCode());
         profileBtn.addActionListener(e -> openProfileDialog());
         paymentBtn.addActionListener(e -> openPaymentMethodDialog());
+        historyBtn.addActionListener(e -> openOrderHistory());
         logoutBtn.addActionListener(e -> logout());
 
         // One-time immediate check for delivered orders not yet notified
@@ -143,6 +148,17 @@ public class MainScreen extends JPanel {
         button.setPreferredSize(new Dimension(220, 45));
         button.setMaximumSize(new Dimension(220, 45));
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
+    }
+
+    // opens order history screen
+    private void openOrderHistory() {
+        CustomerOrderHistory historyScreen = new CustomerOrderHistory(parent, username);
+        try {
+            parent.getSceneSorter().addScene("CustomerOrderHistory", historyScreen);
+        } catch (IllegalArgumentException ex) {
+            // already exists
+        }
+        parent.getSceneSorter().switchPage("CustomerOrderHistory");
     }
 
     // opens order screen if zip is set
