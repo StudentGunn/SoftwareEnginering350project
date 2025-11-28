@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Instant;
+import javax.swing.JOptionPane;
 
 /*
  * Order database - handles everything related to food orders
@@ -403,6 +404,9 @@ public class OrderDatabase {
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, customerUsername);
             ps.executeUpdate();
+        } catch (SQLException var51) {
+            Logger.catchAndLogBug(var51,"OrderDatabase");
+            JOptionPane.showMessageDialog(null, "An error occurred while marking orders as notified:\n" + var51.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
-    }
+    } 
 }
