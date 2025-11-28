@@ -1,22 +1,24 @@
 // ResturantScreen.java
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.sql.SQLException;
 import javax.swing.*;
 
 public class ResturantScreen extends JPanel {
     private FoodDeliveryLoginUI parent;
     private String username;
-    private String zip;
+    private JPanel content;
 
-    public ResturantScreen(FoodDeliveryLoginUI parent, String username, String zip) {
+    public ResturantScreen(FoodDeliveryLoginUI parent, String username) {
         this.parent = parent;
         this.username = username;
-        this.zip = zip;
         initUI();
     }
 
     private void initUI() {
         setLayout(new BorderLayout(5,5));
+        String zip = parent.address.getZip();
 
         // header with green style
         JPanel headerPanel = new JPanel(new BorderLayout());
@@ -48,13 +50,30 @@ public class ResturantScreen extends JPanel {
         headerPanel.add(backBtn, BorderLayout.EAST);
         add(headerPanel, BorderLayout.NORTH);
 
-        // restaurant list area
-        JPanel content = new JPanel();
+        // Content Panel
+        content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
         content.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
         content.setBackground(new Color(250, 250, 250));
 
-        // bridgewater zip for demo// if not 02325 display nothing
+        JScrollPane scroll = new JScrollPane(content);
+        scroll.getViewport().setBackground(content.getBackground());
+        add(scroll, BorderLayout.CENTER);
+
+        // Add a listener to refresh the UI when the component is shown
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                refreshUI();
+            }
+        });
+    }
+
+    // Allows the UI to refresh when pulled up. This allows it to reflect changes in address or zip code.
+    private void refreshUI() {
+        content.removeAll();
+        String zip = parent.address != null ? String.valueOf(parent.address.getZip()) : "";
+
         if ("02325".equals(zip)) {
             content.add(createRestaurantRow("Crimson Dining", "125 Burrill Ave", 41.98656, 70.96437));
             content.add(Box.createVerticalStrut(6));
@@ -66,7 +85,6 @@ public class ResturantScreen extends JPanel {
             // no restaurants for other zips yet
             JPanel noResultsPanel = new JPanel(new BorderLayout());
             noResultsPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
-            // TODO: Here should have a update instance  
             JLabel none = new JLabel("No restaurants available in " + zip, SwingConstants.CENTER);
             none.setFont(new Font("Arial", Font.PLAIN, 12));
             none.setForeground(Color.GRAY);
@@ -76,13 +94,12 @@ public class ResturantScreen extends JPanel {
             content.add(Box.createVerticalStrut(8));
         }
 
-        JScrollPane scroll = new JScrollPane(content);
-        scroll.getViewport().setBackground(content.getBackground());
-        add(scroll, BorderLayout.CENTER);
+        content.revalidate();
+        content.repaint();
     }
 
     // makes each restaurant row
-    private JPanel createRestaurantRow(String name, String address, double lat, double lon) {
+    private JPanel createRestaurantRow(String name, String restAddress, double lat, double lon) {
         JPanel row = new JPanel(new BorderLayout(8,6));
         row.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(220, 220, 220)),
@@ -100,7 +117,7 @@ public class ResturantScreen extends JPanel {
         nameLabel.setFont(new Font("Arial", Font.BOLD, 12));
         info.add(nameLabel);
 
-        JLabel addressLabel = new JLabel(address);
+        JLabel addressLabel = new JLabel(restAddress);
         addressLabel.setFont(new Font("Arial", Font.PLAIN, 10));
         addressLabel.setForeground(Color.DARK_GRAY);
         info.add(addressLabel);
@@ -123,14 +140,16 @@ public class ResturantScreen extends JPanel {
         bottomPanel.setOpaque(false);
 
         // Miles/ETA
-        double miles = MapCalculator.calculateMiles(41.98621, 70.96555, lat, lon);
-        JLabel distanceLabel = new JLabel(String.format("%.1f miles away", miles));
-        distanceLabel.setFont(new Font("Arial", Font.PLAIN, 10));
-        distanceLabel.setForeground(new Color(46, 125, 50));
-        distanceLabel.setOpaque(false);
-        distanceLabel.setBorder(BorderFactory.createCompoundBorder());
-
-        bottomPanel.add(distanceLabel);
+        if (parent.address != null) {
+            double miles = MapCalculator.calculateMiles(parent.address.getLatitude(),parent.address.getLongitude(), lat, lon);
+            JLabel distanceLabel = new JLabel(String.format("%.1f miles away", miles));
+            distanceLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+            distanceLabel.setForeground(new Color(46, 125, 50));
+            distanceLabel.setOpaque(false);
+            distanceLabel.setBorder(BorderFactory.createCompoundBorder());
+            bottomPanel.add(distanceLabel);
+        }
+        
         row.add(bottomPanel, BorderLayout.SOUTH);
 
         return row;
@@ -263,7 +282,7 @@ public class ResturantScreen extends JPanel {
 
                     // create order in db
                     long orderId = parent.orderDb.createOrder(username, restaurantName, restaurantAddress,
-                        "123 Main St",
+                        parent.address.getStreet(),
                         "No special instructions",
                         total,
                         totalItems,

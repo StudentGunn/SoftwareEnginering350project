@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 import javax.swing.*;
 
 // main UI class -> handles the app window and scene switching 
@@ -26,6 +27,9 @@ public class FoodDeliveryLoginUI {
     public PaymentDatabase paymentDb;
     public DriverDatabase driverDb;
     public OrderDatabase orderDb;
+    
+    // Holds the address for the currently logged-in user
+    public Address address;
 
     // creates and shows the main window
     public void createAndShow() {
@@ -43,6 +47,19 @@ public class FoodDeliveryLoginUI {
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+    }
+    
+    // Loads the address for the given user from the database and stores it
+    // in the public 'address' field. This creates a centralized, shared
+    // Address object.
+    public void loadUserAddress(String username) {
+        try {
+            this.address = userDb.getUserAddress(username);
+        } catch (SQLException e) {
+            System.err.println("Error loading address for " + username + ": " + e.getMessage());
+            // Set to null if an error occurs
+            this.address = null;
+        }
     }
 
     // sets a background image for the UI
@@ -127,6 +144,7 @@ public class FoodDeliveryLoginUI {
         }
     }
 }
+
 
 // panel that can show a background image or solid color if needed
 class BackgroundPanel extends JPanel {

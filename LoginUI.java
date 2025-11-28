@@ -141,6 +141,7 @@ public class LoginUI {
             boolean ok = parent.userDb.authenticate(user, hash);
             if (ok) {
                 passField.setText("");
+                parent.loadUserAddress(user);
 
                 // check user type
                 String userType = parent.userDb.getUserType(user);

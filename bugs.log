@@ -136,3 +136,25 @@ Actual Result:
 
 ================================================================================
 
+================================================================================
+BUG ID: 1001
+Date: 2025-11-27 11:40:22
+Module: TestJira
+Severity: MEDIUM
+Status: OPEN
+--------------------------------------------------------------------------------
+Description:
+  Automated test bug created by TestJira
+
+Steps to Reproduce:
+  1) Run TestJira
+2) Observe bugs.log and Jira (if enabled)
+
+Expected Result:
+  No exception expected
+
+Actual Result:
+  This is a synthetic test for Jira integration
+
+================================================================================
+

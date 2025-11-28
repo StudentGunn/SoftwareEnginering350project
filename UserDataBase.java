@@ -9,9 +9,11 @@ import java.time.Instant;
 
 // user database - handles registration and login stuff
 // stores usernames, password hashes, and user types (customer, driver, admin)
+// also stores address info for each user to determine distance between drivers, resturaunts, and customers.
 public class UserDataBase {
     private final Path dbPath;
     private final String url;
+    public Address address;
 
     public UserDataBase(Path dbPath) {
         this.dbPath = dbPath;
@@ -41,7 +43,7 @@ public class UserDataBase {
                     + "full_name TEXT,"
                     + "email TEXT,"
                     + "phone TEXT,"
-                    + "admin_hash TEXT,"  // special hash code for admin verification
+                    + "admin_hash TEXT," // Special hash code for admin verification
                     + "created_at INTEGER"
                     + ")");
 
@@ -72,6 +74,41 @@ public class UserDataBase {
                     throw e;
                 }
             }
+
+            try {
+                stmt.executeUpdate("ALTER TABLE users ADD COLUMN address TEXT");
+            } catch (SQLException e) {
+                if (!e.getMessage().contains("duplicate column name")) {
+                    throw e;
+                }
+            }
+
+            try {
+                stmt.executeUpdate("ALTER TABLE users ADD COLUMN zipCode TEXT");
+            } catch (SQLException e) {
+                if (!e.getMessage().contains("duplicate column name")) {
+                    throw e;
+                }
+            }
+
+            try {
+                stmt.executeUpdate("ALTER TABLE users ADD COLUMN latitude REAL");
+            } catch (SQLException e) {
+                if (!e.getMessage().contains("duplicate column name")) {
+                    throw e;
+                }
+            }
+
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS address ("
+                    + "username TEXT PRIMARY KEY,"
+                    + "street TEXT,"
+                    + "city TEXT,"
+                    + "state TEXT,"
+                    + "zip INTEGER,"
+                    + "latitude REAL,"
+                    + "longitude REAL,"
+                    + "FOREIGN KEY(username) REFERENCES users(username)"
+                    + ")");
 
             // couple indexes to speed up lookups
             stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_users_type ON users(user_type)");
@@ -173,6 +210,35 @@ public class UserDataBase {
                 ps.setString(1, adminHashCode);
                 ps.setString(2, adminUsername);
                 ps.executeUpdate();
+            }
+        }
+    }
+    
+    public void updateUserAddress(String username, Address address) throws SQLException {
+        String sql = "INSERT OR REPLACE INTO address (username, street, city, state, zip, latitude, longitude) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, username);
+            ps.setString(2, address.getStreet());
+            ps.setString(3, address.getCity());
+            ps.setString(4, address.getState());
+            ps.setString(5, address.getZip());
+            ps.setDouble(6, address.getLatitude());
+            ps.setDouble(7, address.getLongitude());
+            ps.executeUpdate();
+        }
+    }
+
+    public Address getUserAddress(String username) throws SQLException {
+        String sql = "SELECT street, city, state, zip, latitude, longitude FROM address WHERE username = ?";
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, username);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new Address(rs.getString("street"), rs.getString("city"), rs.getString("state"), rs.getString("zip"), rs.getDouble("latitude"), rs.getDouble("longitude"));
+                }
+                return null;
             }
         }
     }

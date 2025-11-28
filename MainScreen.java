@@ -13,6 +13,9 @@ public class MainScreen extends JPanel {
     public MainScreen(FoodDeliveryLoginUI parent, String username) {
         this.parent = parent;
         this.username = (username == null || username.isEmpty()) ? "User" : username;
+        if (parent.address != null) {
+            this.zipCode = String.valueOf(parent.address.getZip());
+        }
         initUI();
     }
 
@@ -69,7 +72,7 @@ public class MainScreen extends JPanel {
 
         // make the buttons
         JButton orderBtn = new JButton("Order Food");
-        JButton zipBtn = new JButton("Set Zip Code");
+        JButton zipBtn = new JButton("Set Address");
         JButton paymentBtn = new JButton("Payment Methods");
 
         // style them
@@ -156,7 +159,7 @@ public class MainScreen extends JPanel {
         }
         
         // Create and show the restaurant screen
-        ResturantScreen restaurantScreen = new ResturantScreen(parent, username, zipCode);
+        ResturantScreen restaurantScreen = new ResturantScreen(parent, username);
         try {
             parent.getSceneSorter().addScene("RestaurantScreen", restaurantScreen);
         } catch (IllegalArgumentException ex) {
@@ -166,21 +169,15 @@ public class MainScreen extends JPanel {
     }
     
     private void promptZipCode() {
-        String input = JOptionPane.showInputDialog(SwingUtilities.getWindowAncestor(this),
-                "Enter your 5-digit zip code:", zipCode.isEmpty() ? "" : zipCode);
-        if (input != null) {
-            input = input.trim();
-            if (input.matches("\\d{5}")) {
-                zipCode = input;
-                JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(this),
-                        "Zip code set to: " + zipCode,
-                        "Zip Code Saved", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(this),
-                        "Please enter a valid 5-digit zip code.",
-                        "Invalid Zip", JOptionPane.WARNING_MESSAGE);
-            }
+        parent.loadUserAddress(username);
+        // Create and show the address screen
+        AddressScreen addressScreen = new AddressScreen(parent, username);
+        try {
+            parent.getSceneSorter().addScene("addressScreen", addressScreen);
+        } catch (IllegalArgumentException ex) {
+            // Scene already exists; reuse existing instance.
         }
+        parent.getSceneSorter().switchPage("addressScreen");
     }
 
     // shows profile info, can edit email
