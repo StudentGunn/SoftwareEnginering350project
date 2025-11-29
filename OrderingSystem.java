@@ -24,7 +24,8 @@ public class OrderingSystem{
         unaccpetedOrders.remove(order);
         acceptedOrders.add(order);
         order.status = 1;
-    }
+    } 
+
     /*
     --> Just stores to use update an order status
     --> Should also change where it does in the database
@@ -44,7 +45,7 @@ public class OrderingSystem{
             }
             else {
                 acceptedOrders.remove(order);
-            }
+            } 
         }
     }
 

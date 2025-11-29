@@ -420,6 +420,7 @@ public class OrderDatabase {
         }
     }
 
+
     // mark all delivered orders as notified;to avoid repeat notifications
     public void markDeliveredNotified(String customerUsername) throws SQLException {
         String sql = "UPDATE orders SET delivered_notified = 1 WHERE customer_username = ? AND status = 'DELIVERED' AND COALESCE(delivered_notified,0) = 0";
@@ -431,5 +432,6 @@ public class OrderDatabase {
             Logger.catchAndLogBug(var51,"OrderDatabase");
             JOptionPane.showMessageDialog(null, "An error occurred while marking orders as notified:\n" + var51.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
+    
     } 
 }
