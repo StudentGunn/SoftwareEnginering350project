@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Instant;
+import javax.swing.JOptionPane;
 
 // handles payment stuff for users - both credit cards and bank accounts
 // took forever to get the table setup right with all the foreign keys
@@ -26,6 +27,9 @@ public class PaymentDatabase {
         try {
             Class.forName("org.sqlite.JDBC");
         } catch (ClassNotFoundException e) {
+            Logger.catchAndLogBug(e, "PaymentDatabase");
+            JOptionPane.showMessageDialog(null, "An error occurred while initializing the payment database:\n" +
+                e.getMessage(), "Database Error", javax.swing.JOptionPane.ERROR_MESSAGE);
             throw new SQLException("SQLite JDBC driver not found on classpath", e);
         }
 
@@ -95,6 +99,11 @@ public class PaymentDatabase {
                 }
                 throw new SQLException("Failed to retrieve generated payment method ID");
             }
+        } catch (SQLException e) {
+            Logger.catchAndLogBug(e, "PaymentDatabase");
+            JOptionPane.showMessageDialog(null, "An error occurred while adding card payment:\n" +
+                e.getMessage(), "Database Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            throw e;
         }
     }
 
@@ -117,6 +126,11 @@ public class PaymentDatabase {
                 }
                 throw new SQLException("Failed to retrieve generated payment method ID");
             }
+        } catch (SQLException e) {
+            Logger.catchAndLogBug(e, "PaymentDatabase");
+            JOptionPane.showMessageDialog(null, "An error occurred while adding bank payment:\n" +
+                e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            throw e;
         }
     }
 
@@ -149,6 +163,11 @@ public class PaymentDatabase {
                 }
                 return null;  // no payment method found
             }
+        } catch (SQLException e) {
+            Logger.catchAndLogBug(e, "PaymentDatabase");
+            JOptionPane.showMessageDialog(null, "An error occurred while getting active payment method:\n" +
+                e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            throw e;
         }
     }
 
@@ -156,7 +175,7 @@ public class PaymentDatabase {
     --> Connects to the database and retrieves the most recent active payment method ID for the specified user.
     --> Asks for username as parameter to identify the user.
     --> Connects to to payment database.
-    --> Return the id of the most-recent active payment method for a user, or null if none. 
+    --> Return the id of the most-recent active payment method for a user, or null if none.
     --> create coloum in payment_methods table to store is_active boolean
      */
     public Long getActivePaymentMethodId(String username) throws SQLException {
@@ -168,6 +187,11 @@ public class PaymentDatabase {
                 if (rs.next()) return rs.getLong(1);
                 return null;
             }
+        } catch (SQLException e) {
+            Logger.catchAndLogBug(e, "PaymentDatabase");
+            JOptionPane.showMessageDialog(null, "An error occurred while getting payment method ID:\n" +
+                e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            throw e;
         }
     }
 
@@ -178,6 +202,11 @@ public class PaymentDatabase {
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
             ps.executeUpdate();
+        } catch (SQLException e) {
+            Logger.catchAndLogBug(e, "PaymentDatabase");
+            JOptionPane.showMessageDialog(null, "An error occurred while deactivating payment methods:\n" +
+                e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            throw e;
         }
     }
 
@@ -205,6 +234,11 @@ public class PaymentDatabase {
                 }
                 throw new SQLException("Failed to retrieve generated transaction ID");
             }
+        } catch (SQLException e) {
+            Logger.catchAndLogBug(e, "PaymentDatabase");
+            JOptionPane.showMessageDialog(null, "An error occurred while creating transaction:\n" +
+                e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            throw e;
         }
     }
 
@@ -218,7 +252,11 @@ public class PaymentDatabase {
             ps.setString(3, errorMessage);
             ps.setLong(4, transactionId);
             ps.executeUpdate();
-            // System.out.println("Updated transaction " + transactionId + " to " + status);  // used this for debugging
+        } catch (SQLException e) {
+            Logger.catchAndLogBug(e, "PaymentDatabase");
+            JOptionPane.showMessageDialog(null, "An error occurred while updating transaction status:\n" +
+                e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            throw e;
         }
     }
 }

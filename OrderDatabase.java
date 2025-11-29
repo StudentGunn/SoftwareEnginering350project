@@ -30,6 +30,9 @@ public class OrderDatabase {
         try {
             Class.forName("org.sqlite.JDBC");
         } catch (ClassNotFoundException e) {
+            Logger.catchAndLogBug(e, "OrderDatabase");
+            JOptionPane.showMessageDialog(null, "An error occurred while initializing the order database:\n" +
+                e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
             throw new SQLException("SQLite JDBC driver not found on classpath", e);
         }
 
@@ -312,10 +315,15 @@ public class OrderDatabase {
         String sql = "SELECT o.*, "
                   + "(SELECT GROUP_CONCAT(item_name || ' x' || quantity) FROM order_items WHERE order_id = o.order_id) as items "
                   + "FROM orders o WHERE o.order_id = ?";
-        Connection conn = DriverManager.getConnection(url);
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setLong(1, orderId);
-        return ps.executeQuery();
+        try {
+            Connection conn = DriverManager.getConnection(url);
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setLong(1, orderId);
+            return ps.executeQuery();
+        } catch (SQLException e) {
+            Logger.catchAndLogBug(e, "OrderDatabase");
+            throw e;
+        }
     }
 
     // gets just the items for an order
@@ -373,6 +381,11 @@ public class OrderDatabase {
             if (updated == 0) {
                 throw new SQLException("Order not found or already assigned to another driver");
             }
+        } catch (SQLException e) {
+            Logger.catchAndLogBug(e, "OrderDatabase");
+            JOptionPane.showMessageDialog(null, "An error occurred while assigning driver to order:\n" +
+                e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            throw e;
         }
     }
 
