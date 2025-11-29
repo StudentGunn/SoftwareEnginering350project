@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Instant;
 
+import javax.swing.JOptionPane;
+
 // database class for managing driver accounts and their delivery stuff
 // has 3 tables: drivers, delivery_history, and driver_schedule
 public class DriverDatabase {
@@ -23,6 +25,9 @@ public class DriverDatabase {
         try {
             Class.forName("org.sqlite.JDBC");
         } catch (ClassNotFoundException e) {
+            Logger.catchAndLogBug(e, "DriverDatabase");
+            JOptionPane.showMessageDialog(null, "An error occurred while initializing the driver database:\n" +
+                e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
             throw new SQLException("SQLite JDBC driver not found on classpath", e);
         }
 
@@ -94,6 +99,11 @@ public class DriverDatabase {
             ps.setString(4, serviceArea);
             ps.setLong(5, Instant.now().getEpochSecond());
             ps.executeUpdate();
+        } catch (SQLException e) {
+            Logger.catchAndLogBug(e, "DriverDatabase");
+            JOptionPane.showMessageDialog(null, "An error occurred while registering driver:\n" +
+                e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            throw e;
         }
     }
 
@@ -105,6 +115,11 @@ public class DriverDatabase {
             ps.setString(1, status);
             ps.setString(2, username);
             ps.executeUpdate();
+        } catch (SQLException e) {
+            Logger.catchAndLogBug(e, "DriverDatabase");
+            JOptionPane.showMessageDialog(null, "An error occurred while updating driver status:\n" +
+                e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            throw e;
         }
     }
 
@@ -133,6 +148,11 @@ public class DriverDatabase {
                     ps2.executeUpdate();
                 }
             }
+        } catch (SQLException e) {
+            Logger.catchAndLogBug(e, "DriverDatabase");
+            JOptionPane.showMessageDialog(null, "An error occurred while saving delivery to driver history:\n" +
+                e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            throw e;
         }
     }
 
@@ -160,6 +180,11 @@ public class DriverDatabase {
                 ps2.setString(2, username);
                 ps2.executeUpdate();
             }
+        } catch (SQLException e) {
+            Logger.catchAndLogBug(e, "DriverDatabase");
+            JOptionPane.showMessageDialog(null, "An error occurred while updating driver rating:\n" +
+                e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            throw e;
         }
     }
 
@@ -175,6 +200,11 @@ public class DriverDatabase {
             ps.setString(3, startTime);
             ps.setString(4, endTime);
             ps.executeUpdate();
+        } catch (SQLException e) {
+            Logger.catchAndLogBug(e, "DriverDatabase");
+            JOptionPane.showMessageDialog(null, "An error occurred while setting driver schedule:\n" +
+                e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            throw e;
         }
     }
 
