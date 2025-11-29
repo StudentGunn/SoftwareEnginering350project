@@ -2,6 +2,12 @@ import java.awt.*;
 import java.sql.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+/* 
+ --> CustomerOrderHistory.java
+ --> Panel to show customer's past orders in a table format
+ --> Includes back and refresh buttons
+ --> Also wrapped in try/catch to log exceptions to Logger -> write to bugs.log
+*/
 
 public class CustomerOrderHistory extends JPanel {
     private FoodDeliveryLoginUI parent;
@@ -9,27 +15,31 @@ public class CustomerOrderHistory extends JPanel {
     private DefaultTableModel tableModel;
 
     public CustomerOrderHistory(FoodDeliveryLoginUI parent, String username) {
-        this.parent = parent;
-        this.username = username;
+        try {
+            this.parent = parent;
+            this.username = username;
 
-        String[] columns = {"Order ID", "Restaurant", "Total", "Status", "Date"};
-        tableModel = new DefaultTableModel(columns, 0);
-        JTable table = new JTable(tableModel);
+            String[] columns = {"Order ID", "Restaurant", "Total", "Status", "Date"};
+            tableModel = new DefaultTableModel(columns, 0);
+            JTable table = new JTable(tableModel);
 
-        setLayout(new BorderLayout());
+            setLayout(new BorderLayout());
 
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JButton backBtn = new JButton("Back");
-        JButton refreshBtn = new JButton("Refresh");
-        backBtn.addActionListener(e -> parent.getSceneSorter().switchPage("MainScreen"));
-        refreshBtn.addActionListener(e -> loadHistory());
-        topPanel.add(backBtn);
-        topPanel.add(refreshBtn);
-        add(topPanel, BorderLayout.NORTH);
+            JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            JButton backBtn = new JButton("Back");
+            JButton refreshBtn = new JButton("Refresh");
+            backBtn.addActionListener(e -> parent.getSceneSorter().switchPage("MainScreen"));
+            refreshBtn.addActionListener(e -> loadHistory());
+            topPanel.add(backBtn);
+            topPanel.add(refreshBtn);
+            add(topPanel, BorderLayout.NORTH);
 
-        add(new JScrollPane(table), BorderLayout.CENTER);
+            add(new JScrollPane(table), BorderLayout.CENTER);
 
-        loadHistory();
+            loadHistory();
+        } catch (Exception e) {
+            Logger.catchAndLogBug(e, "CustomerOrderHistory.constructor");
+        }
     }
 
     private void loadHistory() {
@@ -54,7 +64,11 @@ public class CustomerOrderHistory extends JPanel {
             stmt.close();
             conn.close();
         } catch (SQLException ex) {
+            Logger.catchAndLogBug(ex, "CustomerOrderHistory.loadHistory");
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+        } catch (Exception ex) {
+            Logger.catchAndLogBug(ex, "CustomerOrderHistory.loadHistory");
+            JOptionPane.showMessageDialog(this, "Unexpected error loading order history");
         }
     }
 }

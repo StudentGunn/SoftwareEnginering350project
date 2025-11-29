@@ -29,24 +29,24 @@ public class CheckAdmin {
             
             String adminUsername = "FoodDashAdmin";
             
-            // Check if admin exists
+            // Check if admin exists, Ultize the UserDataBase methods to verify details; PASS/FAIL output
             if (userDb.userExists(adminUsername)) {
-                System.out.println("[OK] FoodDashAdmin account exists in database");
+                System.out.println("[PASS] FoodDashAdmin account exists in database");
                 
                 // Check user type
                 String userType = userDb.getUserType(adminUsername);
                 System.out.println("User Type: " + userType);
                 if ("ADMIN".equals(userType)) {
-                    System.out.println("[OK] User type is correctly set to ADMIN");
+                    System.out.println("[PASS] User type is correctly set to ADMIN");
                 } else {
-                    System.out.println("[FAIL] User type is incorrect. Expected: ADMIN, Actual: " + userType);
+                    System.out.println("[FAILED] User type is incorrect. Expected: ADMIN, Actual: " + userType);
                 }
                 
                 // Check admin hash code
                 String expectedHashCode = "ADMIN2024";
                 boolean hashValid = userDb.verifyAdminHash(adminUsername, expectedHashCode);
                 if (hashValid) {
-                    System.out.println("[OK] Admin hash code is correctly set to: " + expectedHashCode);
+                    System.out.println("[PASS] Admin hash code is correctly set to: " + expectedHashCode);
                 } else {
                     System.out.println("[FAIL] Admin hash code verification failed");
                 }
@@ -55,13 +55,13 @@ public class CheckAdmin {
                 String expectedPassword = sha256Hex("admin123");
                 boolean authValid = userDb.authenticate(adminUsername, expectedPassword);
                 if (authValid) {
-                    System.out.println("[OK] Admin password authentication works (password: admin123)");
+                    System.out.println("[PASS] Admin password authentication works (password: admin123)");
                 } else {
-                    System.out.println("[FAIL] Admin password authentication failed");
+                    System.out.println("[FAILED] Admin password authentication failed");
                 }
                 
             } else {
-                System.out.println("[FAIL] FoodDashAdmin account does NOT exist in database");
+                System.out.println("[FAILED] FoodDashAdmin account does NOT exist in database");
             }
             
         } catch (SQLException e) {
