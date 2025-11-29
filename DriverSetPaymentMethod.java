@@ -3,7 +3,7 @@ import java.sql.*;
 import java.text.ParseException;
 import javax.swing.*;
 import javax.swing.text.*;
-
+// catch exceptions and log them to Logger -> write to bugs.log
 public class DriverSetPaymentMethod extends JPanel {
     private final FoodDeliveryLoginUI parent;
     private final String username;

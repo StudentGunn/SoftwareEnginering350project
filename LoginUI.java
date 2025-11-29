@@ -14,60 +14,65 @@ public class LoginUI {
     }
 
     public JPanel buildLoginPanel() {
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(new Color(245, 245, 245));
+        try {
+            JPanel mainPanel = new JPanel(new BorderLayout());
+            mainPanel.setBackground(new Color(245, 245, 245));
 
-        // header
-        JPanel headerBar = new JPanel(new BorderLayout(10, 0));
-        headerBar.setBackground(new Color(46, 125, 50));
-        headerBar.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
+            // header
+            JPanel headerBar = new JPanel(new BorderLayout(10, 0));
+            headerBar.setBackground(new Color(46, 125, 50));
+            headerBar.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
 
-        JLabel titleLabel = new JLabel("Food Delivery Service", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        titleLabel.setForeground(Color.WHITE);
+            JLabel titleLabel = new JLabel("Food Delivery Service", SwingConstants.CENTER);
+            titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+            titleLabel.setForeground(Color.WHITE);
 
-        headerBar.add(titleLabel, BorderLayout.CENTER);
-        mainPanel.add(headerBar, BorderLayout.NORTH);
+            headerBar.add(titleLabel, BorderLayout.CENTER);
+            mainPanel.add(headerBar, BorderLayout.NORTH);
 
-        // login form
-        JPanel centerPanel = new JPanel(new GridBagLayout());
-        centerPanel.setBackground(new Color(245, 245, 245));
-        centerPanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
+            // login form
+            JPanel centerPanel = new JPanel(new GridBagLayout());
+            centerPanel.setBackground(new Color(245, 245, 245));
+            centerPanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
 
-        GridBagConstraints c = new GridBagConstraints();
-        c.insets = new Insets(8, 8, 8, 8);
+            GridBagConstraints c = new GridBagConstraints();
+            c.insets = new Insets(8, 8, 8, 8);
 
-        c.gridx = 0; c.gridy = 0; c.anchor = GridBagConstraints.EAST;
-        centerPanel.add(new JLabel("Username:"), c);
-        c.gridx = 1; c.anchor = GridBagConstraints.WEST;
-        centerPanel.add(userField, c);
+            c.gridx = 0; c.gridy = 0; c.anchor = GridBagConstraints.EAST;
+            centerPanel.add(new JLabel("Username:"), c);
+            c.gridx = 1; c.anchor = GridBagConstraints.WEST;
+            centerPanel.add(userField, c);
 
-        c.gridx = 0; c.gridy = 1; c.anchor = GridBagConstraints.EAST;
-        centerPanel.add(new JLabel("Password:"), c);
-        c.gridx = 1; c.anchor = GridBagConstraints.WEST;
-        centerPanel.add(passField, c);
+            c.gridx = 0; c.gridy = 1; c.anchor = GridBagConstraints.EAST;
+            centerPanel.add(new JLabel("Password:"), c);
+            c.gridx = 1; c.anchor = GridBagConstraints.WEST;
+            centerPanel.add(passField, c);
 
-        // buttons
-        JPanel btns = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        btns.setOpaque(false);
+            // buttons
+            JPanel btns = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+            btns.setOpaque(false);
 
-        JButton loginBtn = new JButton("Login");
-        styleButton(loginBtn);
-        loginBtn.addActionListener(this::onLogin);
+            JButton loginBtn = new JButton("Login");
+            styleButton(loginBtn);
+            loginBtn.addActionListener(this::onLogin);
 
-        JButton registerBtn = new JButton("Register");
-        styleButton(registerBtn);
-        registerBtn.addActionListener(this::onRegister);
+            JButton registerBtn = new JButton("Register");
+            styleButton(registerBtn);
+            registerBtn.addActionListener(this::onRegister);
 
-        btns.add(loginBtn);
-        btns.add(registerBtn);
+            btns.add(loginBtn);
+            btns.add(registerBtn);
 
-        c.gridx = 0; c.gridy = 2; c.gridwidth = 2; c.anchor = GridBagConstraints.CENTER;
-        centerPanel.add(btns, c);
+            c.gridx = 0; c.gridy = 2; c.gridwidth = 2; c.anchor = GridBagConstraints.CENTER;
+            centerPanel.add(btns, c);
 
-        mainPanel.add(centerPanel, BorderLayout.CENTER);
+            mainPanel.add(centerPanel, BorderLayout.CENTER);
 
-        return mainPanel;
+            return mainPanel;
+        } catch (Exception e) {
+            Logger.catchAndLogBug(e, "LoginUI.buildLoginPanel");
+            return new JPanel(); // Return empty panel on error
+        }
     }
 
     // style buttons
@@ -124,7 +129,7 @@ public class LoginUI {
                 parent.getSceneSorter().switchPage("AdminScreen");
                 return;
             } catch (SQLException ex) {
-                Logger.catchAndLogBug(ex, "LoginUI");
+                Logger.catchAndLogBug(ex, "LoginUI.onLogin");
                 JOptionPane.showMessageDialog(null, "Database error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -165,42 +170,50 @@ public class LoginUI {
                 JOptionPane.showMessageDialog(null, "Invalid username or password.", "Login Failed", JOptionPane.ERROR_MESSAGE);
             }
         } catch (SQLException ex) {
-            Logger.catchAndLogBug(ex, "LoginUI");
+            Logger.catchAndLogBug(ex, "LoginUI.onLogin");
             JOptionPane.showMessageDialog(null, "Database error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            Logger.catchAndLogBug(ex, "LoginUI.onLogin");
+            JOptionPane.showMessageDialog(null, "Unexpected error during login: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     // user type dialog for registration
     private String showUserTypeDialog() {
-        JDialog dialog = new JDialog((Frame)SwingUtilities.getWindowAncestor(userField), "Select User Type", true);
-        dialog.setLayout(new BorderLayout(10, 10));
-        dialog.setSize(300, 150);
-        dialog.setLocationRelativeTo(null);
+        try {
+            JDialog dialog = new JDialog((Frame)SwingUtilities.getWindowAncestor(userField), "Select User Type", true);
+            dialog.setLayout(new BorderLayout(10, 10));
+            dialog.setSize(300, 150);
+            dialog.setLocationRelativeTo(null);
 
-        JPanel buttonPanel = new JPanel(new GridLayout(2, 1, 10, 10));
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+            JPanel buttonPanel = new JPanel(new GridLayout(2, 1, 10, 10));
+            buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        JButton customerBtn = new JButton("Customer");
-        JButton driverBtn = new JButton("Driver");
+            JButton customerBtn = new JButton("Customer");
+            JButton driverBtn = new JButton("Driver");
 
-        final String[] result = {null};
+            final String[] result = {null};
 
-        customerBtn.addActionListener(e -> {
-            result[0] = "CUSTOMER";
-            dialog.dispose();
-        });
+            customerBtn.addActionListener(e -> {
+                result[0] = "CUSTOMER";
+                dialog.dispose();
+            });
 
-        driverBtn.addActionListener(e -> {
-            result[0] = "DRIVER";
-            dialog.dispose();
-        });
+            driverBtn.addActionListener(e -> {
+                result[0] = "DRIVER";
+                dialog.dispose();
+            });
 
-        buttonPanel.add(customerBtn);
-        buttonPanel.add(driverBtn);
-        dialog.add(buttonPanel, BorderLayout.CENTER);
-        dialog.setVisible(true);
+            buttonPanel.add(customerBtn);
+            buttonPanel.add(driverBtn);
+            dialog.add(buttonPanel, BorderLayout.CENTER);
+            dialog.setVisible(true);
 
-        return result[0];
+            return result[0];
+        } catch (Exception e) {
+            Logger.catchAndLogBug(e, "LoginUI.showUserTypeDialog");
+            return null;
+        }
     }
 
     // register button click
@@ -292,8 +305,11 @@ public class LoginUI {
                 JOptionPane.showMessageDialog(null, "Registered successfully. You can now login.", "Success", JOptionPane.INFORMATION_MESSAGE);
             }
         } catch (SQLException ex) {
-            Logger.catchAndLogBug(ex, "LoginUI");
+            Logger.catchAndLogBug(ex, "LoginUI.onRegister");
             JOptionPane.showMessageDialog(null, "Failed to save user: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            Logger.catchAndLogBug(ex, "LoginUI.onRegister");
+            JOptionPane.showMessageDialog(null, "Unexpected error during registration: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

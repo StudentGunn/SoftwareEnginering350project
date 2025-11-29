@@ -8,6 +8,7 @@ import javax.swing.table.DefaultTableModel;
 
 public class DriverPaymentHistory extends JPanel {
     // Set up UI components and load payment history from the database, so it shows driver their payment history
+	// catch any exceptions and log them to Logger -> write to bugs.log
 	private final FoodDeliveryLoginUI parent;
 	private final String username;
 	private final JTable table;
@@ -30,33 +31,41 @@ public class DriverPaymentHistory extends JPanel {
         // Create JTable with the model
 		table = new JTable(model);
         // call initUI to set up the layout and loadPayments to fetch data/payment history
-		initUI();
-		loadPayments();
+		try {
+			initUI();
+			loadPayments();
+		} catch (Exception e) {
+			Logger.catchAndLogBug(e, "DriverPaymentHistory.constructor");
+		}
 	}
     /* Create UI Interface for Payment History button for driver Screen
        --> sets layout, adds title, back button, table, and refresh button
        --> 
     */
 	private void initUI() {
-		setLayout(new BorderLayout(10, 10));
-		setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		try {
+			setLayout(new BorderLayout(10, 10));
+			setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-		JPanel header = new JPanel(new BorderLayout());
-		JLabel title = new JLabel("Payment History", SwingConstants.LEFT);
-		title.setFont(title.getFont().deriveFont(Font.BOLD, 18f));
-		JButton back = new JButton("Back to Driver Menu");
-		back.addActionListener(e -> parent.getSceneSorter().switchPage("DriverScreen"));
-		header.add(title, BorderLayout.WEST);
-		header.add(back, BorderLayout.EAST);
-		add(header, BorderLayout.NORTH);
+			JPanel header = new JPanel(new BorderLayout());
+			JLabel title = new JLabel("Payment History", SwingConstants.LEFT);
+			title.setFont(title.getFont().deriveFont(Font.BOLD, 18f));
+			JButton back = new JButton("Back to Driver Menu");
+			back.addActionListener(e -> parent.getSceneSorter().switchPage("DriverScreen"));
+			header.add(title, BorderLayout.WEST);
+			header.add(back, BorderLayout.EAST);
+			add(header, BorderLayout.NORTH);
 
-		add(new JScrollPane(table), BorderLayout.CENTER);
+			add(new JScrollPane(table), BorderLayout.CENTER);
 
-		JPanel actions = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JButton refresh = new JButton("Refresh");
-		refresh.addActionListener(e -> loadPayments());
-		actions.add(refresh);
-		add(actions, BorderLayout.SOUTH);
+			JPanel actions = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			JButton refresh = new JButton("Refresh");
+			refresh.addActionListener(e -> loadPayments());
+			actions.add(refresh);
+			add(actions, BorderLayout.SOUTH);
+		} catch (Exception e) {
+			Logger.catchAndLogBug(e, "DriverPaymentHistory.initUI");
+		}
 	}
     /* Load payment history from the database and populate the table 
      --> queries payment_transactions and payment_methods tables for the driver's username
@@ -122,10 +131,16 @@ public class DriverPaymentHistory extends JPanel {
 			}
             // If any SQL error occurs, show error dialog
 		} catch (SQLException ex) {
-			Logger.catchAndLogBug(ex, "DriverPaymentHistory");
+			Logger.catchAndLogBug(ex, "DriverPaymentHistory.loadPayments");
 			JOptionPane.showMessageDialog(this,
 				"Error loading payment history: " + ex.getMessage(),
 				"Database Error",
+				JOptionPane.ERROR_MESSAGE);
+		} catch (Exception ex) {
+			Logger.catchAndLogBug(ex, "DriverPaymentHistory.loadPayments");
+			JOptionPane.showMessageDialog(this,
+				"Unexpected error loading payment history: " + ex.getMessage(),
+				"Error",
 				JOptionPane.ERROR_MESSAGE);
 		}
 	}

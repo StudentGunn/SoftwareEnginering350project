@@ -32,43 +32,51 @@ public class DriverGetOrder extends JPanel {
         ordersTable = new JTable(ordersModel);
         ordersTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         
-        initUI();
-        refreshOrders();
+        try {
+            initUI();
+            refreshOrders();
+        } catch (Exception e) {
+            Logger.catchAndLogBug(e, "DriverGetOrder.constructor");
+        }
     }
 
     private void initUI() {
-        setLayout(new BorderLayout(10, 10));
-        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        try {
+            setLayout(new BorderLayout(10, 10));
+            setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Header Panel
-        JPanel headerPanel = new JPanel(new BorderLayout());
-        JLabel titleLabel = new JLabel("Available Orders", SwingConstants.LEFT);
-        titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 18f));
-        
-        JButton backBtn = new JButton("Back to Driver Menu");
-        backBtn.addActionListener(e -> parent.getSceneSorter().switchPage("DriverScreen"));
-        
-        headerPanel.add(titleLabel, BorderLayout.WEST);
-        headerPanel.add(backBtn, BorderLayout.EAST);
-        add(headerPanel, BorderLayout.NORTH);
+            // Header Panel
+            JPanel headerPanel = new JPanel(new BorderLayout());
+            JLabel titleLabel = new JLabel("Available Orders", SwingConstants.LEFT);
+            titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 18f));
+            
+            JButton backBtn = new JButton("Back to Driver Menu");
+            backBtn.addActionListener(e -> parent.getSceneSorter().switchPage("DriverScreen"));
+            
+            headerPanel.add(titleLabel, BorderLayout.WEST);
+            headerPanel.add(backBtn, BorderLayout.EAST);
+            add(headerPanel, BorderLayout.NORTH);
 
-        // Orders Table
-        JScrollPane scrollPane = new JScrollPane(ordersTable);
-        add(scrollPane, BorderLayout.CENTER);
+            // Orders Table
+            JScrollPane scrollPane = new JScrollPane(ordersTable);
+            add(scrollPane, BorderLayout.CENTER);
 
-        // Button Panel
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        
-        JButton acceptOrderBtn = new JButton("Accept Selected Order");
-        JButton refreshBtn = new JButton("Refresh Orders");
-        
-        acceptOrderBtn.addActionListener(e -> acceptSelectedOrder());
-        refreshBtn.addActionListener(e -> refreshOrders());
-        
-        buttonPanel.add(acceptOrderBtn);
-        buttonPanel.add(refreshBtn);
-        
-        add(buttonPanel, BorderLayout.SOUTH);
+            // Button Panel
+            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            
+            JButton acceptOrderBtn = new JButton("Accept Selected Order");
+            JButton refreshBtn = new JButton("Refresh Orders");
+            
+            acceptOrderBtn.addActionListener(e -> acceptSelectedOrder());
+            refreshBtn.addActionListener(e -> refreshOrders());
+            
+            buttonPanel.add(acceptOrderBtn);
+            buttonPanel.add(refreshBtn);
+            
+            add(buttonPanel, BorderLayout.SOUTH);
+        } catch (Exception e) {
+            Logger.catchAndLogBug(e, "DriverGetOrder.initUI");
+        }
     }
 
     private void refreshOrders() {
@@ -110,10 +118,16 @@ public class DriverGetOrder extends JPanel {
                 ordersModel.addRow(row);
             }
         } catch (SQLException ex) {
-            Logger.catchAndLogBug(ex, "DriverGetOrder");
+            Logger.catchAndLogBug(ex, "DriverGetOrder.refreshOrders");
             JOptionPane.showMessageDialog(this,
                 "Error loading orders: " + ex.getMessage(),
                 "Database Error",
+                JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            Logger.catchAndLogBug(ex, "DriverGetOrder.refreshOrders");
+            JOptionPane.showMessageDialog(this,
+                "Unexpected error loading orders: " + ex.getMessage(),
+                "Error",
                 JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -150,10 +164,16 @@ public class DriverGetOrder extends JPanel {
                     JOptionPane.INFORMATION_MESSAGE);
                 refreshOrders();
             } catch (SQLException ex) {
-                Logger.catchAndLogBug(ex, "DriverGetOrder");
+                Logger.catchAndLogBug(ex, "DriverGetOrder.acceptSelectedOrder");
                 JOptionPane.showMessageDialog(this,
                     "Error accepting order: " + ex.getMessage(),
                     "Database Error",
+                    JOptionPane.ERROR_MESSAGE);
+            } catch (Exception ex) {
+                Logger.catchAndLogBug(ex, "DriverGetOrder.acceptSelectedOrder");
+                JOptionPane.showMessageDialog(this,
+                    "Unexpected error accepting order: " + ex.getMessage(),
+                    "Error",
                     JOptionPane.ERROR_MESSAGE);
             }
         }

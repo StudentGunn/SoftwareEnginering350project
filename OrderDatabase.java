@@ -193,9 +193,9 @@ public class OrderDatabase {
                     return orderId;
                 }
                 throw new SQLException("Failed to retrieve generated order ID");
-            } catch (SQLException var51) {
-                Logger.catchAndLogBug(var51,"OrderDatabase");
-                JOptionPane.showMessageDialog(null, "An error occurred while creating the order:\n" + var51.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            } catch (SQLException ex) {
+                Logger.catchAndLogBug(ex,"OrderDatabase");
+                JOptionPane.showMessageDialog(null, "An error occurred while creating the order:\n" + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
                 return -1;
             }
             
@@ -214,9 +214,9 @@ public class OrderDatabase {
             ps.setDouble(4, unitPrice);
             ps.setString(5, specialRequests);
             ps.executeUpdate();
-        } catch (SQLException var51) {
-            Logger.catchAndLogBug(var51,"OrderDatabase");
-            JOptionPane.showMessageDialog(null, "An error occurred while adding item to order:\n" + var51.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException ex) {
+            Logger.catchAndLogBug(ex,"OrderDatabase");
+            JOptionPane.showMessageDialog(null, "An error occurred while adding item to order:\n" + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -233,9 +233,9 @@ public class OrderDatabase {
             ps.executeUpdate();
 
             recordOrderUpdate(orderId, "ASSIGNED", "Driver assigned: " + driverUsername, driverUsername);
-        } catch (SQLException var51) {
-            Logger.catchAndLogBug(var51,"OrderDatabase");
-            JOptionPane.showMessageDialog(null, "An error occurred while assigning driver to order:\n" + var51.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException ex) {
+            Logger.catchAndLogBug(ex,"OrderDatabase");
+            JOptionPane.showMessageDialog(null, "An error occurred while assigning driver to order:\n" + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }
     /*
@@ -281,9 +281,9 @@ public class OrderDatabase {
             ps.executeUpdate();
 
             recordOrderUpdate(orderId, status, "Status updated to: " + status, username);
-        } catch (SQLException var51) {
-            Logger.catchAndLogBug(var51,"OrderDatabase");
-            JOptionPane.showMessageDialog(null, "An error occurred while updating order status:\n" + var51.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException ex) {
+            Logger.catchAndLogBug(ex,"OrderDatabase");
+            JOptionPane.showMessageDialog(null, "An error occurred while updating order status:\n" + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -299,9 +299,9 @@ public class OrderDatabase {
             ps.setLong(4, Instant.now().getEpochSecond());
             ps.setString(5, username);
             ps.executeUpdate();
-        } catch (SQLException var51) {
-            Logger.catchAndLogBug(var51,"OrderDatabase");
-            JOptionPane.showMessageDialog(null, "An error occurred while recording order update:\n" + var51.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException ex) {
+            Logger.catchAndLogBug(ex,"OrderDatabase");
+            JOptionPane.showMessageDialog(null, "An error occurred while recording order update:\n" + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -398,9 +398,9 @@ public class OrderDatabase {
             }
 
             recordOrderUpdate(orderId, "CANCELLED", "Order cancelled by admin", "admin");
-        } catch (SQLException var51) {
-            Logger.catchAndLogBug(var51,"OrderDatabase");
-            JOptionPane.showMessageDialog(null, "An error occurred while cancelling the order:\n" + var51.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException ex) {
+            Logger.catchAndLogBug(ex,"OrderDatabase");
+            JOptionPane.showMessageDialog(null, "An error occurred while cancelling the order:\n" + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -412,9 +412,9 @@ public class OrderDatabase {
             ps.setString(1, customerUsername);
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.next() && rs.getInt(1) == 1;
-            } catch (SQLException var51) {
-                Logger.catchAndLogBug(var51,"OrderDatabase");
-                JOptionPane.showMessageDialog(null, "An error occurred while checking for unnotified delivered orders:\n" + var51.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            } catch (SQLException ex) {
+                Logger.catchAndLogBug(ex,"OrderDatabase");
+                JOptionPane.showMessageDialog(null, "An error occurred while checking for unnotified delivered orders:\n" + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
         }
@@ -428,9 +428,9 @@ public class OrderDatabase {
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, customerUsername);
             ps.executeUpdate();
-        } catch (SQLException var51) {
-            Logger.catchAndLogBug(var51,"OrderDatabase");
-            JOptionPane.showMessageDialog(null, "An error occurred while marking orders as notified:\n" + var51.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException ex) {
+            Logger.catchAndLogBug(ex,"OrderDatabase");
+            JOptionPane.showMessageDialog(null, "An error occurred while marking orders as notified:\n" + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     
     } 
