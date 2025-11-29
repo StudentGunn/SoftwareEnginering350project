@@ -1,11 +1,24 @@
 // Work in Progress *Sky Broke it*
-/* import org.junit.Test;
+import org.junit.Test;
 import org.junit.jupiter.api.*;
 import java.nio.file.*;
 import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.*;
 
+
+public class TestClass {
+
+    @Test    
+    public void testOrderDB() throws SQLException{
+        OrderDatabase orderDatabase = new OrderDatabase(null );
+        long orderID = orderDatabase.createOrder("Gerbert", "MacDon", "23 hill ave", "null", "null", 12.21, 3, null);
+        if (orderID != 0){
+            System.out.println("Order was created, Order ID: "+ orderID);
+        }
+    }
+}
 class UserDataBaseTest {
+
 
     private static Path testDbPath;
     private UserDataBase db;
@@ -60,7 +73,6 @@ class UserDataBaseTest {
     }
 }
 
-*/
 //import static org.junit.jupiter.api.Assertions.assertEquals;
 //public class TestClass
 //{
