@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Instant;
+import javax.swing.JOptionPane;
 
 /*
 --> user database - handles registration and login stuff
@@ -50,6 +51,9 @@ public class UserDataBase {
         try {
             Class.forName("org.sqlite.JDBC");
         } catch (ClassNotFoundException e) {
+            Logger.catchAndLogBug(e, "UserDataBase");
+            JOptionPane.showMessageDialog(null, "An error occurred while loading the database driver:\n" +
+                e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
             throw new SQLException("SQLite JDBC driver not found on classpath", e);
         }
     }
@@ -71,6 +75,11 @@ public class UserDataBase {
                     + "admin_hash TEXT,"
                     + "created_at INTEGER"
                     + ")");
+        } catch (SQLException e) {
+            Logger.catchAndLogBug(e, "UserDataBase");
+            JOptionPane.showMessageDialog(null, "An error occurred while creating users table:\n" +
+                e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            throw e;
         }
     }
 /*  
@@ -84,6 +93,11 @@ public class UserDataBase {
             addColumnIfNotExists(stmt, "user_type", "TEXT DEFAULT 'CUSTOMER'");
             addColumnIfNotExists(stmt, "phone", "TEXT");
             addColumnIfNotExists(stmt, "admin_hash", "TEXT");
+        } catch (SQLException e) {
+            Logger.catchAndLogBug(e, "UserDataBase");
+            JOptionPane.showMessageDialog(null, "An error occurred while migrating users table:\n" +
+                e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            throw e;
         }
     }
 
@@ -113,6 +127,11 @@ public class UserDataBase {
              Statement stmt = conn.createStatement()) {
             stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_users_type ON users(user_type)");
             stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)");
+        } catch (SQLException e) {
+            Logger.catchAndLogBug(e, "UserDataBase");
+            JOptionPane.showMessageDialog(null, "An error occurred while creating indexes:\n" +
+                e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            throw e;
         }
     }
     /* 
@@ -144,6 +163,11 @@ public class UserDataBase {
             ps.setLong(7, Instant.now().getEpochSecond());
             ps.executeUpdate();
             return true;
+        } catch (SQLException e) {
+            Logger.catchAndLogBug(e, "UserDataBase");
+            JOptionPane.showMessageDialog(null, "An error occurred while registering user:\n" +
+                e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            throw e;
         }
     }
 
@@ -166,6 +190,11 @@ public class UserDataBase {
                 }
                 return false;
             }
+        } catch (SQLException e) {
+            Logger.catchAndLogBug(e, "UserDataBase");
+            JOptionPane.showMessageDialog(null, "An error occurred while authenticating user:\n" +
+                e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            throw e;
         }
     }
 
@@ -182,6 +211,11 @@ public class UserDataBase {
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.next();
             }
+        } catch (SQLException e) {
+            Logger.catchAndLogBug(e, "UserDataBase");
+            JOptionPane.showMessageDialog(null, "An error occurred while checking if user exists:\n" +
+                e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            throw e;
         }
     }
 
@@ -201,6 +235,11 @@ public class UserDataBase {
                 }
                 return null;
             }
+        } catch (SQLException e) {
+            Logger.catchAndLogBug(e, "UserDataBase");
+            JOptionPane.showMessageDialog(null, "An error occurred while getting user type:\n" +
+                e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            throw e;
         }
     }
     /*
@@ -221,6 +260,11 @@ public class UserDataBase {
                 }
                 return false;
             }
+        } catch (SQLException e) {
+            Logger.catchAndLogBug(e, "UserDataBase");
+            JOptionPane.showMessageDialog(null, "An error occurred while verifying admin hash:\n" +
+                e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            throw e;
         }
     }
     /* 
@@ -257,6 +301,11 @@ public class UserDataBase {
             ps.setString(1, adminHashCode);
             ps.setString(2, adminUsername);
             ps.executeUpdate();
+        } catch (SQLException e) {
+            Logger.catchAndLogBug(e, "UserDataBase");
+            JOptionPane.showMessageDialog(null, "An error occurred while setting admin hash:\n" +
+                e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            throw e;
         }
     }
 }
