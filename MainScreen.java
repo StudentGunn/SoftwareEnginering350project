@@ -13,9 +13,6 @@ public class MainScreen extends JPanel {
     public MainScreen(FoodDeliveryLoginUI parent, String username) {
         this.parent = parent;
         this.username = (username == null || username.isEmpty()) ? "User" : username;
-        if (parent.address != null) {
-            this.zipCode = String.valueOf(parent.address.getZip());
-        }
         initUI();
     }
 
@@ -150,10 +147,10 @@ public class MainScreen extends JPanel {
 
     // opens order screen if zip is set
     private void openOrderScreen() {
-        if (zipCode.isEmpty()) {
+        if (parent.address == null || !parent.address.isValid()) {
             JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(this),
-                    "Please enter your zip code first to see available restaurants.",
-                    "Zip Code Required", JOptionPane.WARNING_MESSAGE);
+                    "Please set an address before you order so we know where to deliver your food!",
+                    "Address Required", JOptionPane.WARNING_MESSAGE);
             promptZipCode();
             return;
         }

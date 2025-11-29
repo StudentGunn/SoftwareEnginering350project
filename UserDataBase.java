@@ -19,6 +19,10 @@ public class UserDataBase {
         this.dbPath = dbPath;
         this.url = "jdbc:sqlite:" + dbPath.toAbsolutePath().toString();
     }
+     public UserDataBase() {
+        this.dbPath = Path.of("FoodDelivery.db");
+        this.url = "jdbc:sqlite:" + dbPath.toAbsolutePath().toString();
+    }
 
     public String getConnectionUrl() {
         return url;
@@ -98,17 +102,48 @@ public class UserDataBase {
                     throw e;
                 }
             }
+            
+            // Check if the address table needs migration
+            boolean migrationNeeded = false;
+            try (ResultSet rs = conn.getMetaData().getColumns(null, null, "address", "zip")) {
+                if (rs.next()) {
+                    String typeName = rs.getString("TYPE_NAME");
+                    if ("INTEGER".equalsIgnoreCase(typeName)) {
+                        migrationNeeded = true;
+                    }
+                }
+            }
 
-            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS address ("
+            if (migrationNeeded) {
+                System.out.println("Migrating address table to update zip column type...");
+                stmt.executeUpdate("ALTER TABLE address RENAME TO address_old");
+                stmt.executeUpdate("CREATE TABLE address ("
+                        + "username TEXT PRIMARY KEY,"
+                        + "street TEXT,"
+                        + "city TEXT,"
+                        + "state TEXT,"
+                        + "zip TEXT,"
+                        + "latitude REAL,"
+                        + "longitude REAL,"
+                        + "FOREIGN KEY(username) REFERENCES users(username)"
+                        + ")");
+                stmt.executeUpdate("INSERT INTO address (username, street, city, state, zip, latitude, longitude) "
+                        + "SELECT username, street, city, state, zip, latitude, longitude FROM address_old");
+                stmt.executeUpdate("DROP TABLE address_old");
+                System.out.println("Address table migration complete.");
+            } else {
+                 stmt.executeUpdate("CREATE TABLE IF NOT EXISTS address ("
                     + "username TEXT PRIMARY KEY,"
                     + "street TEXT,"
                     + "city TEXT,"
                     + "state TEXT,"
-                    + "zip INTEGER,"
+                    + "zip TEXT,"
                     + "latitude REAL,"
                     + "longitude REAL,"
                     + "FOREIGN KEY(username) REFERENCES users(username)"
                     + ")");
+            }
+
 
             // couple indexes to speed up lookups
             stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_users_type ON users(user_type)");
