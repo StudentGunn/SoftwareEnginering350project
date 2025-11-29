@@ -50,3 +50,147 @@ Actual Result:
 {"errorMessages":[],"errors":{"project":"valid project is required"}}
 
 
+================================================================================
+BUG ID: 1001
+Date: 2025-11-29 15:17:17
+Module: OrderDatabase.addOrderItem
+Severity: HIGH
+Status: OPEN
+--------------------------------------------------------------------------------
+Description:
+  SQLException: Foreign key constraint failed: order_items references non-existent order_id 99999
+
+Steps to Reproduce:
+  See stack trace for conditions. Occurred in: TestBugLogging.testOrderDatabaseBug() at line 34
+
+Expected Result:
+  No exception thrown
+
+Actual Result:
+  java.sql.SQLException: Foreign key constraint failed: order_items references non-existent order_id 99999
+	at TestBugLogging.testOrderDatabaseBug(TestBugLogging.java:34)
+	at TestBugLogging.main(TestBugLogging.java:11)
+
+
+================================================================================
+
+================================================================================
+BUG ID: 1002
+Date: 2025-11-29 15:17:17
+Module: DriverDatabase.updateDriverStatus
+Severity: HIGH
+Status: OPEN
+--------------------------------------------------------------------------------
+Description:
+  NullPointerException: No message
+
+Steps to Reproduce:
+  See stack trace for conditions. Occurred in: TestBugLogging.testDriverDatabaseBug() at line 45
+
+Expected Result:
+  No exception thrown
+
+Actual Result:
+  java.lang.NullPointerException
+	at TestBugLogging.testDriverDatabaseBug(TestBugLogging.java:45)
+	at TestBugLogging.main(TestBugLogging.java:14)
+
+
+================================================================================
+
+================================================================================
+BUG ID: 1003
+Date: 2025-11-29 15:17:17
+Module: PaymentDatabase.addCardPayment
+Severity: HIGH
+Status: OPEN
+--------------------------------------------------------------------------------
+Description:
+  SQLException: CHECK constraint failed: payment_type must be 'CARD' or 'BANK'
+
+Steps to Reproduce:
+  See stack trace for conditions. Occurred in: TestBugLogging.testPaymentDatabaseBug() at line 56
+
+Expected Result:
+  No exception thrown
+
+Actual Result:
+  java.sql.SQLException: CHECK constraint failed: payment_type must be 'CARD' or 'BANK'
+	at TestBugLogging.testPaymentDatabaseBug(TestBugLogging.java:56)
+	at TestBugLogging.main(TestBugLogging.java:17)
+
+
+================================================================================
+
+================================================================================
+BUG ID: 1004
+Date: 2025-11-29 15:17:17
+Module: UserDatabase.register
+Severity: HIGH
+Status: OPEN
+--------------------------------------------------------------------------------
+Description:
+  SQLException: UNIQUE constraint failed: users.username
+
+Steps to Reproduce:
+  See stack trace for conditions. Occurred in: TestBugLogging.testUserDatabaseBug() at line 65
+
+Expected Result:
+  No exception thrown
+
+Actual Result:
+  java.sql.SQLException: UNIQUE constraint failed: users.username
+	at TestBugLogging.testUserDatabaseBug(TestBugLogging.java:65)
+	at TestBugLogging.main(TestBugLogging.java:20)
+
+
+================================================================================
+
+================================================================================
+BUG ID: 1005
+Date: 2025-11-29 15:17:17
+Module: DriverGetOrder.refreshOrders
+Severity: HIGH
+Status: OPEN
+--------------------------------------------------------------------------------
+Description:
+  ArrayIndexOutOfBoundsException: Index 10 out of bounds for length 5
+
+Steps to Reproduce:
+  See stack trace for conditions. Occurred in: TestBugLogging.testUIComponentBug() at line 76
+
+Expected Result:
+  No exception thrown
+
+Actual Result:
+  java.lang.ArrayIndexOutOfBoundsException: Index 10 out of bounds for length 5
+	at TestBugLogging.testUIComponentBug(TestBugLogging.java:76)
+	at TestBugLogging.main(TestBugLogging.java:23)
+
+
+================================================================================
+
+================================================================================
+BUG ID: 1006
+Date: 2025-11-29 15:17:17
+Module: OrderingSystem.acceptOrder
+Severity: HIGH
+Status: OPEN
+--------------------------------------------------------------------------------
+Description:
+  Order acceptance fails when driver is already assigned to another order
+
+Steps to Reproduce:
+  1. Driver logs in
+2. Accepts order #123
+3. Attempts to accept order #456 while still on delivery
+4. System allows duplicate assignment
+
+Expected Result:
+  System should prevent driver from accepting multiple orders simultaneously
+
+Actual Result:
+  Driver successfully accepts both orders, causing delivery conflicts
+
+================================================================================
+
