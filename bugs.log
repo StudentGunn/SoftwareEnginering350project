@@ -181,9 +181,9 @@ Description:
   Order acceptance fails when driver is already assigned to another order
 
 Steps to Reproduce:
-  1. Driver logs in
-2. Accepts order #123
-3. Attempts to accept order #456 while still on delivery
+1. Driver logs in
+2. Accepts order#123
+3. Attempts to accept order#456 while still on delivery
 4. System allows duplicate assignment
 
 Expected Result:
