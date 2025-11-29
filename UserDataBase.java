@@ -22,11 +22,11 @@ public class UserDataBase {
 --> connects to the SQLite database at the given path
 --> retines the database connection URL
 */
-    public UserDataBase(Path dbPath) {
+    public UserDataBase(Path dbPath) throws SQLException {
         this.dbPath = dbPath;
         this.url = "jdbc:sqlite:" + dbPath.toAbsolutePath().toString();
     }
-     public UserDataBase() {
+     public UserDataBase() throws SQLException {
         this.dbPath = Path.of("FoodDelivery.db");
         this.url = "jdbc:sqlite:" + dbPath.toAbsolutePath().toString();
     }
@@ -91,6 +91,10 @@ public class UserDataBase {
             addColumnIfNotExists(stmt, "user_type", "TEXT DEFAULT 'CUSTOMER'");
             addColumnIfNotExists(stmt, "phone", "TEXT");
             addColumnIfNotExists(stmt, "admin_hash", "TEXT");
+            addColumnIfNotExists(stmt, "address", "TEXT"); // This column is likely deprecated by the 'address' table
+            addColumnIfNotExists(stmt, "zipCode", "TEXT"); // This column is likely deprecated by the 'address' table
+            addColumnIfNotExists(stmt, "latitude", "REAL"); // This column is likely deprecated by the 'address' table
+            createAddressTableAndMigrate(conn, stmt);
         }
     }
 
@@ -110,65 +114,28 @@ public class UserDataBase {
         }
     }
     /*
-    --> creates indexes on frequently queried columns for performance
-    --> connects to the database
-    -->  create indexes on user_type and email columns
+    --> Creates the address table if it doesn't exist and handles migration for the 'zip' column type.
+    --> This method is called during database initialization to ensure the address table is correctly set up.
+    --> It checks if the 'zip' column in an existing 'address' table is of type INTEGER and, if so,
+    --> migrates it to TEXT to align with the expected data type.
+    --> If the 'address' table does not exist or does not require migration, it simply creates it.
     */
-
-            try {
-                stmt.executeUpdate("ALTER TABLE users ADD COLUMN address TEXT");
-            } catch (SQLException e) {
-                if (!e.getMessage().contains("duplicate column name")) {
-                    throw e;
+    private void createAddressTableAndMigrate(Connection conn, Statement stmt) throws SQLException {
+        // Check if the address table needs migration for the 'zip' column
+        boolean migrationNeeded = false;
+        try (ResultSet rs = conn.getMetaData().getColumns(null, null, "address", "zip")) {
+            if (rs.next()) {
+                String typeName = rs.getString("TYPE_NAME");
+                if ("INTEGER".equalsIgnoreCase(typeName)) {
+                    migrationNeeded = true;
                 }
             }
+        }
 
-            try {
-                stmt.executeUpdate("ALTER TABLE users ADD COLUMN zipCode TEXT");
-            } catch (SQLException e) {
-                if (!e.getMessage().contains("duplicate column name")) {
-                    throw e;
-                }
-            }
-
-            try {
-                stmt.executeUpdate("ALTER TABLE users ADD COLUMN latitude REAL");
-            } catch (SQLException e) {
-                if (!e.getMessage().contains("duplicate column name")) {
-                    throw e;
-                }
-            }
-
-            // Check if the address table needs migration
-            boolean migrationNeeded = false;
-            try (ResultSet rs = conn.getMetaData().getColumns(null, null, "address", "zip")) {
-                if (rs.next()) {
-                    String typeName = rs.getString("TYPE_NAME");
-                    if ("INTEGER".equalsIgnoreCase(typeName)) {
-                        migrationNeeded = true;
-                    }
-                }
-            }
-
-            if (migrationNeeded) {
-                System.out.println("Migrating address table to update zip column type...");
-                stmt.executeUpdate("ALTER TABLE address RENAME TO address_old");
-                stmt.executeUpdate("CREATE TABLE address ("
-                        + "username TEXT PRIMARY KEY,"
-                        + "street TEXT,"
-                        + "city TEXT,"
-                        + "state TEXT,"
-                        + "zip TEXT,"
-                        + "latitude REAL,"
-                        + "longitude REAL,"
-                        + "FOREIGN KEY(username) REFERENCES users(username)"
-                        + ")");
-                stmt.executeUpdate("INSERT INTO address (username, street, city, state, zip, latitude, longitude) "
-                        + "SELECT username, street, city, state, zip, latitude, longitude FROM address_old");
-                stmt.executeUpdate("DROP TABLE address_old");
-                System.out.println("Address table migration complete.");
-            } else {
-                 stmt.executeUpdate("CREATE TABLE IF NOT EXISTS address ("
+        if (migrationNeeded) {
+            System.out.println("Migrating address table to update zip column type...");
+            stmt.executeUpdate("ALTER TABLE address RENAME TO address_old");
+            stmt.executeUpdate("CREATE TABLE address ("
                     + "username TEXT PRIMARY KEY,"
                     + "street TEXT,"
                     + "city TEXT,"
@@ -178,10 +145,28 @@ public class UserDataBase {
                     + "longitude REAL,"
                     + "FOREIGN KEY(username) REFERENCES users(username)"
                     + ")");
-            }
-
-
-            // couple indexes to speed up lookups
+            stmt.executeUpdate("INSERT INTO address (username, street, city, state, zip, latitude, longitude) "
+                    + "SELECT username, street, city, state, zip, latitude, longitude FROM address_old");
+            stmt.executeUpdate("DROP TABLE address_old");
+            System.out.println("Address table migration complete.");
+        } else {
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS address ("
+                    + "username TEXT PRIMARY KEY,"
+                    + "street TEXT,"
+                    + "city TEXT,"
+                    + "state TEXT,"
+                    + "zip TEXT,"
+                    + "latitude REAL,"
+                    + "longitude REAL,"
+                    + "FOREIGN KEY(username) REFERENCES users(username)"
+                    + ")");
+        }
+    }
+    /*
+    --> creates indexes on frequently queried columns for performance
+    --> connects to the database
+    -->  create indexes on user_type and email columns
+    */
     private void createIndexes() throws SQLException {
         try (Connection conn = DriverManager.getConnection(url);
              Statement stmt = conn.createStatement()) {
