@@ -1,3 +1,4 @@
+//TestBugLogging.java
 // Test file to generate fake bugs for each database to verify bug logging works- test UI Components as well adn Database connections
 import java.sql.SQLException;
 
