@@ -20,6 +20,7 @@ public class OrderDatabase {
     public OrderDatabase(Path dbPath) {
         this.dbPath = dbPath;
         this.url = "jdbc:sqlite:" + dbPath.toAbsolutePath().toString();
+        System.err.println(url);
     }
 
     public String getConnectionUrl() {
