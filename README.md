@@ -155,6 +155,18 @@ Version 1.1 includes core functionality. Future updates will focus on:
 - Enhanced user experience
 - Additional features based on user feedback * Not implmented yet*
 
+# Content Added Since 1.1*
+-  Added back Buttons for log out functioanilty 
+-  Added Customer Order history button
+-  Added solid color UI readability
+-  Added "welcome" diffecinate between screens
+-  Added Confirm Food Drop-off button on Driver side
+-  Added Delivery History
+-  Added Collect Payment option; Driver Side
+
+
+
+
 ## Authors
 - Alex
 - Mark
