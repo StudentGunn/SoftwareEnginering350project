@@ -7,14 +7,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 public class TestClass {
+    
+    
 
     @Test    
     public void testOrderDB() throws SQLException{
-        OrderDatabase orderDatabase = new OrderDatabase(null );
-        long orderID = orderDatabase.createOrder("Gerbert", "MacDon", "23 hill ave", "null", "null", 12.21, 3, null);
-        if (orderID != 0){
-            System.out.println("Order was created, Order ID: "+ orderID);
-        }
+        OrderingSystem orderingSystem = new OrderingSystem( );
+        Customer bob = new Customer("bob", 0, 0, "null", null);
+        int id = orderingSystem.createNewOrder(10, bob, null, 10);
+        assertEquals(10, id, "id should be 10");
+
     }
 }
 class UserDataBaseTest {

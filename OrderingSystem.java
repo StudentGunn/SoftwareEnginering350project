@@ -18,13 +18,17 @@ public class OrderingSystem{
             return false;
         }
     };
-    private void createNewOrder (int orderID,Customer customer, String items[], int storeID){
+    public int createNewOrder (int orderID,Customer customer, String items[], int storeID){
+        Orders newOrder = new Orders(orderID, customer.name, customer.ID,null, 0,items,storeID,0);
         try {
-            Orders newOrder = new Orders(orderID, customer.name, customer.ID,null, 0,items,storeID,0);
             unaccpetedOrders.add(newOrder);
+            // return newOrder.orderID;
         } catch (Exception e) {
             Logger.catchAndLogBug(e, "OrderingSystem.createNewOrder");
+            
         }
+        return newOrder.orderID;
+
     };
     /*Method for when a driver accpets an order,
     * The oder will be taken out of the unaccepted queue and the order object will have the added properties */
