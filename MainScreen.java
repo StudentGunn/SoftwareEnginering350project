@@ -25,7 +25,7 @@ public class MainScreen extends JPanel {
         headerBar.setBackground(new Color(46, 125, 50));
         headerBar.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
 
-        JLabel welcomeLabel = new JLabel("Welcome, " + username + "!");
+        JLabel welcomeLabel = new JLabel("Welcome Customer, " + username + "!");
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 18));
         welcomeLabel.setForeground(Color.WHITE);
 
