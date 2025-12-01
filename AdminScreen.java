@@ -115,6 +115,7 @@ public class AdminScreen extends JPanel {
         add(splitPane, BorderLayout.CENTER);
     }
 
+    // Allows the user to refresh the page.
     private void refreshData() {
     // Clear existing data
     customersModel.setRowCount(0);

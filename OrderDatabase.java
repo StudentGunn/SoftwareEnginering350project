@@ -207,9 +207,13 @@ public class OrderDatabase {
             ps.setLong(5, Instant.now().getEpochSecond());
             ps.setString(6, deliveryAddress);
             ps.setString(7, specialInstructions);
-            ps.setInt(8, estimateDeliveryTime(totalAmount, restaurantLat, restaurantLon, deliveryLat, deliveryLon));  // calculate estimated time
+            ps.setInt(8, estimateDeliveryTime(totalAmount));
             ps.setInt(9, itemCount);
             ps.setString(10, paymentType);
+            ps.setDouble(11, restaurantLat);
+            ps.setDouble(12, restaurantLon);
+            ps.setDouble(13, deliveryLat);
+            ps.setDouble(14, deliveryLon);
             ps.executeUpdate();
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -384,23 +388,10 @@ public class OrderDatabase {
     }
 
     // simple estimate based on order size and distance
-    private int estimateDeliveryTime(double orderTotal, double restaurantLat, double restaurantLon, double deliveryLat, double deliveryLon) {
-        int baseTime;
-        if (orderTotal <= 20) {
-            baseTime = 20;
-        } else if (orderTotal <= 50) {
-            baseTime = 30;
-        } else {
-            baseTime = 40;
-        }
-
-        try {
-            double travelTime = MapCalculator.calculateETA(restaurantLat, restaurantLon, deliveryLat, deliveryLon);
-            return baseTime + (int) Math.round(travelTime);
-        } catch (Exception e) {
-            // Fallback to a simpler estimate if coordinates are not available or invalid
-            return baseTime + 15; // Add a default travel time
-        }
+    private int estimateDeliveryTime(double orderTotal) {
+        if (orderTotal <= 20) return 30;
+        else if (orderTotal <= 50) return 45;
+        else return 60;
     }
 
     // assigns driver but only if order is still pending and not already assigned

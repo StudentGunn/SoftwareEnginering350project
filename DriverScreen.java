@@ -2,7 +2,12 @@
 import java.awt.*;
 import java.sql.*;
 import javax.swing.*;
-
+/*
+--> The driver varient of the main screen. Shows driver specific prompts.
+--> Includes six different buttons to navigate the driver side of the app.
+--> All other screens lead back to DriverScreen.
+--> Includes a panel to show the driver their most relevant order.
+ */
 public class DriverScreen extends JPanel {
     private final FoodDeliveryLoginUI parent;
     private final String username;
@@ -115,6 +120,7 @@ public class DriverScreen extends JPanel {
         customerLabel.setFont(new Font("Arial", Font.PLAIN, 12));
         customerLabel.setForeground(new Color(46, 125, 50));
 
+        // Shows the street the customer lives on.
         JTextArea customerAddress = new JTextArea();
         customerAddress.setAlignmentX(Component.LEFT_ALIGNMENT);
         customerAddress.setEditable(false);
@@ -142,7 +148,11 @@ public class DriverScreen extends JPanel {
             }
             parent.getSceneSorter().switchPage("DriverGetOrder");
         });
-        // cash out button action
+        /*
+        --> Adds money to the user's account based on finished deliveries.
+        --> Calculates the proper amount of money to add when clicked.
+        --> Adds proper amount to driver's bank account or card.
+         */
         cashOutBtn.addActionListener(e -> {
             String input = JOptionPane.showInputDialog(this, "Enter order ID to collect payment for:", "Collect Payment", JOptionPane.QUESTION_MESSAGE);
             if (input == null) return; // cancelled
@@ -199,6 +209,7 @@ public class DriverScreen extends JPanel {
             }
         });
 
+        // Button prompting
         deliveryHistoryBtn.addActionListener(e -> {
             DriveryHistory historyScreen = new DriveryHistory(parent, username);
             try {

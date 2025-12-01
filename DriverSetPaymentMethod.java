@@ -3,7 +3,11 @@ import java.sql.*;
 import java.text.ParseException;
 import javax.swing.*;
 import javax.swing.text.*;
-// catch exceptions and log them to Logger -> write to bugs.log
+/*
+--> Driver specific payment methods. Used to set up card, or bank account.
+--> Used to pay the driver for deliveries.
+--> Money is added to the preferred account when conditions are met.
+ */
 public class DriverSetPaymentMethod extends JPanel {
     private final FoodDeliveryLoginUI parent;
     private final String username;

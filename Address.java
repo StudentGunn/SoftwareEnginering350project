@@ -1,9 +1,18 @@
+ /*
+--> Address stores the user's street, city, state, zip code, latitude, and longitude.
+--> All of these are later used in other aspects of the code, such as ordering or ETA calculations.
+--> All address values are stored in a public address value in userDatabase, set whenever logging in.
+--> This ensures all classes can access it, and that it will always correspond to the correct user.
+ */
 
 public class Address {
+    // Used to tell drivers where to deliver food.
     private String street;
     private String city;
     private String state;
+    // Used to determine restaurants in area, especially on resturantScreen.
     private String zip;
+    // Coordinates are used to determine ETA values, as well as how many miles away a restaurant is.
     private double latitude;
     private double longitude;
 
@@ -15,8 +24,9 @@ public class Address {
         this.latitude = latitude;
         this.longitude = longitude;
     }
+    // Ensures that the address value is never null.
+    // Used to prompt user if they try to go to resturantScreen without a full address set.
     public boolean isValid() {
-        // Check String fields for null or emptiness
         if (street == null || street.trim().isEmpty()) {
             return false;
         }

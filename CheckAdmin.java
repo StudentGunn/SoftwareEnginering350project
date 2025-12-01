@@ -2,6 +2,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
+ /*
+--> Used to double-check that an attempted admin login is an admin.
+--> Uses hash codes for extra security.
+ */
 public class CheckAdmin {
     
     // Copy of the sha256Hex method to avoid dependencies

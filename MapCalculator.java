@@ -1,7 +1,7 @@
 public class MapCalculator {
     private static final double EARTH_RADIUS_KM = 6371; // Earth's radius in kilometers
 
-    public static double calculateETA (double lat1, double lon1, double lat2, double lon2){
+    public static int calculateETA (double lat1, double lon1, double lat2, double lon2){
         // The Haversine equation is used to deterime the distance in kilometers between two sets of coordinates.
         double dLat = Math.toRadians(lat2 - lat1);
         double dLon = Math.toRadians(lon2 - lon1);
@@ -16,7 +16,8 @@ public class MapCalculator {
         // The average global speed for a car is 30 km.
         double temp = distanceKm/30;
         temp=temp * 60; // Converting hours to minutes.
-        return (double) Math.round(temp * 10) /10; // Rounding makes it more readable
+        temp = (double) Math.round(temp * 10) /10; // Rounding makes it more readable
+        return (int) Math.round(temp);
     }
     public static double calculateMiles (double lat1, double lon1, double lat2, double lon2){
             // Redoing the first calculation prevents headaches.

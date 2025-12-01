@@ -3,7 +3,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.sql.SQLException;
-
+ /*
+--> Used to allow a user to see, as well as change their address.
+--> Automatically fills all fields with an address if the information exists.
+--> Information can be changed, but will not be saved until the "Save address" button is pressed.
+--> Prompted by the Set Address button in mainScreen.
+--> Uses the public address variable in userDatabase.
+ */
 public class AddressScreen extends JPanel {
     private FoodDeliveryLoginUI parent;
     private String username;
@@ -13,16 +19,16 @@ public class AddressScreen extends JPanel {
     private JTextField zipField;
     private JTextField latitudeField;
     private JTextField longitudeField;
-    private JButton updateButton;
-    private JButton backButton;
 
-    public AddressScreen(FoodDeliveryLoginUI parent, String username) {
+     public AddressScreen(FoodDeliveryLoginUI parent, String username) {
         this.parent = parent;
         this.username = username;
         initUI();
+        // Ensures that the address shows up as soon as the screen loads.
         loadAddress();
     }
 
+    // Stores information used in sceneSorter.
     private void initUI() {
         setLayout(new BorderLayout(0, 0));
         setBackground(new Color(245, 245, 245));
@@ -32,7 +38,7 @@ public class AddressScreen extends JPanel {
         headerBar.setBackground(new Color(46, 125, 50));
         headerBar.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
 
-        backButton = new JButton("Back");
+        JButton backButton = new JButton("Back");
         styleHeaderButton(backButton);
         headerBar.add(backButton, BorderLayout.WEST);
 
@@ -51,6 +57,7 @@ public class AddressScreen extends JPanel {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
+        // Street
         gbc.gridx = 0;
         gbc.gridy = 0;
         formPanel.add(new JLabel("Street:"), gbc);
@@ -58,6 +65,7 @@ public class AddressScreen extends JPanel {
         streetField = new JTextField(20);
         formPanel.add(streetField, gbc);
 
+        // City
         gbc.gridx = 0;
         gbc.gridy = 1;
         formPanel.add(new JLabel("City:"), gbc);
@@ -65,6 +73,7 @@ public class AddressScreen extends JPanel {
         cityField = new JTextField(20);
         formPanel.add(cityField, gbc);
 
+        // State
         gbc.gridx = 0;
         gbc.gridy = 2;
         formPanel.add(new JLabel("State:"), gbc);
@@ -72,6 +81,7 @@ public class AddressScreen extends JPanel {
         stateField = new JTextField(20);
         formPanel.add(stateField, gbc);
 
+        // Zip Code
         gbc.gridx = 0;
         gbc.gridy = 3;
         formPanel.add(new JLabel("Zip:"), gbc);
@@ -80,6 +90,8 @@ public class AddressScreen extends JPanel {
         formPanel.add(zipField, gbc);
 
         // Latitude and Longitude
+
+        // Helps inform the user of how to find the harder values.
         gbc.gridx = 0;
         gbc.gridy = 4;
         gbc.gridwidth = 2;
@@ -90,6 +102,7 @@ public class AddressScreen extends JPanel {
         cordHelp.setAlignmentX(Component.CENTER_ALIGNMENT);
         formPanel.add(cordHelp, gbc);
 
+        // Latitude
         gbc.gridx = 0;
         gbc.gridy = 5;
         formPanel.add(new JLabel("Latitude:"), gbc);
@@ -97,6 +110,7 @@ public class AddressScreen extends JPanel {
         latitudeField = new JTextField(20);
         formPanel.add(latitudeField, gbc);
 
+        // Longitude
         gbc.gridx = 0;
         gbc.gridy = 6;
         formPanel.add(new JLabel("Longitude:"), gbc);
@@ -104,11 +118,12 @@ public class AddressScreen extends JPanel {
         longitudeField = new JTextField(20);
         formPanel.add(longitudeField, gbc);
 
+        // Save button.
         gbc.gridx = 0;
         gbc.gridy = 7;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
-        updateButton = new JButton("Update Address");
+        JButton updateButton = new JButton("Update Address");
         styleMainButton(updateButton);
         formPanel.add(updateButton, gbc);
 
@@ -127,6 +142,7 @@ public class AddressScreen extends JPanel {
         updateButton.addActionListener(this::updateAddress);
     }
 
+    // Makes updateButton look stylish.
     private void styleMainButton(JButton button) {
         button.setFont(new Font("Arial", Font.BOLD, 14));
         button.setBackground(new Color(46, 125, 50));
@@ -139,6 +155,7 @@ public class AddressScreen extends JPanel {
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
     }
 
+    // Makes backButton look stylish.
     private void styleHeaderButton(JButton button) {
         button.setFont(new Font("Arial", Font.BOLD, 12));
         button.setBackground(Color.WHITE);
@@ -149,6 +166,8 @@ public class AddressScreen extends JPanel {
         button.setPreferredSize(new Dimension(90, 32));
     }
 
+    // Used to preset the values of the address screen if there's existing information.
+     // Allows user to check their address.
     private void loadAddress() {
         if (parent.address != null) {
             streetField.setText(parent.address.getStreet());
@@ -160,31 +179,38 @@ public class AddressScreen extends JPanel {
         }
     }
 
+    // Changes the public address variable when the update Address button is clicked.
+     // Also checks to make sure all values are valid before saving.
     private void updateAddress(ActionEvent e) {
+         // Street
         String street = streetField.getText().trim();
         if (street.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Street cannot be empty.", "Input Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
+        // City
         String city = cityField.getText().trim();
         if (city.isEmpty()) {
             JOptionPane.showMessageDialog(this, "City cannot be empty.", "Input Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
+        // State
         String state = stateField.getText().trim();
         if (state.length() != 2 || !state.matches("[a-zA-Z]+")) {
             JOptionPane.showMessageDialog(this, "State must be a 2-letter abbreviation.", "Input Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
+        // Zip
         String zip = zipField.getText().trim();
         if (!zip.matches("\\d{5}")) {
             JOptionPane.showMessageDialog(this, "ZIP code must be 5 digits.", "Input Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
+        // Latitude and Longitude
         double latitude = Double.parseDouble(latitudeField.getText().trim());
         double longitude = Double.parseDouble(longitudeField.getText().trim());
         if (!(longitude >= -180 && longitude <= 180) || !(latitude >= -90 && latitude <= 90)) {
@@ -201,11 +227,13 @@ public class AddressScreen extends JPanel {
             
             // Reload the address in the parent UI to ensure it's updated globally
             parent.loadUserAddress(username);
-            
+
+            // Tell user it's a success!
             JOptionPane.showMessageDialog(this, "Address updated successfully!");
 
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            // If it fails, log the bug, inform the user.
+            Logger.catchAndLogBug(ex, "AddressScreen");
             JOptionPane.showMessageDialog(this, "Error updating address in the database.", "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }

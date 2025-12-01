@@ -5,7 +5,7 @@ import java.text.DecimalFormat;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-
+// Used to review payment history. Shows the driver all previous deliveries and the money made from each one.
 public class DriverPaymentHistory extends JPanel {
     // Set up UI components and load payment history from the database, so it shows driver their payment history
 	// catch any exceptions and log them to Logger -> write to bugs.log

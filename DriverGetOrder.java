@@ -3,7 +3,12 @@ import java.sql.*;
 import java.text.DecimalFormat;
 import javax.swing.*;
 import javax.swing.table.*;
-
+ /*
+--> The main screen used for a driver to pick orders to deliver.
+--> Shows a table that displays currently unclaimed orders.
+--> The driver will claim an order, at which point the driver will be assigned to it.
+--> This order will be removed from the unclaimed orders, and will no longer appear.
+ */
 public class DriverGetOrder extends JPanel {
     private final FoodDeliveryLoginUI parent;
     private final String username;
@@ -78,7 +83,7 @@ public class DriverGetOrder extends JPanel {
             Logger.catchAndLogBug(e, "DriverGetOrder.initUI");
         }
     }
-
+    // Refreshes the page, in case new orders appear while still on the screen.
     private void refreshOrders() {
         ordersModel.setRowCount(0);
         
@@ -102,8 +107,8 @@ public class DriverGetOrder extends JPanel {
                 double totalAmount = rs.getDouble("total_amount");
                 double driverPay = totalAmount * DRIVER_COMMISSION;
                 int baseEta = rs.getInt("estimated_minutes");
-                int deliveryEta = baseEta + 10; // Add 10 minutes for delivery
-                
+                int plusEta = MapCalculator.calculateETA(rs.getDouble("restaurantLat"), rs.getDouble("restaurantLon"), rs.getDouble("deliveryLat"), rs.getDouble("deliveryLon"));
+                int deliveryEta = (baseEta+plusEta);
                 Object[] row = {
                     rs.getLong("order_id"),
                     rs.getString("restaurant_name"),
@@ -132,6 +137,8 @@ public class DriverGetOrder extends JPanel {
         }
     }
 
+    // The prompt used by the select Order button.
+     // Used to assign orders to a specific driver, and switch their status accordingly.
     private void acceptSelectedOrder() {
         int selectedRow = ordersTable.getSelectedRow();
         if (selectedRow == -1) {
