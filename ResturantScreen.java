@@ -11,6 +11,8 @@ public class ResturantScreen extends JPanel {
     private FoodDeliveryLoginUI parent;
     private String username;
     private JPanel content;
+    private String zip;
+
     /*
     --> Sets Resturant Screen, calls initUI to initialize the user interface
     --> Parameters:
@@ -20,6 +22,7 @@ public class ResturantScreen extends JPanel {
     public ResturantScreen(FoodDeliveryLoginUI parent, String username) {
         this.parent = parent;
         this.username = username;
+        this.zip = parent.address.getZip();
         initUI();
     }
 

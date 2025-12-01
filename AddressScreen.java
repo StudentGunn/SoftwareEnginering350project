@@ -85,7 +85,7 @@ public class AddressScreen extends JPanel {
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         JLabel cordHelp = new JLabel("You can find coordinates by placing the address into Google Maps!");
-        cordHelp.setFont(new Font("Arial", Font.PLAIN, 10));
+        cordHelp.setFont(new Font("Arial", Font.PLAIN, 14));
         cordHelp.setForeground(new Color(46, 125, 50));
         cordHelp.setAlignmentX(Component.CENTER_ALIGNMENT);
         formPanel.add(cordHelp, gbc);

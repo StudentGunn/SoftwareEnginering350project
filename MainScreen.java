@@ -186,7 +186,7 @@ public class MainScreen extends JPanel {
             restaurantScreen.updateZipCode(zipCode);
         } else {
             // Create new restaurant screen with the current zip code
-            restaurantScreen = new ResturantScreen(parent, username, zipCode);
+            restaurantScreen = new ResturantScreen(parent, username);
             parent.getSceneSorter().addScene("RestaurantScreen", restaurantScreen);
         }
         parent.getSceneSorter().switchPage("RestaurantScreen");

@@ -55,7 +55,7 @@ public class IntegrationAdminTest {
         assertTrue(hashValid);
 
         // create a test order
-        long orderId = orderDb.createOrder("customer1", "Taco Shop", "50 Taco Ave", "75 Home St", "extra salsa", 12.50, 2, "CARD");
+        long orderId = orderDb.createOrder("customer1", "Taco Shop", "50 Taco Ave", "75 Home St", "extra salsa", 12.50, 2, "CARD", 20.10294,60.120,69.420,42.560);
         assertTrue(orderId > 0);
 
         // admin cancels the order

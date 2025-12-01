@@ -67,7 +67,7 @@ public class IntegrationCustomerTest {
         assertNotNull(activePayment);
 
         // place order
-        long orderId = orderDb.createOrder(username, "Pizza Place", "123 Main St", "456 Home St", "none", 19.99, 2, "CARD");
+        long orderId = orderDb.createOrder(username, "Pizza Place", "123 Main St", "456 Home St", "none", 19.99, 2, "CARD",20.10294,60.120,69.420,42.560);
         assertTrue(orderId > 0);
 
         // add items

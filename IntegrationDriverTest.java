@@ -61,7 +61,7 @@ public class IntegrationDriverTest {
         assertEquals("DRIVER", userType);
 
         // create a test order (normally customer does this)
-        long orderId = orderDb.createOrder("somecustomer", "Burger Joint", "100 Food St", "200 Customer Rd", "none", 15.99, 1, "CARD");
+        long orderId = orderDb.createOrder("somecustomer", "Burger Joint", "100 Food St", "200 Customer Rd", "none", 15.99, 1, "CARD",20.10294,60.120,69.420,42.560);
         assertTrue(orderId > 0);
 
         // driver accepts order
