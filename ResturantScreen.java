@@ -140,7 +140,7 @@ public class ResturantScreen extends JPanel {
         orderBtn.setOpaque(true);
         orderBtn.setBorderPainted(false);
         orderBtn.setFocusPainted(false);
-        orderBtn.addActionListener(e -> createOrder(name));
+        orderBtn.addActionListener(e -> createOrder(name, lat, lon));
         row.add(orderBtn, BorderLayout.EAST);
 
         JPanel bottomPanel = new JPanel();
@@ -163,7 +163,7 @@ public class ResturantScreen extends JPanel {
         return row;
     }
     // shows menu and places order
-    private void createOrder(String restaurantName) {
+    private void createOrder(String restaurantName, double restaurantLat, double restaurantLon) {
         String restaurantAddress = getRestaurantAddress(restaurantName);
         String[] menuItems = {"Burger - $12.99", "Pizza - $15.99", "Salad - $8.99", "Pasta - $13.99", "Sandwich - $9.99"};
         double[] prices = {12.99, 15.99, 8.99, 13.99, 9.99};
@@ -193,7 +193,7 @@ public class ResturantScreen extends JPanel {
 
             if (confirm == JOptionPane.OK_OPTION) {
                 try {
-                    saveOrderToDatabase(restaurantName, restaurantAddress, menuItems, prices, menuPanel.checkBoxes, menuPanel.quantities, calc.total);
+                    saveOrderToDatabase(restaurantName, restaurantAddress, menuItems, prices, menuPanel.checkBoxes, menuPanel.quantities, calc.total, restaurantLat, restaurantLon);
                     navigateBackToMain();
                 } catch (SQLException ex) {
                     Logger.catchAndLogBug(ex, "ResturantScreen");
@@ -278,7 +278,8 @@ public class ResturantScreen extends JPanel {
     }
 
     private void saveOrderToDatabase(String restaurantName, String restaurantAddress, String[] menuItems,
-                                     double[] prices, JCheckBox[] checkBoxes, JSpinner[] quantities, double total) throws SQLException {
+                                     double[] prices, JCheckBox[] checkBoxes, JSpinner[] quantities, double total,
+                                     double restaurantLat, double restaurantLon) throws SQLException {
         // Check payment method
         PaymentInformation paymentInfo = parent.paymentDb.getActivePaymentMethod(username);
         if (paymentInfo == null) {
@@ -300,10 +301,12 @@ public class ResturantScreen extends JPanel {
         // Create order in database
         long orderId = parent.orderDb.createOrder(username, restaurantName, restaurantAddress,
             parent.address.getStreet(),
-            "No special instructions",
+            "No Special Instructions",
             total,
             totalItems,
-            paymentInfo.getPaymentType());
+            paymentInfo.getPaymentType(),
+            restaurantLat, restaurantLon,
+            parent.address.getLatitude(), parent.address.getLongitude());
 
         // Add items to order
         for (int i = 0; i < checkBoxes.length; i++) {

@@ -101,22 +101,30 @@ public class MainScreen extends JPanel {
 
         // One-time immediate check for delivered orders not yet notified
         try {
-            if (parent.orderDb.hasUnnotifiedDelivered(username)) {
+            if (parent.orderDb != null && parent.orderDb.hasUnnotifiedDelivered(username)) {
                 parent.showNotification("Your food has been delivered!", new Color(46, 125, 50), Color.WHITE, 5000);
                 parent.orderDb.markDeliveredNotified(username);
             }
         } catch (SQLException ex) {
-            // implement proper error handling/logging as needed later
+            Logger.catchAndLogBug(ex, "MainScreen");
+            JOptionPane.showMessageDialog(this, "Error checking for delivered orders: " + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
 
         // Periodic check while this screen is shown
         deliveredCheckTimer = new javax.swing.Timer(5000, e -> {
             try {
-                if (parent.orderDb.hasUnnotifiedDelivered(username)) {
+                if (parent.orderDb != null && parent.orderDb.hasUnnotifiedDelivered(username)) {
                     parent.showNotification("Your food has been delivered!", new Color(46, 125, 50), Color.WHITE, 5000);
                     parent.orderDb.markDeliveredNotified(username);
                 }
-            } catch (SQLException ignored) { }
+            } catch (SQLException ex) {
+                Logger.catchAndLogBug(ex, "MainScreen");
+                // Stop the timer if a database error occurs to prevent repeated errors
+                if (deliveredCheckTimer != null) {
+                    deliveredCheckTimer.stop();
+                }
+                JOptionPane.showMessageDialog(this, "Error checking for delivered orders: " + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            }
         });
         deliveredCheckTimer.start();
     }

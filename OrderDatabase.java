@@ -41,58 +41,11 @@ public class OrderDatabase {
             // migration stuff - adding columns to existing tables if they dont have them yet
             // this way the database works even if someone has an older version
 
-            // check for payment_status column
-            boolean needsPaymentStatus = false;
-            try (ResultSet rs = stmt.executeQuery("SELECT payment_status FROM orders LIMIT 1")) {
-                // column exists if this works
-            } catch (SQLException ex) {
-                needsPaymentStatus = true;
-            }
-            if (needsPaymentStatus) {
-                try {
-                    stmt.executeUpdate("ALTER TABLE orders ADD COLUMN payment_status TEXT DEFAULT 'PENDING'");
-                } catch (SQLException ex) {
-                    // probably already added, just ignore
-                }
-            }
-
-            // check for payment_type column
-            boolean needsPaymentType = false;
-            try (ResultSet rs = stmt.executeQuery("SELECT payment_type FROM orders LIMIT 1")) {
-            } catch (SQLException ex) {
-                needsPaymentType = true;
-            }
-            if (needsPaymentType) {
-                try {
-                    stmt.executeUpdate("ALTER TABLE orders ADD COLUMN payment_type TEXT");
-                } catch (SQLException ex) {
-                }
-            }
-
-            // check for restaurant_address
-            boolean needsRestaurantAddress = false;
-            try (ResultSet rs = stmt.executeQuery("SELECT restaurant_address FROM orders LIMIT 1")) {
-            } catch (SQLException ex) {
-                needsRestaurantAddress = true;
-            }
-            if (needsRestaurantAddress) {
-                try {
-                    stmt.executeUpdate("ALTER TABLE orders ADD COLUMN restaurant_address TEXT");
-                } catch (SQLException ex) {
-                }
-            }
-
-            //  make as a delivered_notified flag (for customer notifications- easy way to do it before .db convertion)
-            boolean needsDeliveredNotified = false;
-            try (ResultSet rs = stmt.executeQuery("SELECT delivered_notified FROM orders LIMIT 1")) {
-            } catch (SQLException ex) {
-                needsDeliveredNotified = true;
-            }
-            if (needsDeliveredNotified) {
-                try {
-                    stmt.executeUpdate("ALTER TABLE orders ADD COLUMN delivered_notified INTEGER DEFAULT 0");
-                } catch (SQLException ex) {
-                }
+            if (tableExists("orders", conn)) {
+                addColumnIfNotExists("orders", "payment_status", "TEXT DEFAULT 'PENDING'", conn);
+                addColumnIfNotExists("orders", "payment_type", "TEXT", conn);
+                addColumnIfNotExists("orders", "restaurant_address", "TEXT", conn);
+                addColumnIfNotExists("orders", "delivered_notified", "INTEGER DEFAULT 0", conn);
             }
 
             // main orders table - stores all the order info
@@ -114,6 +67,7 @@ public class OrderDatabase {
                     + "item_count INTEGER NOT NULL DEFAULT 0,"
                     + "payment_type TEXT,"
                     + "payment_status TEXT DEFAULT 'PENDING',"
+                    + "restaurant_address TEXT,"
                     + "delivered_notified INTEGER DEFAULT 0,"
                     + "FOREIGN KEY (customer_username) REFERENCES users(username) ON DELETE RESTRICT ON UPDATE CASCADE,"
                     + "FOREIGN KEY (driver_username) REFERENCES drivers(username) ON DELETE RESTRICT ON UPDATE CASCADE,"
@@ -163,11 +117,32 @@ public class OrderDatabase {
             stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_order_items_order ON order_items(order_id)");
         }
     }
+
+    private boolean tableExists(String tableName, Connection conn) throws SQLException {
+        try (ResultSet rs = conn.getMetaData().getTables(null, null, tableName, null)) {
+            return rs.next();
+        }
+    }
+
+    private void addColumnIfNotExists(String tableName, String columnName, String columnDefinition, Connection conn) throws SQLException {
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("PRAGMA table_info(" + tableName + ")")) {
+            while (rs.next()) {
+                if (rs.getString("name").equalsIgnoreCase(columnName)) {
+                    return; // Column already exists
+                }
+            }
+        }
+        try (Statement stmt = conn.createStatement()) {
+            stmt.executeUpdate("ALTER TABLE " + tableName + " ADD COLUMN " + columnName + " " + columnDefinition);
+        }
+    }
     // creates a new order and returns the order id
     // also estimates delivery time based on order total
     public long createOrder(String customerUsername, String restaurantName, String restaurantAddress,
-                          String deliveryAddress, String specialInstructions, double totalAmount,
-                          int itemCount, String paymentType) throws SQLException {
+                            String deliveryAddress, String specialInstructions, double totalAmount,
+                            int itemCount, String paymentType, double restaurantLat, double restaurantLon,
+                            double deliveryLat, double deliveryLon) throws SQLException {
         String sql = "INSERT INTO orders (customer_username, restaurant_name, restaurant_address, status, total_amount, "
                   + "created_at, delivery_address, special_instructions, estimated_minutes, item_count, payment_type) "
                   + "VALUES (?, ?, ?, 'PENDING', ?, ?, ?, ?, ?, ?, ?)";
@@ -181,7 +156,7 @@ public class OrderDatabase {
             ps.setLong(5, Instant.now().getEpochSecond());
             ps.setString(6, deliveryAddress);
             ps.setString(7, specialInstructions);
-            ps.setInt(8, estimateDeliveryTime(totalAmount));  // calculate estimated time
+            ps.setInt(8, estimateDeliveryTime(totalAmount, restaurantLat, restaurantLon, deliveryLat, deliveryLon));  // calculate estimated time
             ps.setInt(9, itemCount);
             ps.setString(10, paymentType);
             ps.executeUpdate();
@@ -291,7 +266,7 @@ public class OrderDatabase {
 
     // gets full order details including all items
     // uses GROUP_CONCAT to combine all items into one string
-    // remember to close the ResultSet after using it
+    // remember to close the ResultSet when done
     public ResultSet getOrderDetails(long orderId) throws SQLException {
         String sql = "SELECT o.*, "
                   + "(SELECT GROUP_CONCAT(item_name || ' x' || quantity) FROM order_items WHERE order_id = o.order_id) as items "
@@ -336,12 +311,24 @@ public class OrderDatabase {
         return ps.executeQuery();
     }
 
-    // simple estimate based on order size
-    // bigger orders = longer prep time probably
-    private int estimateDeliveryTime(double orderTotal) {
-        if (orderTotal <= 20) return 30;
-        else if (orderTotal <= 50) return 45;
-        else return 60;
+    // simple estimate based on order size and distance
+    private int estimateDeliveryTime(double orderTotal, double restaurantLat, double restaurantLon, double deliveryLat, double deliveryLon) {
+        int baseTime;
+        if (orderTotal <= 20) {
+            baseTime = 20;
+        } else if (orderTotal <= 50) {
+            baseTime = 30;
+        } else {
+            baseTime = 40;
+        }
+
+        try {
+            double travelTime = MapCalculator.calculateETA(restaurantLat, restaurantLon, deliveryLat, deliveryLon);
+            return baseTime + (int) Math.round(travelTime);
+        } catch (Exception e) {
+            // Fallback to a simpler estimate if coordinates are not available or invalid
+            return baseTime + 15; // Add a default travel time
+        }
     }
 
     // assigns driver but only if order is still pending and not already assigned
@@ -404,9 +391,16 @@ public class OrderDatabase {
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, customerUsername);
             ps.executeUpdate();
-        } catch (SQLException var51) {
-            Logger.catchAndLogBug(var51,"OrderDatabase");
-            JOptionPane.showMessageDialog(null, "An error occurred while marking orders as notified:\n" + var51.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     } 
+    // Used to determine the oldest pending order accepted by a single driver.
+    // This will be used to make sure that the order shown in the driver
+    // main screen is the most important.
+    public ResultSet getOldestActiveOrder(String driverUsername) throws SQLException {
+        String sql = "SELECT * FROM orders WHERE driver_username = ? AND status != 'DELIVERED' AND status != 'CANCELLED' ORDER BY order_id ASC LIMIT 1";
+        Connection conn = DriverManager.getConnection(url);
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, driverUsername);
+        return ps.executeQuery();
+    }
 }

@@ -79,22 +79,33 @@ public class AddressScreen extends JPanel {
         zipField = new JTextField(20);
         formPanel.add(zipField, gbc);
 
+        // Latitude and Longitude
         gbc.gridx = 0;
         gbc.gridy = 4;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        JLabel cordHelp = new JLabel("You can find coordinates by placing the address into Google Maps!");
+        cordHelp.setFont(new Font("Arial", Font.PLAIN, 10));
+        cordHelp.setForeground(new Color(46, 125, 50));
+        cordHelp.setAlignmentX(Component.CENTER_ALIGNMENT);
+        formPanel.add(cordHelp, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 5;
         formPanel.add(new JLabel("Latitude:"), gbc);
         gbc.gridx = 1;
         latitudeField = new JTextField(20);
         formPanel.add(latitudeField, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         formPanel.add(new JLabel("Longitude:"), gbc);
         gbc.gridx = 1;
         longitudeField = new JTextField(20);
         formPanel.add(longitudeField, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 6;
+        gbc.gridy = 7;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         updateButton = new JButton("Update Address");
