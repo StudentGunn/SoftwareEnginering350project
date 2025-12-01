@@ -23,6 +23,15 @@ public class ResturantScreen extends JPanel {
         initUI();
     }
 
+    // Method to update the zip code and refresh the UI
+    public void updateZipCode(String newZip) {
+        this.zip = newZip;
+        removeAll(); // Clear all components
+        initUI(); // Rebuild UI with new zip
+        revalidate(); // Revalidate the layout
+        repaint(); // Repaint the panel
+    }
+
     private void initUI() {
         setLayout(new BorderLayout(5,5));
 
@@ -45,12 +54,7 @@ public class ResturantScreen extends JPanel {
         backBtn.setBorderPainted(false);
         backBtn.setFocusPainted(false);
         backBtn.addActionListener(e -> {
-            MainScreen mainScreen = new MainScreen(parent, username);
-            try {
-                parent.getSceneSorter().addScene("MainScreen", mainScreen);
-            } catch (IllegalArgumentException ex) {
-                // already exists
-            }
+            // Just switch back to MainScreen without creating a new one
             parent.getSceneSorter().switchPage("MainScreen");
         });
 

@@ -171,12 +171,15 @@ public class MainScreen extends JPanel {
             return;
         }
         
-        // Create and show the restaurant screen
-        ResturantScreen restaurantScreen = new ResturantScreen(parent, username, zipCode);
-        try {
+        // Check if RestaurantScreen already exists and update it
+        ResturantScreen restaurantScreen = parent.getSceneSorter().getScene("RestaurantScreen");
+        if (restaurantScreen != null) {
+            // Update existing screen with new zip code
+            restaurantScreen.updateZipCode(zipCode);
+        } else {
+            // Create new restaurant screen with the current zip code
+            restaurantScreen = new ResturantScreen(parent, username, zipCode);
             parent.getSceneSorter().addScene("RestaurantScreen", restaurantScreen);
-        } catch (IllegalArgumentException ex) {
-            // Scene already exists; reuse existing instance *for now*
         }
         parent.getSceneSorter().switchPage("RestaurantScreen");
     }

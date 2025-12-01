@@ -23,15 +23,20 @@ public class SceneSorter {
     /*
     --> Allows the ability to add a new scene (JPanel) with a unique name
     --> scenes are stored in a map for easy retrieval
-    --> if a duplicate scene exists, an exception is thrown
+    --> if a duplicate scene exists, it will be replaced with the new one
     */
 
     public void addScene(String name, JPanel scene) {
         if (scenes.containsKey(name)) {
-            throw new IllegalArgumentException("A scene with this name already exists.");
+            // Remove old scene from card panel
+            JPanel oldScene = scenes.get(name);
+            cardsPanel.remove(oldScene);
         }
         scenes.put(name, scene);
         cardsPanel.add(scene, name);
+        // Force the panel to revalidate and repaint
+        cardsPanel.revalidate();
+        cardsPanel.repaint();
     }
     /*
     --> switchPage method; allows to switch to a different scene by name
@@ -51,5 +56,15 @@ public class SceneSorter {
     */
     public JPanel getCardsPanel() {
         return cardsPanel;
+    }
+    
+    /*
+    --> getScene method; returns a specific scene by name
+    --> returns null if the scene doesn't exist
+    --> allows checking if a scene exists and retrieving it for updates
+    */
+    @SuppressWarnings("unchecked")
+    public <T extends JPanel> T getScene(String name) {
+        return (T) scenes.get(name);
     }
 }

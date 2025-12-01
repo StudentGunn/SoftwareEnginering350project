@@ -194,3 +194,46 @@ Actual Result:
 
 ================================================================================
 
+================================================================================
+BUG ID: 1001
+Date: 2025-11-30 20:37:32
+Module: UserDataBase
+Severity: HIGH
+Status: OPEN
+--------------------------------------------------------------------------------
+Description:
+  ClassNotFoundException: org.sqlite.JDBC
+
+Steps to Reproduce:
+  See stack trace for conditions. Occurred in: jdk.internal.loader.BuiltinClassLoader.loadClass() at line 581
+
+Expected Result:
+  No exception thrown
+
+Actual Result:
+  java.lang.ClassNotFoundException: org.sqlite.JDBC
+	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:581)
+	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:178)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:522)
+	at java.base/java.lang.Class.forName0(Native Method)
+	at java.base/java.lang.Class.forName(Class.java:315)
+	at UserDataBase.loadJDBCDriver(UserDataBase.java:52)
+	at UserDataBase.init(UserDataBase.java:40)
+	at MainApp.lambda$main$0(MainApp.java:24)
+	at java.desktop/java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:313)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:770)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:721)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:715)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:85)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:740)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+
+
+================================================================================
+
