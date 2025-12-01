@@ -171,7 +171,8 @@ public class Logger {
         String expectedResult = "No exception thrown";
         String actualResult = stackTrace;
 
-        return reportBug(module, description, stepsToReproduce, expectedResult, actualResult, "HIGH", "OPEN");
+        String severity = mapSeverity(e, module);
+        return reportBug(module, description, stepsToReproduce, expectedResult, actualResult, severity, "OPEN");
     }
 
     /*
@@ -185,6 +186,63 @@ public class Logger {
             module = trace[0].getClassName();
         }
         return catchAndLogBug(e, module);
+    }
+
+    // Explicit severity overload for callers needing manual control
+    public static long catchAndLogBug(Exception e, String module, String severity) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        String stackTrace = sw.toString();
+        pw.close();
+
+        StackTraceElement[] trace = e.getStackTrace();
+        String locationInfo = "";
+        if (trace.length > 0) {
+            StackTraceElement top = trace[0];
+            locationInfo = top.getClassName() + "." + top.getMethodName() + "() at line " + top.getLineNumber();
+        }
+
+        String description = e.getClass().getSimpleName() + ": " + (e.getMessage() != null ? e.getMessage() : "No message");
+        String stepsToReproduce = "See stack trace for conditions. Occurred in: " + locationInfo;
+        String expectedResult = "No exception thrown";
+        String actualResult = stackTrace;
+
+        return reportBug(module, description, stepsToReproduce, expectedResult, actualResult, severity, "OPEN");
+    }
+
+    // Severity mapping by exception type and module hints
+    private static String mapSeverity(Exception e, String module) {
+        try {
+            if (e instanceof java.sql.SQLException) {
+                String msg = e.getMessage() != null ? e.getMessage().toLowerCase() : "";
+                if (msg.contains("constraint") || msg.contains("foreign key") || msg.contains("unique")) {
+                    return "HIGH";
+                }
+                return "HIGH"; // DB failures generally high
+            }
+            if (e instanceof NullPointerException) {
+                return "HIGH";
+            }
+            if (e instanceof IllegalArgumentException) {
+                return "LOW";
+            }
+            if (e instanceof ArrayIndexOutOfBoundsException || e instanceof IndexOutOfBoundsException) {
+                return "HIGH";
+            }
+            if (e instanceof IOException) {
+                return "MEDIUM";
+            }
+            if (e instanceof ClassNotFoundException) {
+                return "HIGH";
+            }
+            String m = module != null ? module.toLowerCase() : "";
+            if (m.contains("loginiu") || m.contains("resturantscreen") || m.contains("mainscreen")) {
+                return "MEDIUM";
+            }
+        } catch (Exception ignored) {
+        }
+        return "HIGH";
     }
 }
 
