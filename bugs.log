@@ -52,181 +52,58 @@ Actual Result:
 
 ================================================================================
 BUG ID: 1001
-Date: 2025-11-29 15:17:17
-Module: OrderDatabase.addOrderItem
+Date: 2025-11-24 14:29:49
+Module: ResturantScreen
 Severity: HIGH
 Status: OPEN
 --------------------------------------------------------------------------------
 Description:
-  SQLException: Foreign key constraint failed: order_items references non-existent order_id 99999
+  SQLiteException: [SQLITE_ERROR] SQL error or missing database (table orders has no column named restaurant_address)
 
 Steps to Reproduce:
-  See stack trace for conditions. Occurred in: TestBugLogging.testOrderDatabaseBug() at line 34
+  See stack trace for conditions. Occurred in: org.sqlite.core.DB.newSQLException() at line 1179
 
 Expected Result:
   No exception thrown
 
 Actual Result:
-  java.sql.SQLException: Foreign key constraint failed: order_items references non-existent order_id 99999
-	at TestBugLogging.testOrderDatabaseBug(TestBugLogging.java:34)
-	at TestBugLogging.main(TestBugLogging.java:11)
-
-
-================================================================================
-
-================================================================================
-BUG ID: 1002
-Date: 2025-11-29 15:17:17
-Module: DriverDatabase.updateDriverStatus
-Severity: HIGH
-Status: OPEN
---------------------------------------------------------------------------------
-Description:
-  NullPointerException: No message
-
-Steps to Reproduce:
-  See stack trace for conditions. Occurred in: TestBugLogging.testDriverDatabaseBug() at line 45
-
-Expected Result:
-  No exception thrown
-
-Actual Result:
-  java.lang.NullPointerException
-	at TestBugLogging.testDriverDatabaseBug(TestBugLogging.java:45)
-	at TestBugLogging.main(TestBugLogging.java:14)
-
-
-================================================================================
-
-================================================================================
-BUG ID: 1003
-Date: 2025-11-29 15:17:17
-Module: PaymentDatabase.addCardPayment
-Severity: HIGH
-Status: OPEN
---------------------------------------------------------------------------------
-Description:
-  SQLException: CHECK constraint failed: payment_type must be 'CARD' or 'BANK'
-
-Steps to Reproduce:
-  See stack trace for conditions. Occurred in: TestBugLogging.testPaymentDatabaseBug() at line 56
-
-Expected Result:
-  No exception thrown
-
-Actual Result:
-  java.sql.SQLException: CHECK constraint failed: payment_type must be 'CARD' or 'BANK'
-	at TestBugLogging.testPaymentDatabaseBug(TestBugLogging.java:56)
-	at TestBugLogging.main(TestBugLogging.java:17)
-
-
-================================================================================
-
-================================================================================
-BUG ID: 1004
-Date: 2025-11-29 15:17:17
-Module: UserDatabase.register
-Severity: HIGH
-Status: OPEN
---------------------------------------------------------------------------------
-Description:
-  SQLException: UNIQUE constraint failed: users.username
-
-Steps to Reproduce:
-  See stack trace for conditions. Occurred in: TestBugLogging.testUserDatabaseBug() at line 65
-
-Expected Result:
-  No exception thrown
-
-Actual Result:
-  java.sql.SQLException: UNIQUE constraint failed: users.username
-	at TestBugLogging.testUserDatabaseBug(TestBugLogging.java:65)
-	at TestBugLogging.main(TestBugLogging.java:20)
-
-
-================================================================================
-
-================================================================================
-BUG ID: 1005
-Date: 2025-11-29 15:17:17
-Module: DriverGetOrder.refreshOrders
-Severity: HIGH
-Status: OPEN
---------------------------------------------------------------------------------
-Description:
-  ArrayIndexOutOfBoundsException: Index 10 out of bounds for length 5
-
-Steps to Reproduce:
-  See stack trace for conditions. Occurred in: TestBugLogging.testUIComponentBug() at line 76
-
-Expected Result:
-  No exception thrown
-
-Actual Result:
-  java.lang.ArrayIndexOutOfBoundsException: Index 10 out of bounds for length 5
-	at TestBugLogging.testUIComponentBug(TestBugLogging.java:76)
-	at TestBugLogging.main(TestBugLogging.java:23)
-
-
-================================================================================
-
-================================================================================
-BUG ID: 1006
-Date: 2025-11-29 15:17:17
-Module: OrderingSystem.acceptOrder
-Severity: HIGH
-Status: OPEN
---------------------------------------------------------------------------------
-Description:
-  Order acceptance fails when driver is already assigned to another order
-
-Steps to Reproduce:
-1. Driver logs in
-2. Accepts order#123
-3. Attempts to accept order#456 while still on delivery
-4. System allows duplicate assignment
-
-Expected Result:
-  System should prevent driver from accepting multiple orders simultaneously
-
-Actual Result:
-  Driver successfully accepts both orders, causing delivery conflicts
-
-================================================================================
-
-================================================================================
-BUG ID: 1001
-Date: 2025-11-30 20:37:32
-Module: UserDataBase
-Severity: HIGH
-Status: OPEN
---------------------------------------------------------------------------------
-Description:
-  ClassNotFoundException: org.sqlite.JDBC
-
-Steps to Reproduce:
-  See stack trace for conditions. Occurred in: jdk.internal.loader.BuiltinClassLoader.loadClass() at line 581
-
-Expected Result:
-  No exception thrown
-
-Actual Result:
-  java.lang.ClassNotFoundException: org.sqlite.JDBC
-	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:581)
-	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:178)
-	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:522)
-	at java.base/java.lang.Class.forName0(Native Method)
-	at java.base/java.lang.Class.forName(Class.java:315)
-	at UserDataBase.loadJDBCDriver(UserDataBase.java:52)
-	at UserDataBase.init(UserDataBase.java:40)
-	at MainApp.lambda$main$0(MainApp.java:24)
-	at java.desktop/java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:313)
-	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:770)
-	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:721)
-	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:715)
-	at java.base/java.security.AccessController.doPrivileged(Native Method)
-	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:85)
-	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:740)
+  org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (table orders has no column named restaurant_address)
+	at org.sqlite.core.DB.newSQLException(DB.java:1179)
+	at org.sqlite.core.DB.newSQLException(DB.java:1190)
+	at org.sqlite.core.DB.throwex(DB.java:1150)
+	at org.sqlite.core.NativeDB.prepare_utf8(Native Method)
+	at org.sqlite.core.NativeDB.prepare(NativeDB.java:126)
+	at org.sqlite.core.DB.prepare(DB.java:264)
+	at org.sqlite.core.CorePreparedStatement.<init>(CorePreparedStatement.java:46)
+	at org.sqlite.jdbc3.JDBC3PreparedStatement.<init>(JDBC3PreparedStatement.java:32)
+	at org.sqlite.jdbc4.JDBC4PreparedStatement.<init>(JDBC4PreparedStatement.java:25)
+	at org.sqlite.jdbc4.JDBC4Connection.prepareStatement(JDBC4Connection.java:34)
+	at org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:226)
+	at org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:206)
+	at org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:211)
+	at OrderDatabase.createOrder(OrderDatabase.java:175)
+	at ResturantScreen.createOrder(ResturantScreen.java:265)
+	at ResturantScreen.lambda$createRestaurantRow$0(ResturantScreen.java:118)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1972)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2314)
+	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:407)
+	at java.desktop/javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:262)
+	at java.desktop/javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:279)
+	at java.desktop/java.awt.Component.processMouseEvent(Component.java:6576)
+	at java.desktop/javax.swing.JComponent.processMouseEvent(JComponent.java:3404)
+	at java.desktop/java.awt.Component.processEvent(Component.java:6341)
+	at java.desktop/java.awt.Container.processEvent(Container.java:2260)
+	at java.desktop/java.awt.Component.dispatchEventImpl(Component.java:4958)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2318)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4790)
+	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4917)
+	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Container.java:4560)
+	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Container.java:4501)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2304)
+	at java.desktop/java.awt.Window.dispatchEventImpl(Window.java:2671)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4790)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:725)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:702)
 	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
 	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
 	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
@@ -239,37 +116,493 @@ Actual Result:
 
 ================================================================================
 BUG ID: 1001
-Date: 2025-12-01 00:34:10
-Module: UserDataBase
+Date: 2025-11-24 14:30:29
+Module: TestJira
+Severity: MEDIUM
+Status: OPEN
+--------------------------------------------------------------------------------
+Description:
+  Automated test bug created by TestJira
+
+Steps to Reproduce:
+  1) Run TestJira
+2) Observe bugs.log and Jira (if enabled)
+
+Expected Result:
+  No exception expected
+
+Actual Result:
+  This is a synthetic test for Jira integration
+
+================================================================================
+
+================================================================================
+BUG ID: 1001
+Date: 2025-11-27 11:40:22
+Module: TestJira
+Severity: MEDIUM
+Status: OPEN
+--------------------------------------------------------------------------------
+Description:
+  Automated test bug created by TestJira
+
+Steps to Reproduce:
+  1) Run TestJira
+2) Observe bugs.log and Jira (if enabled)
+
+Expected Result:
+  No exception expected
+
+Actual Result:
+  This is a synthetic test for Jira integration
+
+================================================================================
+
+================================================================================
+BUG ID: 1001
+Date: 2025-11-30 22:24:52
+Module: DriverScreen
 Severity: HIGH
 Status: OPEN
 --------------------------------------------------------------------------------
 Description:
-  ClassNotFoundException: org.sqlite.JDBC
+  SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: orders)
 
 Steps to Reproduce:
-  See stack trace for conditions. Occurred in: jdk.internal.loader.BuiltinClassLoader.loadClass() at line 581
+  See stack trace for conditions. Occurred in: org.sqlite.core.DB.newSQLException() at line 1179
 
 Expected Result:
   No exception thrown
 
 Actual Result:
-  java.lang.ClassNotFoundException: org.sqlite.JDBC
-	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:581)
-	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:178)
-	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:522)
-	at java.base/java.lang.Class.forName0(Native Method)
-	at java.base/java.lang.Class.forName(Class.java:315)
-	at UserDataBase.loadJDBCDriver(UserDataBase.java:52)
-	at UserDataBase.init(UserDataBase.java:40)
-	at MainApp.lambda$main$0(MainApp.java:24)
-	at java.desktop/java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:313)
-	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:770)
-	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:721)
-	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:715)
-	at java.base/java.security.AccessController.doPrivileged(Native Method)
-	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:85)
-	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:740)
+  org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: orders)
+	at org.sqlite.core.DB.newSQLException(DB.java:1179)
+	at org.sqlite.core.DB.newSQLException(DB.java:1190)
+	at org.sqlite.core.DB.throwex(DB.java:1150)
+	at org.sqlite.core.NativeDB.prepare_utf8(Native Method)
+	at org.sqlite.core.NativeDB.prepare(NativeDB.java:126)
+	at org.sqlite.core.DB.prepare(DB.java:264)
+	at org.sqlite.core.CorePreparedStatement.<init>(CorePreparedStatement.java:46)
+	at org.sqlite.jdbc3.JDBC3PreparedStatement.<init>(JDBC3PreparedStatement.java:32)
+	at org.sqlite.jdbc4.JDBC4PreparedStatement.<init>(JDBC4PreparedStatement.java:25)
+	at org.sqlite.jdbc4.JDBC4Connection.prepareStatement(JDBC4Connection.java:34)
+	at org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:226)
+	at org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:206)
+	at DriverDatabase.getOldestActiveOrder(DriverDatabase.java:213)
+	at DriverScreen.loadCurrentOrder(DriverScreen.java:250)
+	at DriverScreen.initUI(DriverScreen.java:246)
+	at DriverScreen.<init>(DriverScreen.java:13)
+	at LoginUI.onLogin(LoginUI.java:149)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1972)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2314)
+	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:407)
+	at java.desktop/javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:262)
+	at java.desktop/javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:279)
+	at java.desktop/java.awt.Component.processMouseEvent(Component.java:6576)
+	at java.desktop/javax.swing.JComponent.processMouseEvent(JComponent.java:3404)
+	at java.desktop/java.awt.Component.processEvent(Component.java:6341)
+	at java.desktop/java.awt.Container.processEvent(Container.java:2260)
+	at java.desktop/java.awt.Component.dispatchEventImpl(Component.java:4958)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2318)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4790)
+	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4917)
+	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Container.java:4560)
+	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Container.java:4501)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2304)
+	at java.desktop/java.awt.Window.dispatchEventImpl(Window.java:2671)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4790)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:725)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:702)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+
+
+================================================================================
+
+================================================================================
+BUG ID: 1002
+Date: 2025-11-30 22:25:29
+Module: DriverScreen
+Severity: HIGH
+Status: OPEN
+--------------------------------------------------------------------------------
+Description:
+  SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: orders)
+
+Steps to Reproduce:
+  See stack trace for conditions. Occurred in: org.sqlite.core.DB.newSQLException() at line 1179
+
+Expected Result:
+  No exception thrown
+
+Actual Result:
+  org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: orders)
+	at org.sqlite.core.DB.newSQLException(DB.java:1179)
+	at org.sqlite.core.DB.newSQLException(DB.java:1190)
+	at org.sqlite.core.DB.throwex(DB.java:1150)
+	at org.sqlite.core.NativeDB.prepare_utf8(Native Method)
+	at org.sqlite.core.NativeDB.prepare(NativeDB.java:126)
+	at org.sqlite.core.DB.prepare(DB.java:264)
+	at org.sqlite.core.CorePreparedStatement.<init>(CorePreparedStatement.java:46)
+	at org.sqlite.jdbc3.JDBC3PreparedStatement.<init>(JDBC3PreparedStatement.java:32)
+	at org.sqlite.jdbc4.JDBC4PreparedStatement.<init>(JDBC4PreparedStatement.java:25)
+	at org.sqlite.jdbc4.JDBC4Connection.prepareStatement(JDBC4Connection.java:34)
+	at org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:226)
+	at org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:206)
+	at DriverDatabase.getOldestActiveOrder(DriverDatabase.java:213)
+	at DriverScreen.loadCurrentOrder(DriverScreen.java:250)
+	at DriverScreen.initUI(DriverScreen.java:246)
+	at DriverScreen.<init>(DriverScreen.java:13)
+	at LoginUI.onLogin(LoginUI.java:149)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1972)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2314)
+	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:407)
+	at java.desktop/javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:262)
+	at java.desktop/javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:279)
+	at java.desktop/java.awt.Component.processMouseEvent(Component.java:6576)
+	at java.desktop/javax.swing.JComponent.processMouseEvent(JComponent.java:3404)
+	at java.desktop/java.awt.Component.processEvent(Component.java:6341)
+	at java.desktop/java.awt.Container.processEvent(Container.java:2260)
+	at java.desktop/java.awt.Component.dispatchEventImpl(Component.java:4958)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2318)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4790)
+	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4917)
+	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Container.java:4560)
+	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Container.java:4501)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2304)
+	at java.desktop/java.awt.Window.dispatchEventImpl(Window.java:2671)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4790)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:725)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:702)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+
+
+================================================================================
+
+================================================================================
+BUG ID: 1001
+Date: 2025-11-30 22:41:06
+Module: DriverScreen
+Severity: HIGH
+Status: OPEN
+--------------------------------------------------------------------------------
+Description:
+  SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: orders)
+
+Steps to Reproduce:
+  See stack trace for conditions. Occurred in: org.sqlite.core.DB.newSQLException() at line 1179
+
+Expected Result:
+  No exception thrown
+
+Actual Result:
+  org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: orders)
+	at org.sqlite.core.DB.newSQLException(DB.java:1179)
+	at org.sqlite.core.DB.newSQLException(DB.java:1190)
+	at org.sqlite.core.DB.throwex(DB.java:1150)
+	at org.sqlite.core.NativeDB.prepare_utf8(Native Method)
+	at org.sqlite.core.NativeDB.prepare(NativeDB.java:126)
+	at org.sqlite.core.DB.prepare(DB.java:264)
+	at org.sqlite.core.CorePreparedStatement.<init>(CorePreparedStatement.java:46)
+	at org.sqlite.jdbc3.JDBC3PreparedStatement.<init>(JDBC3PreparedStatement.java:32)
+	at org.sqlite.jdbc4.JDBC4PreparedStatement.<init>(JDBC4PreparedStatement.java:25)
+	at org.sqlite.jdbc4.JDBC4Connection.prepareStatement(JDBC4Connection.java:34)
+	at org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:226)
+	at org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:206)
+	at DriverDatabase.getOldestActiveOrder(DriverDatabase.java:213)
+	at DriverScreen.loadCurrentOrder(DriverScreen.java:250)
+	at DriverScreen.initUI(DriverScreen.java:246)
+	at DriverScreen.<init>(DriverScreen.java:13)
+	at LoginUI.onLogin(LoginUI.java:149)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1972)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2314)
+	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:407)
+	at java.desktop/javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:262)
+	at java.desktop/javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:279)
+	at java.desktop/java.awt.Component.processMouseEvent(Component.java:6576)
+	at java.desktop/javax.swing.JComponent.processMouseEvent(JComponent.java:3404)
+	at java.desktop/java.awt.Component.processEvent(Component.java:6341)
+	at java.desktop/java.awt.Container.processEvent(Container.java:2260)
+	at java.desktop/java.awt.Component.dispatchEventImpl(Component.java:4958)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2318)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4790)
+	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4917)
+	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Container.java:4560)
+	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Container.java:4501)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2304)
+	at java.desktop/java.awt.Window.dispatchEventImpl(Window.java:2671)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4790)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:725)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:702)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+
+
+================================================================================
+
+================================================================================
+BUG ID: 1001
+Date: 2025-11-30 22:47:28
+Module: DriverScreen
+Severity: HIGH
+Status: OPEN
+--------------------------------------------------------------------------------
+Description:
+  SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: orders)
+
+Steps to Reproduce:
+  See stack trace for conditions. Occurred in: org.sqlite.core.DB.newSQLException() at line 1179
+
+Expected Result:
+  No exception thrown
+
+Actual Result:
+  org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: orders)
+	at org.sqlite.core.DB.newSQLException(DB.java:1179)
+	at org.sqlite.core.DB.newSQLException(DB.java:1190)
+	at org.sqlite.core.DB.throwex(DB.java:1150)
+	at org.sqlite.core.NativeDB.prepare_utf8(Native Method)
+	at org.sqlite.core.NativeDB.prepare(NativeDB.java:126)
+	at org.sqlite.core.DB.prepare(DB.java:264)
+	at org.sqlite.core.CorePreparedStatement.<init>(CorePreparedStatement.java:46)
+	at org.sqlite.jdbc3.JDBC3PreparedStatement.<init>(JDBC3PreparedStatement.java:32)
+	at org.sqlite.jdbc4.JDBC4PreparedStatement.<init>(JDBC4PreparedStatement.java:25)
+	at org.sqlite.jdbc4.JDBC4Connection.prepareStatement(JDBC4Connection.java:34)
+	at org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:226)
+	at org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:206)
+	at DriverDatabase.getOldestActiveOrder(DriverDatabase.java:213)
+	at DriverScreen.loadCurrentOrder(DriverScreen.java:250)
+	at DriverScreen.initUI(DriverScreen.java:246)
+	at DriverScreen.<init>(DriverScreen.java:13)
+	at LoginUI.onLogin(LoginUI.java:149)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1972)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2314)
+	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:407)
+	at java.desktop/javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:262)
+	at java.desktop/javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:279)
+	at java.desktop/java.awt.Component.processMouseEvent(Component.java:6576)
+	at java.desktop/javax.swing.JComponent.processMouseEvent(JComponent.java:3404)
+	at java.desktop/java.awt.Component.processEvent(Component.java:6341)
+	at java.desktop/java.awt.Container.processEvent(Container.java:2260)
+	at java.desktop/java.awt.Component.dispatchEventImpl(Component.java:4958)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2318)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4790)
+	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4917)
+	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Container.java:4560)
+	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Container.java:4501)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2304)
+	at java.desktop/java.awt.Window.dispatchEventImpl(Window.java:2671)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4790)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:725)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:702)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+
+
+================================================================================
+
+================================================================================
+BUG ID: 1001
+Date: 2025-11-30 23:01:39
+Module: DriverScreen
+Severity: HIGH
+Status: OPEN
+--------------------------------------------------------------------------------
+Description:
+  SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: orders)
+
+Steps to Reproduce:
+  See stack trace for conditions. Occurred in: org.sqlite.core.DB.newSQLException() at line 1179
+
+Expected Result:
+  No exception thrown
+
+Actual Result:
+  org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: orders)
+	at org.sqlite.core.DB.newSQLException(DB.java:1179)
+	at org.sqlite.core.DB.newSQLException(DB.java:1190)
+	at org.sqlite.core.DB.throwex(DB.java:1150)
+	at org.sqlite.core.NativeDB.prepare_utf8(Native Method)
+	at org.sqlite.core.NativeDB.prepare(NativeDB.java:126)
+	at org.sqlite.core.DB.prepare(DB.java:264)
+	at org.sqlite.core.CorePreparedStatement.<init>(CorePreparedStatement.java:46)
+	at org.sqlite.jdbc3.JDBC3PreparedStatement.<init>(JDBC3PreparedStatement.java:32)
+	at org.sqlite.jdbc4.JDBC4PreparedStatement.<init>(JDBC4PreparedStatement.java:25)
+	at org.sqlite.jdbc4.JDBC4Connection.prepareStatement(JDBC4Connection.java:34)
+	at org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:226)
+	at org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:206)
+	at DriverDatabase.getOldestActiveOrder(DriverDatabase.java:213)
+	at DriverScreen.loadCurrentOrder(DriverScreen.java:250)
+	at DriverScreen.initUI(DriverScreen.java:246)
+	at DriverScreen.<init>(DriverScreen.java:13)
+	at LoginUI.onLogin(LoginUI.java:149)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1972)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2314)
+	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:407)
+	at java.desktop/javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:262)
+	at java.desktop/javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:279)
+	at java.desktop/java.awt.Component.processMouseEvent(Component.java:6576)
+	at java.desktop/javax.swing.JComponent.processMouseEvent(JComponent.java:3404)
+	at java.desktop/java.awt.Component.processEvent(Component.java:6341)
+	at java.desktop/java.awt.Container.processEvent(Container.java:2260)
+	at java.desktop/java.awt.Component.dispatchEventImpl(Component.java:4958)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2318)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4790)
+	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4917)
+	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Container.java:4560)
+	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Container.java:4501)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2304)
+	at java.desktop/java.awt.Window.dispatchEventImpl(Window.java:2671)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4790)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:725)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:702)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+
+
+================================================================================
+
+================================================================================
+BUG ID: 1001
+Date: 2025-11-30 23:06:36
+Module: DriverScreen
+Severity: HIGH
+Status: OPEN
+--------------------------------------------------------------------------------
+Description:
+  SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: orders)
+
+Steps to Reproduce:
+  See stack trace for conditions. Occurred in: org.sqlite.core.DB.newSQLException() at line 1179
+
+Expected Result:
+  No exception thrown
+
+Actual Result:
+  org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: orders)
+	at org.sqlite.core.DB.newSQLException(DB.java:1179)
+	at org.sqlite.core.DB.newSQLException(DB.java:1190)
+	at org.sqlite.core.DB.throwex(DB.java:1150)
+	at org.sqlite.core.NativeDB.prepare_utf8(Native Method)
+	at org.sqlite.core.NativeDB.prepare(NativeDB.java:126)
+	at org.sqlite.core.DB.prepare(DB.java:264)
+	at org.sqlite.core.CorePreparedStatement.<init>(CorePreparedStatement.java:46)
+	at org.sqlite.jdbc3.JDBC3PreparedStatement.<init>(JDBC3PreparedStatement.java:32)
+	at org.sqlite.jdbc4.JDBC4PreparedStatement.<init>(JDBC4PreparedStatement.java:25)
+	at org.sqlite.jdbc4.JDBC4Connection.prepareStatement(JDBC4Connection.java:34)
+	at org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:226)
+	at org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:206)
+	at DriverDatabase.getOldestActiveOrder(DriverDatabase.java:213)
+	at DriverScreen.loadCurrentOrder(DriverScreen.java:250)
+	at DriverScreen.initUI(DriverScreen.java:246)
+	at DriverScreen.<init>(DriverScreen.java:13)
+	at LoginUI.onLogin(LoginUI.java:149)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1972)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2314)
+	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:407)
+	at java.desktop/javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:262)
+	at java.desktop/javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:279)
+	at java.desktop/java.awt.Component.processMouseEvent(Component.java:6576)
+	at java.desktop/javax.swing.JComponent.processMouseEvent(JComponent.java:3404)
+	at java.desktop/java.awt.Component.processEvent(Component.java:6341)
+	at java.desktop/java.awt.Container.processEvent(Container.java:2260)
+	at java.desktop/java.awt.Component.dispatchEventImpl(Component.java:4958)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2318)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4790)
+	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4917)
+	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Container.java:4560)
+	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Container.java:4501)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2304)
+	at java.desktop/java.awt.Window.dispatchEventImpl(Window.java:2671)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4790)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:725)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:702)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+
+
+================================================================================
+
+================================================================================
+BUG ID: 1001
+Date: 2025-12-01 11:06:06
+Module: DriverScreen
+Severity: HIGH
+Status: OPEN
+--------------------------------------------------------------------------------
+Description:
+  SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: orders)
+
+Steps to Reproduce:
+  See stack trace for conditions. Occurred in: org.sqlite.core.DB.newSQLException() at line 1179
+
+Expected Result:
+  No exception thrown
+
+Actual Result:
+  org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: orders)
+	at org.sqlite.core.DB.newSQLException(DB.java:1179)
+	at org.sqlite.core.DB.newSQLException(DB.java:1190)
+	at org.sqlite.core.DB.throwex(DB.java:1150)
+	at org.sqlite.core.NativeDB.prepare_utf8(Native Method)
+	at org.sqlite.core.NativeDB.prepare(NativeDB.java:126)
+	at org.sqlite.core.DB.prepare(DB.java:264)
+	at org.sqlite.core.CorePreparedStatement.<init>(CorePreparedStatement.java:46)
+	at org.sqlite.jdbc3.JDBC3PreparedStatement.<init>(JDBC3PreparedStatement.java:32)
+	at org.sqlite.jdbc4.JDBC4PreparedStatement.<init>(JDBC4PreparedStatement.java:25)
+	at org.sqlite.jdbc4.JDBC4Connection.prepareStatement(JDBC4Connection.java:34)
+	at org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:226)
+	at org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:206)
+	at DriverDatabase.getOldestActiveOrder(DriverDatabase.java:213)
+	at DriverScreen.loadCurrentOrder(DriverScreen.java:250)
+	at DriverScreen.initUI(DriverScreen.java:246)
+	at DriverScreen.<init>(DriverScreen.java:13)
+	at LoginUI.onLogin(LoginUI.java:149)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1972)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2314)
+	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:407)
+	at java.desktop/javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:262)
+	at java.desktop/javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:279)
+	at java.desktop/java.awt.Component.processMouseEvent(Component.java:6576)
+	at java.desktop/javax.swing.JComponent.processMouseEvent(JComponent.java:3404)
+	at java.desktop/java.awt.Component.processEvent(Component.java:6341)
+	at java.desktop/java.awt.Container.processEvent(Container.java:2260)
+	at java.desktop/java.awt.Component.dispatchEventImpl(Component.java:4958)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2318)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4790)
+	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4917)
+	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Container.java:4560)
+	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Container.java:4501)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2304)
+	at java.desktop/java.awt.Window.dispatchEventImpl(Window.java:2671)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4790)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:725)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:702)
 	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
 	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
 	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)

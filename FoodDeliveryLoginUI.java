@@ -2,12 +2,13 @@ import java.awt.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 import javax.swing.*;
 
 
  // Main UI class - handles the app window and scene switching.
  //  Uses SceneSorter to swap between different screens (login, customer, driver, admin).
- 
+
 public class FoodDeliveryLoginUI {
 
     // UI components
@@ -22,11 +23,14 @@ public class FoodDeliveryLoginUI {
     public DriverDatabase driverDb;
     public OrderDatabase orderDb;
 
+    // Holds the address for the currently logged-in user
+    public Address address;
+
     public SceneSorter getSceneSorter() {
         return sceneSorter;
     }
 
-    // Creates and shows the main window 
+    // Creates and shows the main window
     public void createAndShow() {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setMinimumSize(new Dimension(420, 260));
@@ -49,7 +53,20 @@ public class FoodDeliveryLoginUI {
         frame.setVisible(true);
     }
 
-    // Shows a notification message - auto disapears 
+    // Loads the address for the given user from the database and stores it
+    // in the public 'address' field. This creates a centralized, shared
+    // Address object.
+    public void loadUserAddress(String username) {
+        try {
+            this.address = userDb.getUserAddress(username);
+        } catch (SQLException e) {
+            System.err.println("Error loading address for " + username + ": " + e.getMessage());
+            // Set to null if an error occurs
+            this.address = null;
+        }
+    }
+
+    // Shows a notification message - auto disapears
     public void showNotification(String message, Color bg, Color fg, int durationMs) {
         messageLabel.setText(message);
         messageLabel.setOpaque(true);
@@ -65,14 +82,14 @@ public class FoodDeliveryLoginUI {
         timer.start();
     }
 
-    // Closes the window 
+    // Closes the window
     public void closeWindow() {
         if (frame != null) {
             frame.dispose();
         }
     }
 
-    // Hashes the password using SHA-256 
+    // Hashes the password using SHA-256
     public static String sha256Hex(String input) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");

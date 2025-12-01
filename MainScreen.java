@@ -69,7 +69,7 @@ public class MainScreen extends JPanel {
 
         // make the buttons
         JButton orderBtn = new JButton("Order Food");
-        JButton zipBtn = new JButton("Set Zip Code");
+        JButton zipBtn = new JButton("Set Address");
         JButton paymentBtn = new JButton("Payment Methods");
         JButton historyBtn = new JButton("Order History");
 
@@ -101,22 +101,30 @@ public class MainScreen extends JPanel {
 
         // One-time immediate check for delivered orders not yet notified
         try {
-            if (parent.orderDb.hasUnnotifiedDelivered(username)) {
+            if (parent.orderDb != null && parent.orderDb.hasUnnotifiedDelivered(username)) {
                 parent.showNotification("Your food has been delivered!", new Color(46, 125, 50), Color.WHITE, 5000);
                 parent.orderDb.markDeliveredNotified(username);
             }
         } catch (SQLException ex) {
-            // implement proper error handling/logging as needed later
+            Logger.catchAndLogBug(ex, "MainScreen");
+            JOptionPane.showMessageDialog(this, "Error checking for delivered orders: " + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
 
         // Periodic check while this screen is shown
         deliveredCheckTimer = new javax.swing.Timer(5000, e -> {
             try {
-                if (parent.orderDb.hasUnnotifiedDelivered(username)) {
+                if (parent.orderDb != null && parent.orderDb.hasUnnotifiedDelivered(username)) {
                     parent.showNotification("Your food has been delivered!", new Color(46, 125, 50), Color.WHITE, 5000);
                     parent.orderDb.markDeliveredNotified(username);
                 }
-            } catch (SQLException ignored) { }
+            } catch (SQLException ex) {
+                Logger.catchAndLogBug(ex, "MainScreen");
+                // Stop the timer if a database error occurs to prevent repeated errors
+                if (deliveredCheckTimer != null) {
+                    deliveredCheckTimer.stop();
+                }
+                JOptionPane.showMessageDialog(this, "Error checking for delivered orders: " + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            }
         });
         deliveredCheckTimer.start();
     }
@@ -163,10 +171,10 @@ public class MainScreen extends JPanel {
 
     // opens order screen if zip is set
     private void openOrderScreen() {
-        if (zipCode.isEmpty()) {
+        if (parent.address == null || !parent.address.isValid()) {
             JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(this),
-                    "Please enter your zip code first to see available restaurants.",
-                    "Zip Code Required", JOptionPane.WARNING_MESSAGE);
+                    "Please set an address before you order so we know where to deliver your food!",
+                    "Address Required", JOptionPane.WARNING_MESSAGE);
             promptZipCode();
             return;
         }
@@ -185,21 +193,15 @@ public class MainScreen extends JPanel {
     }
     
     private void promptZipCode() {
-        String input = JOptionPane.showInputDialog(SwingUtilities.getWindowAncestor(this),
-                "Enter your 5-digit zip code:", zipCode.isEmpty() ? "" : zipCode);
-        if (input != null) {
-            input = input.trim();
-            if (input.matches("\\d{5}")) {
-                zipCode = input;
-                JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(this),
-                        "Zip code set to: " + zipCode,
-                        "Zip Code Saved", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(this),
-                        "Please enter a valid 5-digit zip code.",
-                        "Invalid Zip", JOptionPane.WARNING_MESSAGE);
-            }
+        parent.loadUserAddress(username);
+        // Create and show the address screen
+        AddressScreen addressScreen = new AddressScreen(parent, username);
+        try {
+            parent.getSceneSorter().addScene("addressScreen", addressScreen);
+        } catch (IllegalArgumentException ex) {
+            // Scene already exists; reuse existing instance.
         }
+        parent.getSceneSorter().switchPage("addressScreen");
     }
 
     // shows profile info, can edit email

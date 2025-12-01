@@ -17,7 +17,7 @@ public class DriverScreen extends JPanel {
         setLayout(new BorderLayout(0, 0));
         setBackground(new Color(245, 245, 245));
 
-       // header
+        // Header
         JPanel headerBar = new JPanel(new BorderLayout(10, 0));
         headerBar.setBackground(new Color(46, 125, 50));
         headerBar.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
@@ -26,7 +26,6 @@ public class DriverScreen extends JPanel {
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 18));
         welcomeLabel.setForeground(Color.WHITE);
 
-        // logout button
         JButton logoutBtn = new JButton("Logout");
         logoutBtn.setFont(new Font("Arial", Font.BOLD, 12));
         logoutBtn.setBackground(Color.WHITE);
@@ -40,7 +39,7 @@ public class DriverScreen extends JPanel {
         headerBar.add(logoutBtn, BorderLayout.EAST);
         add(headerBar, BorderLayout.NORTH);
 
-        // main buttons 
+        // main buttons
         JPanel contentPanel = new JPanel(new GridBagLayout());
         contentPanel.setBackground(new Color(245, 245, 245));
         contentPanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
@@ -54,17 +53,17 @@ public class DriverScreen extends JPanel {
         JButton deliveryHistoryBtn = new JButton("Delivery History");
         JButton paymentHistoryBtn = new JButton("Payment History");
         JButton paymentMethodBtn = new JButton("Payment Method");
-        JButton confirmDropoffBtn = new JButton("Confrim Food Drop off");
-        JButton cashOutBtn = new JButton("Collect payment"); 
+        JButton confirmDropoffBtn = new JButton("Confirm Food Drop off");
+        JButton cashOutBtn = new JButton("Collect payment");
 
-        // style buttons 
+        // style buttons
         styleButton(getOrderBtn);
         styleButton(deliveryHistoryBtn);
         styleButton(paymentHistoryBtn);
         styleButton(paymentMethodBtn);
         styleButton(confirmDropoffBtn);
         styleButton(cashOutBtn);
-        
+
 
         // add buttons with spacing
         buttonsPanel.add(getOrderBtn);
@@ -80,8 +79,58 @@ public class DriverScreen extends JPanel {
         buttonsPanel.add(cashOutBtn);
 
         contentPanel.add(buttonsPanel);
-        add(contentPanel, BorderLayout.CENTER);
 
+        /* currentOrder Panel
+        --> Shows up on the right side of the screen
+        --> Shows the current order, order id, restaurant address, and customer address.
+        --> Collaborates with loadCurrentOrder to show oldest accepted order.
+        */
+        JPanel currentOrder = new JPanel();
+        currentOrder.setLayout(new BoxLayout(currentOrder, BoxLayout.Y_AXIS));
+        currentOrder.setBackground(new Color(245, 245, 245));
+        currentOrder.setBorder(BorderFactory.createEtchedBorder(new Color(46, 125, 50), new Color(31, 91, 34)));
+        currentOrder.add(Box.createVerticalStrut(10));
+
+        JTextArea orderID = new JTextArea("Current Order:");
+        orderID.setEditable(false);
+        orderID.setFont(new Font("Arial", Font.PLAIN, 20));
+        orderID.setForeground(new Color(46, 125, 50));
+        orderID.setBackground(new Color(245, 245, 245));
+
+        JLabel restaurantLabel = new JLabel("Restaurant Address:");
+        restaurantLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        restaurantLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        restaurantLabel.setForeground(new Color(46, 125, 50));
+
+        // Shows the street the restaurant is on for the current order.
+        JTextArea restaurantAddress = new JTextArea();
+        restaurantAddress.setAlignmentX(Component.LEFT_ALIGNMENT);
+        restaurantAddress.setEditable(false);
+        restaurantAddress.setFont(new Font("Arial", Font.PLAIN, 10));
+        restaurantAddress.setForeground(Color.BLACK);
+        restaurantAddress.setBackground(new Color(245, 245, 245));
+
+        JLabel customerLabel = new JLabel("Customer Address: ");
+        customerLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        customerLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        customerLabel.setForeground(new Color(46, 125, 50));
+
+        JTextArea customerAddress = new JTextArea();
+        customerAddress.setAlignmentX(Component.LEFT_ALIGNMENT);
+        customerAddress.setEditable(false);
+        customerAddress.setFont(new Font("Arial", Font.PLAIN, 10));
+        customerAddress.setForeground(Color.BLACK);
+        customerAddress.setBackground(new Color(245, 245, 245));
+
+        currentOrder.add(orderID);
+        currentOrder.add(restaurantLabel);
+        currentOrder.add(restaurantAddress);
+        currentOrder.add(customerLabel);
+        currentOrder.add(customerAddress);
+        currentOrder.add(Box.createVerticalStrut(10));
+        contentPanel.add(currentOrder);
+
+        add(contentPanel, BorderLayout.CENTER);
 
         // button actionss
         getOrderBtn.addActionListener(e -> {
@@ -208,6 +257,29 @@ public class DriverScreen extends JPanel {
         });
 
         logoutBtn.addActionListener(e -> logout());
+
+        loadCurrentOrder(orderID, restaurantAddress, customerAddress, customerLabel);
+    }
+    /*
+    --> Updates the currentOrder JPanel to show the most recent order.
+    --> Uses the oldest order the driver has accepted.
+    --> Shows the order id, restaurant address, and customer address.
+    */
+    private void loadCurrentOrder(JTextArea orderID, JTextArea restaurantAddress, JTextArea customerAddress, JLabel customerLabel) {
+        try (ResultSet rs = parent.orderDb.getOldestActiveOrder(username)) {
+            if (rs.next()) {
+                orderID.setText("Order ID: " + rs.getLong("order_id"));
+                restaurantAddress.setText(rs.getString("restaurant_address"));
+                customerAddress.setText(rs.getString("delivery_address"));
+            } else {
+                orderID.setText("No active orders");
+                restaurantAddress.setText("No active restaurants");
+                customerAddress.setText("No active customers");
+            }
+        } catch (SQLException ex) {
+            Logger.catchAndLogBug(ex, "DriverScreen");
+            orderID.setText("Error loading order");
+        }
     }
 
     // logout and go back to login

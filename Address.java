@@ -1,0 +1,61 @@
+
+public class Address {
+    private String street;
+    private String city;
+    private String state;
+    private String zip;
+    private double latitude;
+    private double longitude;
+
+    public Address(String street, String city, String state, String zip, double latitude, double longitude) {
+        this.street = street;
+        this.city = city;
+        this.state = state;
+        this.zip = zip;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+    public boolean isValid() {
+        // Check String fields for null or emptiness
+        if (street == null || street.trim().isEmpty()) {
+            return false;
+        }
+        if (city == null || city.trim().isEmpty()) {
+            return false;
+        }
+        if (state == null || state.trim().isEmpty()) {
+            return false;
+        }
+        if (zip == null || zip.isEmpty()) {
+            return false;
+        }
+        if (longitude == 0 || latitude == 0 || latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
+            return false;
+        }
+        return true;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public String getZip() {
+        return zip;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+}

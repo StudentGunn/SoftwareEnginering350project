@@ -11,17 +11,24 @@ import javax.swing.JOptionPane;
 /*
 --> user database - handles registration and login stuff
 --> stores usernames, password hashes, and user types (customer, driver, admin)
+--> also stores address info for each user to determine distance between drivers, resturaunts, and customers.
 */
 public class UserDataBase {
     private final Path dbPath;
     private final String url;
+    public Address address;
+
 /*
 -->sets path to the database file
 --> connects to the SQLite database at the given path
 --> retines the database connection URL
 */
-    public UserDataBase(Path dbPath) {
+    public UserDataBase(Path dbPath) throws SQLException {
         this.dbPath = dbPath;
+        this.url = "jdbc:sqlite:" + dbPath.toAbsolutePath().toString();
+    }
+     public UserDataBase() throws SQLException {
+        this.dbPath = Path.of("FoodDelivery.db");
         this.url = "jdbc:sqlite:" + dbPath.toAbsolutePath().toString();
     }
 
@@ -34,15 +41,15 @@ public class UserDataBase {
     --> loads the JDBC driver
     --> creates indexes on frequently queried columns
     --> migrates the users table if needed
-    --> create UsersTable 
-    */ 
+    --> create UsersTable
+    */
     public void init() throws SQLException {
         loadJDBCDriver();
         createUsersTable();
         migrateUsersTable();
         createIndexes();
     }
-/*  
+/*
 --> Refactored old loadJDBCDriver method, into separate method *Readabiltiy*
 --> loads the SQLite JDBC driver
 --> throws SQLException if the driver is not found
@@ -82,7 +89,7 @@ public class UserDataBase {
             throw e;
         }
     }
-/*  
+/*
 --> handles migrations for older database versions
 --> adds missing columns if they don't exist yet
 --> also connects to the database
@@ -93,6 +100,10 @@ public class UserDataBase {
             addColumnIfNotExists(stmt, "user_type", "TEXT DEFAULT 'CUSTOMER'");
             addColumnIfNotExists(stmt, "phone", "TEXT");
             addColumnIfNotExists(stmt, "admin_hash", "TEXT");
+            addColumnIfNotExists(stmt, "address", "TEXT"); // This column is likely deprecated by the 'address' table
+            addColumnIfNotExists(stmt, "zipCode", "TEXT"); // This column is likely deprecated by the 'address' table
+            addColumnIfNotExists(stmt, "latitude", "REAL"); // This column is likely deprecated by the 'address' table
+            createAddressTableAndMigrate(conn,stmt);
         } catch (SQLException e) {
             Logger.catchAndLogBug(e, "UserDataBase");
             JOptionPane.showMessageDialog(null, "An error occurred while migrating users table:\n" +
@@ -101,8 +112,8 @@ public class UserDataBase {
         }
     }
 
-    /*  
-    --> adds a column to the users table if it doesn't already exist 
+    /*
+    --> adds a column to the users table if it doesn't already exist
     --> used for database migrations; meaningful when updating older versions of the database
     --> catches SQL exception if column already exists
     --> And logger.CatchAndLogBug; catches other SQL exceptions and prints to bug.log
@@ -117,11 +128,59 @@ public class UserDataBase {
         }
     }
     /*
+    --> Creates the address table if it doesn't exist and handles migration for the 'zip' column type.
+    --> This method is called during database initialization to ensure the address table is correctly set up.
+    --> It checks if the 'zip' column in an existing 'address' table is of type INTEGER and, if so,
+    --> migrates it to TEXT to align with the expected data type.
+    --> If the 'address' table does not exist or does not require migration, it simply creates it.
+    */
+    private void createAddressTableAndMigrate(Connection conn, Statement stmt) throws SQLException {
+        // Check if the address table needs migration for the 'zip' column
+        boolean migrationNeeded = false;
+        try (ResultSet rs = conn.getMetaData().getColumns(null, null, "address", "zip")) {
+            if (rs.next()) {
+                String typeName = rs.getString("TYPE_NAME");
+                if ("INTEGER".equalsIgnoreCase(typeName)) {
+                    migrationNeeded = true;
+                }
+            }
+        }
+
+        if (migrationNeeded) {
+            System.out.println("Migrating address table to update zip column type...");
+            stmt.executeUpdate("ALTER TABLE address RENAME TO address_old");
+            stmt.executeUpdate("CREATE TABLE address ("
+                    + "username TEXT PRIMARY KEY,"
+                    + "street TEXT,"
+                    + "city TEXT,"
+                    + "state TEXT,"
+                    + "zip TEXT,"
+                    + "latitude REAL,"
+                    + "longitude REAL,"
+                    + "FOREIGN KEY(username) REFERENCES users(username)"
+                    + ")");
+            stmt.executeUpdate("INSERT INTO address (username, street, city, state, zip, latitude, longitude) "
+                    + "SELECT username, street, city, state, zip, latitude, longitude FROM address_old");
+            stmt.executeUpdate("DROP TABLE address_old");
+            System.out.println("Address table migration complete.");
+        } else {
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS address ("
+                    + "username TEXT PRIMARY KEY,"
+                    + "street TEXT,"
+                    + "city TEXT,"
+                    + "state TEXT,"
+                    + "zip TEXT,"
+                    + "latitude REAL,"
+                    + "longitude REAL,"
+                    + "FOREIGN KEY(username) REFERENCES users(username)"
+                    + ")");
+        }
+    }
+    /*
     --> creates indexes on frequently queried columns for performance
-    --> connects to the database    
+    --> connects to the database
     -->  create indexes on user_type and email columns
     */
-
     private void createIndexes() throws SQLException {
         try (Connection conn = DriverManager.getConnection(url);
              Statement stmt = conn.createStatement()) {
@@ -134,7 +193,7 @@ public class UserDataBase {
             throw e;
         }
     }
-    /* 
+    /*
     --> // simple version - just registers a customer with username and password
     --> returns true if registration successful
     */
@@ -145,7 +204,7 @@ public class UserDataBase {
 --> create a new user in the database
 --> can specify user type (CUSTOMER, DRIVER, ADMIN) and other info
 --> sets userrname, password hash, user type, full name, email, phone, and creation timestamp
---> update in database 
+--> update in database
 --> returns true if registration successful * all values*
 */
     // full version - can register any user type with all their info
@@ -267,7 +326,7 @@ public class UserDataBase {
             throw e;
         }
     }
-    /* 
+    /*
     --> creates the default admin account if it doesnt exist yet
     --> connects to the database
     --> creates the admin user with given username and password if not already present
@@ -306,6 +365,35 @@ public class UserDataBase {
             JOptionPane.showMessageDialog(null, "An error occurred while setting admin hash:\n" +
                 e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
             throw e;
+        }
+    }
+
+    public void updateUserAddress(String username, Address address) throws SQLException {
+        String sql = "INSERT OR REPLACE INTO address (username, street, city, state, zip, latitude, longitude) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, username);
+            ps.setString(2, address.getStreet());
+            ps.setString(3, address.getCity());
+            ps.setString(4, address.getState());
+            ps.setString(5, address.getZip());
+            ps.setDouble(6, address.getLatitude());
+            ps.setDouble(7, address.getLongitude());
+            ps.executeUpdate();
+        }
+    }
+
+    public Address getUserAddress(String username) throws SQLException {
+        String sql = "SELECT street, city, state, zip, latitude, longitude FROM address WHERE username = ?";
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, username);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new Address(rs.getString("street"), rs.getString("city"), rs.getString("state"), rs.getString("zip"), rs.getDouble("latitude"), rs.getDouble("longitude"));
+                }
+                return null;
+            }
         }
     }
 }
