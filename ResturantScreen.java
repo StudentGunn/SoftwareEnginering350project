@@ -1,4 +1,3 @@
-// ResturantScreen.java
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -7,17 +6,20 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
 
+/**
+ * ResturantScreen displays available restaurants and menu items filtered by zip code.
+ * Allows customers to browse menus and place orders.
+ */
 public class ResturantScreen extends JPanel {
     private FoodDeliveryLoginUI parent;
     private String username;
     private JPanel content;
     private String zip;
 
-    /*
-    --> Sets Resturant Screen, calls initUI to initialize the user interface
-    --> Parameters:
-        - FoodDeliveryLoginUI parent: the main UI frame
-        - String username: the username of the logged-in user
+    /**
+     * Constructs a ResturantScreen with the given parent and username.
+     * @param parent The main application UI frame.
+     * @param username The logged-in customer's username.
      */
     public ResturantScreen(FoodDeliveryLoginUI parent, String username) {
         this.parent = parent;

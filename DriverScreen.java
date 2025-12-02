@@ -1,12 +1,20 @@
-//DriverScreen.java
 import java.awt.*;
 import java.sql.*;
 import javax.swing.*;
 
+/**
+ * DriverScreen displays the driver's main interface for managing deliveries.
+ * Provides access to order pickup, payment history, and payment method settings.
+ */
 public class DriverScreen extends JPanel {
     private final FoodDeliveryLoginUI parent;
     private final String username;
 
+    /**
+     * Constructs a DriverScreen with the given parent and username.
+     * @param parent The main application UI frame.
+     * @param username The logged-in driver's username.
+     */
     public DriverScreen(FoodDeliveryLoginUI parent, String username) {
         this.parent = parent;
         this.username = username == null || username.isEmpty() ? "Driver" : username;

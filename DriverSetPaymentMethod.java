@@ -3,7 +3,11 @@ import java.sql.*;
 import java.text.ParseException;
 import javax.swing.*;
 import javax.swing.text.*;
-// catch exceptions and log them to Logger -> write to bugs.log
+
+/**
+ * DriverSetPaymentMethod allows drivers to set up their payment method.
+ * Supports both card and bank account payment options with input validation.
+ */
 public class DriverSetPaymentMethod extends JPanel {
     private final FoodDeliveryLoginUI parent;
     private final String username;
@@ -21,6 +25,11 @@ public class DriverSetPaymentMethod extends JPanel {
     private final JTextField accountNumberField;
     private final JTextField bankNameField;
 
+    /**
+     * Constructs a DriverSetPaymentMethod screen with the given parent and username.
+     * @param parent The main application UI frame.
+     * @param username The logged-in driver's username.
+     */
     public DriverSetPaymentMethod(FoodDeliveryLoginUI parent, String username) {
         this.parent = parent;
         this.username = username;

@@ -1,6 +1,19 @@
+/**
+ * MapCalculator provides utility methods for calculating distances and travel times
+ * between geographic coordinates using the Haversine formula.
+ */
 public class MapCalculator {
     private static final double EARTH_RADIUS_KM = 6371; // Earth's radius in kilometers
 
+    /**
+     * Calculates the estimated travel time in minutes between two coordinate pairs.
+     * Uses the Haversine formula to determine distance and assumes average car speed of 30 km/h.
+     * @param lat1 Latitude of the first location.
+     * @param lon1 Longitude of the first location.
+     * @param lat2 Latitude of the second location.
+     * @param lon2 Longitude of the second location.
+     * @return Estimated travel time in minutes, rounded to one decimal place.
+     */
     public static double calculateETA (double lat1, double lon1, double lat2, double lon2){
         // The Haversine equation is used to deterime the distance in kilometers between two sets of coordinates.
         double dLat = Math.toRadians(lat2 - lat1);

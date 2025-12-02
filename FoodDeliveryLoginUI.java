@@ -5,10 +5,11 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import javax.swing.*;
 
-
- // Main UI class - handles the app window and scene switching.
- //  Uses SceneSorter to swap between different screens (login, customer, driver, admin).
-
+/**
+ * FoodDeliveryLoginUI is the main UI class that manages the application window and scene switching.
+ * Uses SceneSorter to swap between different screens (login, customer, driver, admin).
+ * Manages database connections and user session state.
+ */
 public class FoodDeliveryLoginUI {
 
     // UI components

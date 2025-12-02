@@ -8,19 +8,21 @@ import java.sql.Statement;
 import java.time.Instant;
 import javax.swing.JOptionPane;
 
-/*
- * Order database - handles everything related to food orders
- * this is probably the most complex database file
- * manages orders, order items, payment transactions, and status updates
+/**
+ * OrderDatabase handles all operations related to food orders, including order management,
+ * order items, payment transactions, and status updates.
  */
 public class OrderDatabase {
     private final Path dbPath;
     private final String url;
 
+    /**
+     * Constructs an OrderDatabase with the given database path.
+     * @param dbPath Path to the SQLite database file.
+     */
     public OrderDatabase(Path dbPath) {
         this.dbPath = dbPath;
         this.url = "jdbc:sqlite:" + dbPath.toAbsolutePath().toString();
-        System.err.println(url);
     }
 
     public String getConnectionUrl() {

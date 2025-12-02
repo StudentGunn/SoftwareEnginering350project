@@ -1,19 +1,13 @@
-// AdminScreen.java
 import java.awt.*;
 import java.sql.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-
-/* Admin Screen 
- * Displays active customers and current orders
- * Allows admin to refresh data and cancel orders
- * Creates controllers for admin actions
- * Accesses userDb for order management
- * and OrderDatabase for order data
- * Provides logout functionality *still working on for all screens*
+/**
+ * AdminScreen displays the admin interface for managing customers and orders.
+ * Provides data tables for active customers and current orders with refresh and cancel capabilities.
+ * Accesses UserDataBase for user management and OrderDatabase for order data.
  */
-
 public class AdminScreen extends JPanel {
     private final FoodDeliveryLoginUI parent;
     private final JTable customersTable;
@@ -21,6 +15,10 @@ public class AdminScreen extends JPanel {
     private final DefaultTableModel customersModel;
     private final DefaultTableModel ordersModel;
 
+    /**
+     * Constructs an AdminScreen with the given parent UI.
+     * @param parent The main application UI frame.
+     */
     public AdminScreen(FoodDeliveryLoginUI parent) {
         this.parent = parent;
         

@@ -1,9 +1,12 @@
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.sql.SQLException;
+import javax.swing.*;
 
+/**
+ * AddressScreen allows users to view and update their delivery address information.
+ * Includes street, city, state, zip code, latitude, and longitude fields.
+ */
 public class AddressScreen extends JPanel {
     private FoodDeliveryLoginUI parent;
     private String username;
@@ -16,6 +19,11 @@ public class AddressScreen extends JPanel {
     private JButton updateButton;
     private JButton backButton;
 
+    /**
+     * Constructs an AddressScreen with the given parent and username.
+     * @param parent The main application UI frame.
+     * @param username The logged-in user's username.
+     */
     public AddressScreen(FoodDeliveryLoginUI parent, String username) {
         this.parent = parent;
         this.username = username;

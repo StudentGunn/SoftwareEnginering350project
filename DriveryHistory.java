@@ -3,12 +3,21 @@ import java.sql.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+/**
+ * DriveryHistory displays the driver's completed delivery history.
+ * Shows order details including customer, restaurant, total, status, date, and payment.
+ */
 public class DriveryHistory extends JPanel {
     private final FoodDeliveryLoginUI parent;
     private final String username;
     private final JTable historyTable;
     private final DefaultTableModel tableModel;
 
+    /**
+     * Constructs a DriveryHistory with the given parent and username.
+     * @param parent The main application UI frame.
+     * @param username The logged-in driver's username.
+     */
     public DriveryHistory(FoodDeliveryLoginUI parent, String username) {
         this.parent = parent;
         this.username = username;

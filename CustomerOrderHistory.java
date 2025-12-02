@@ -2,18 +2,21 @@ import java.awt.*;
 import java.sql.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-/* 
- --> CustomerOrderHistory.java
- --> Panel to show customer's past orders in a table format
- --> Includes back and refresh buttons
- --> Also wrapped in try/catch to log exceptions to Logger -> write to bugs.log
-*/
 
+/**
+ * CustomerOrderHistory displays the customer's past orders in a table format.
+ * Includes back and refresh buttons for navigation and data updates.
+ */
 public class CustomerOrderHistory extends JPanel {
     private FoodDeliveryLoginUI parent;
     private String username;
     private DefaultTableModel tableModel;
 
+    /**
+     * Constructs a CustomerOrderHistory with the given parent and username.
+     * @param parent The main application UI frame.
+     * @param username The logged-in customer's username.
+     */
     public CustomerOrderHistory(FoodDeliveryLoginUI parent, String username) {
         try {
             this.parent = parent;

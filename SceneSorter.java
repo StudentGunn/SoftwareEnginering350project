@@ -1,15 +1,13 @@
-// SceneSorter.java
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JPanel;
-/*
- --> SceneSorter is responsible for managing different UI scenes in the application.
-    --> It uses a CardLayout to switch between different JPanel scenes.
-    --> Scenes are added with a unique name and can be switched to by that name.
-    --> This allows for easy navigation between different parts of the application (e.g., login, driver screen, admin panel).
-*/
 
+/**
+ * SceneSorter manages different UI scenes in the application using CardLayout.
+ * Scenes are added with unique names and can be switched dynamically.
+ * Allows easy navigation between different parts of the application (e.g., login, driver screen, admin panel).
+ */
 public class SceneSorter {
     private final JPanel cardsPanel;
     private final CardLayout cardLayout;

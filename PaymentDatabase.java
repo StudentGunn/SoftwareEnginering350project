@@ -7,13 +7,18 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Instant;
 
-// handles payment stuff for users - both credit cards and bank accounts
-// took forever to get the table setup right with all the foreign keys
-// added the try/catch blocks to log exceptions to Logger -> write to bugs.log
+/**
+ * PaymentDatabase handles payment methods for users, including credit cards and bank accounts.
+ * Manages payment method storage, retrieval, and transaction records.
+ */
 public class PaymentDatabase {
     private final Path dbPath;
     private final String url;
 
+    /**
+     * Constructs a PaymentDatabase with the given database path.
+     * @param dbPath Path to the SQLite database file.
+     */
     public PaymentDatabase(Path dbPath) {
         this.dbPath = dbPath;
         this.url = "jdbc:sqlite:" + dbPath.toAbsolutePath().toString();

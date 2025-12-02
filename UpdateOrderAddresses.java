@@ -1,13 +1,9 @@
-// UpdateOrderAddresses.java
 import java.sql.*;
-/*  
- --> Updates existing orders in the database to set restaurant addresses based on restaurant names
- --> connect to database orders.db
- --> for each order, if restaurant_name matches known names, set restaurant_address accordingly
- --> print out success message with number of updated orders
- --> catch and print any SQL exceptions if fails
- */
 
+/**
+ * UpdateOrderAddresses is a utility to update existing orders with restaurant addresses.
+ * Connects to orders.db and sets restaurant_address based on restaurant_name.
+ */
 public class UpdateOrderAddresses {
     public static void main(String[] args) {
         String url = "jdbc:sqlite:orders.db";

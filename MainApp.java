@@ -1,16 +1,11 @@
-// MainApp.java
-import java.io.IOException;
 import java.sql.SQLException;
 import javax.swing.*;
 
-// main() summary:
-// - runs on the Event Dispatch Thread using SwingUtilities.invokeLater
-// - constructs FoodDeliveryLoginUI, attempts to initialize the SQLite-backed
-//   UserDatabase (creating users.db if missing) and loads a background image
-// - any initialization failures are shown to the user via dialogs so they
-//   understand DB or image problems early
-
-
+/**
+ * MainApp is the entry point for the Food Delivery application.
+ * Runs on the Event Dispatch Thread and initializes all databases and UI components.
+ * Displays initialization failures to the user via dialogs.
+ */
 public class MainApp {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

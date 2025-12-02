@@ -3,12 +3,20 @@ import java.awt.event.ActionEvent;
 import java.sql.SQLException;
 import javax.swing.*;
 
+/**
+ * LoginUI handles the login and registration user interface.
+ * Provides username/password fields and login/register buttons.
+ */
 public class LoginUI {
 
     private final FoodDeliveryLoginUI parent;
     private final JTextField userField = new JTextField(15);
     private final JPasswordField passField = new JPasswordField(15);
 
+    /**
+     * Constructs a LoginUI with a reference to the parent application.
+     * @param parent The main FoodDeliveryLoginUI instance.
+     */
     public LoginUI(FoodDeliveryLoginUI parent) {
         this.parent = parent;
     }

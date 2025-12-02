@@ -1,8 +1,11 @@
-// MainScreen.java
 import java.awt.*;
 import java.sql.SQLException;
 import javax.swing.*;
 
+/**
+ * MainScreen represents the customer's main interface for browsing restaurants and placing orders.
+ * Provides navigation to profile, order history, and restaurant selection.
+ */
 public class MainScreen extends JPanel {
     private String username;
     private String zipCode = "";
@@ -10,6 +13,11 @@ public class MainScreen extends JPanel {
     private FoodDeliveryLoginUI parent;
     private javax.swing.Timer deliveredCheckTimer;
 
+    /**
+     * Constructs a MainScreen with the given parent and username.
+     * @param parent The main application UI frame.
+     * @param username The logged-in customer's username.
+     */
     public MainScreen(FoodDeliveryLoginUI parent, String username) {
         this.parent = parent;
         this.username = (username == null || username.isEmpty()) ? "User" : username;

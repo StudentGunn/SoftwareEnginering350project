@@ -7,13 +7,18 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Instant;
 
-// database class for managing driver accounts and their delivery stuff
-// has 3 tables: drivers, delivery_history, and driver_schedule
-// wrapped in try/catch to log exceptions to Logger -> write to bugs.log
+/**
+ * DriverDatabase manages driver accounts and their delivery information.
+ * Contains tables for drivers, delivery history, and driver schedules.
+ */
 public class DriverDatabase {
     private final Path dbPath;
     private final String url;
 
+    /**
+     * Constructs a DriverDatabase with the given database path.
+     * @param dbPath Path to the SQLite database file.
+     */
     public DriverDatabase(Path dbPath) {
         this.dbPath = dbPath;
         this.url = "jdbc:sqlite:" + dbPath.toAbsolutePath().toString();

@@ -1,10 +1,6 @@
-// PaymentInformation.java
-
-/*  
- *--> Class to hold payment information for customers
- *--> Supports both card and bank payment methods
- --> Contains getters and setters for payment details
- *--> Methods to check payment type
+/**
+ * PaymentInformation holds payment details for customers.
+ * Supports both card and bank payment methods with getters and setters.
  */
 public class PaymentInformation {
     // Fields for payment information

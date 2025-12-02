@@ -1,23 +1,26 @@
-// DriverPaymentHistory.java
 import java.awt.*;
 import java.sql.*;
 import java.text.DecimalFormat;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-
+/**
+ * DriverPaymentHistory displays the driver's payment transaction history.
+ * Shows payment dates, amounts, status, order IDs, payment methods, and details.
+ */
 public class DriverPaymentHistory extends JPanel {
-    // Set up UI components and load payment history from the database, so it shows driver their payment history
-	// catch any exceptions and log them to Logger -> write to bugs.log
 	private final FoodDeliveryLoginUI parent;
 	private final String username;
 	private final JTable table;
 	private final DefaultTableModel model;
 	private final DecimalFormat currency = new DecimalFormat("$#,##0.00");
     
-   
+	/**
+	 * Constructs a DriverPaymentHistory with the given parent and username.
+	 * @param parent The main application UI frame.
+	 * @param username The logged-in driver's username.
+	 */
 	public DriverPaymentHistory(FoodDeliveryLoginUI parent, String username) {
-        // Initialize with reference to parent UI and driver's username
 		this.parent = parent;
         // Default to "Driver" if username is null/empty *tricky*
 		this.username = username == null || username.isEmpty() ? "Driver" : username;

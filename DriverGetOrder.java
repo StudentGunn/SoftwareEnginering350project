@@ -4,6 +4,10 @@ import java.text.DecimalFormat;
 import javax.swing.*;
 import javax.swing.table.*;
 
+/**
+ * DriverGetOrder displays available orders for drivers to accept.
+ * Shows order details including restaurant, address, items, earnings (30% commission), and estimated times.
+ */
 public class DriverGetOrder extends JPanel {
     private final FoodDeliveryLoginUI parent;
     private final String username;
@@ -12,6 +16,11 @@ public class DriverGetOrder extends JPanel {
     private final DecimalFormat currencyFormat = new DecimalFormat("$#,##0.00");
     private static final double DRIVER_COMMISSION = 0.30; // 30% commission
 
+    /**
+     * Constructs a DriverGetOrder screen with the given parent and username.
+     * @param parent The main application UI frame.
+     * @param username The logged-in driver's username.
+     */
     public DriverGetOrder(FoodDeliveryLoginUI parent, String username) {
         this.parent = parent;
         this.username = username;

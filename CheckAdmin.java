@@ -2,9 +2,17 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
+/**
+ * CheckAdmin is a utility class for verifying the admin account in the database.
+ * Used for testing and validation purposes.
+ */
 public class CheckAdmin {
     
-    // Copy of the sha256Hex method to avoid dependencies
+    /**
+     * Computes the SHA-256 hash of the input string.
+     * @param input String to hash.
+     * @return Hexadecimal representation of the SHA-256 hash.
+     */
     public static String sha256Hex(String input) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");

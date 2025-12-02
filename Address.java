@@ -1,4 +1,7 @@
-
+/**
+ * Address represents a delivery address with geographic coordinates.
+ * Includes validation for required fields and coordinate ranges.
+ */
 public class Address {
     private String street;
     private String city;
@@ -7,6 +10,15 @@ public class Address {
     private double latitude;
     private double longitude;
 
+    /**
+     * Constructs an Address with the given information.
+     * @param street Street address.
+     * @param city City name.
+     * @param state State code.
+     * @param zip ZIP code.
+     * @param latitude Latitude coordinate.
+     * @param longitude Longitude coordinate.
+     */
     public Address(String street, String city, String state, String zip, double latitude, double longitude) {
         this.street = street;
         this.city = city;

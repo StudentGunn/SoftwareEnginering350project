@@ -1,4 +1,3 @@
-// Logger.java
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -7,17 +6,20 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * Logger provides centralized error and bug logging with file outputs and simulated Jira integration.
+ * Logs errors to errors.log and structured bug reports to bugs.log.
+ */
 public class Logger {
 
     private static final String LOG_FILE = "errors.log";
     private static final String BUG_LOG_FILE = "bugs.log";
     private static final AtomicLong bugIdCounter = new AtomicLong(1000);
 
-    /*
-     -->  Bug recorder for structured JIRA-like logging
-     -->  Each bug has an auto-incremented bugId, date, module, description,
-     -->  steps to reproduce, expected result, actual result, severity, and status *Final* can't be changed
-     -->  Logs to bugs.log in a readable format
+    /**
+     * Bug represents a structured JIRA-like bug report with auto-incremented ID,
+     * date, module, description, steps to reproduce, expected/actual results, severity, and status.
+     * All fields are final and cannot be changed after creation.
      */
     public static class Bug {
         public final long bugId;

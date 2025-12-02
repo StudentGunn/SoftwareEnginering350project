@@ -8,26 +8,30 @@ import java.sql.Statement;
 import java.time.Instant;
 import javax.swing.JOptionPane;
 
-/*
---> user database - handles registration and login stuff
---> stores usernames, password hashes, and user types (customer, driver, admin)
---> also stores address info for each user to determine distance between drivers, resturaunts, and customers.
-*/
+/**
+ * UserDataBase handles registration, login, and address management for users.
+ * Stores usernames, password hashes, user types, and address info for distance calculations.
+ */
 public class UserDataBase {
     private final Path dbPath;
     private final String url;
     public Address address;
 
-/*
--->sets path to the database file
---> connects to the SQLite database at the given path
---> retines the database connection URL
-*/
+    /**
+     * Constructs a UserDataBase with the given database path.
+     * @param dbPath Path to the SQLite database file.
+     * @throws SQLException if a database error occurs
+     */
     public UserDataBase(Path dbPath) throws SQLException {
         this.dbPath = dbPath;
         this.url = "jdbc:sqlite:" + dbPath.toAbsolutePath().toString();
     }
-     public UserDataBase() throws SQLException {
+
+    /**
+     * Constructs a UserDataBase with the default database file (FoodDelivery.db).
+     * @throws SQLException if a database error occurs
+     */
+    public UserDataBase() throws SQLException {
         this.dbPath = Path.of("FoodDelivery.db");
         this.url = "jdbc:sqlite:" + dbPath.toAbsolutePath().toString();
     }
@@ -100,9 +104,9 @@ public class UserDataBase {
             addColumnIfNotExists(stmt, "user_type", "TEXT DEFAULT 'CUSTOMER'");
             addColumnIfNotExists(stmt, "phone", "TEXT");
             addColumnIfNotExists(stmt, "admin_hash", "TEXT");
-            addColumnIfNotExists(stmt, "address", "TEXT"); // This column is likely deprecated by the 'address' table
-            addColumnIfNotExists(stmt, "zipCode", "TEXT"); // This column is likely deprecated by the 'address' table
-            addColumnIfNotExists(stmt, "latitude", "REAL"); // This column is likely deprecated by the 'address' table
+            addColumnIfNotExists(stmt, "address", "TEXT"); 
+            addColumnIfNotExists(stmt, "zipCode", "TEXT"); 
+            addColumnIfNotExists(stmt, "latitude", "REAL"); 
             createAddressTableAndMigrate(conn,stmt);
         } catch (SQLException e) {
             Logger.catchAndLogBug(e, "UserDataBase");

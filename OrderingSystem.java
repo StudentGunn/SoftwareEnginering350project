@@ -1,27 +1,35 @@
 import java.util.ArrayList;
 
-public class OrderingSystem{
-    ArrayList<Orders> unaccpetedOrders = new ArrayList<>();
+/**
+ * OrderingSystem manages order queues and order state transitions.
+ * Maintains lists of unaccepted and accepted orders.
+ */
+public class OrderingSystem {
+    ArrayList<Orders> unacceptedOrders = new ArrayList<>();
     ArrayList<Orders> acceptedOrders = new ArrayList<>();
-    /*Method to create a new order,
-    * This will be submitted to the store of store.ID
-    * to be put in a queue of unaccpeted orders
-    * Also wrapped the code in a try/catch to catch exceptions */
-    public boolean preOderCheck(Customer customer, double total, Store store){
+
+    /**
+     * Checks if a customer can place an order based on balance and store status.
+     * @param customer The customer placing the order.
+     * @param total The total amount of the order.
+     * @param store The store receiving the order.
+     * @return true if the order can proceed, false otherwise.
+     */
+    public boolean preOrderCheck(Customer customer, double total, Store store) {
         try {
             if (total >= customer.balance){
                 return false;
             }
             return store.status;
         } catch (Exception e) {
-            Logger.catchAndLogBug(e, "OrderingSystem.preOderCheck");
+            Logger.catchAndLogBug(e, "OrderingSystem.preOrderCheck");
             return false;
         }
     };
     public int createNewOrder (int orderID,Customer customer, String items[], int storeID){
         Orders newOrder = new Orders(orderID, customer.name, customer.ID,null, 0,items,storeID,0);
         try {
-            unaccpetedOrders.add(newOrder);
+            unacceptedOrders.add(newOrder);
             // return newOrder.orderID;
         } catch (Exception e) {
             Logger.catchAndLogBug(e, "OrderingSystem.createNewOrder");
@@ -36,7 +44,7 @@ public class OrderingSystem{
         try {
             order.driverID = driver.ID;
             order.driver = driver.name;
-            unaccpetedOrders.remove(order);
+            unacceptedOrders.remove(order);
             acceptedOrders.add(order);
             order.status = 1;
         } catch (Exception e) {
@@ -64,7 +72,7 @@ public class OrderingSystem{
         try {
             if (order.status == 5){
                 if (order.driverID == 0){
-                    unaccpetedOrders.remove(order);
+                    unacceptedOrders.remove(order);
                 }
                 else {
                     acceptedOrders.remove(order);
