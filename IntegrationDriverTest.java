@@ -2,7 +2,15 @@ import org.junit.jupiter.api.*;
 import java.nio.file.*;
 import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.*;
-
+/*
+--> Used to test multiple aspects of the driver side, including:
+    - Registering as a driver
+    - Logging in as a driver
+    - Accepting orders
+    - Delivering orders
+    - Recording orders
+--> Will return "Driver flow test passed - Order ID: 1" if all aspects succeed.
+ */
 public class IntegrationDriverTest {
 
     private static Path userDbPath;

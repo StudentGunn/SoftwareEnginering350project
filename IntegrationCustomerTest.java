@@ -2,7 +2,12 @@ import org.junit.jupiter.api.*;
 import java.nio.file.*;
 import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.*;
-
+/*
+--> Tests
+    - If the user account can be properly created.
+    - If this temp account can make orders.
+---> Will return "Customer flow test passed - Order ID: 1" if succeeded.
+ */
 public class IntegrationCustomerTest {
 
     private static Path userDbPath;

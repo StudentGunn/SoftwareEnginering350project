@@ -2,7 +2,11 @@ import org.junit.jupiter.api.*;
 import java.nio.file.*;
 import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.*;
-
+/*
+--> Tests if admin can properly cancel customer orders.
+--> Creates a test customer order, and then uses an admin account to cancel it.
+--> Will return "Admin flow test passed - Cancelled Order ID: 1" if succeeded.
+ */
 public class IntegrationAdminTest {
 
     private static Path userDbPath;
