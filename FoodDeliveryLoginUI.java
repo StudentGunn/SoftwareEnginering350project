@@ -27,11 +27,18 @@ public class FoodDeliveryLoginUI {
     // Holds the address for the currently logged-in user
     public Address address;
 
+    /**
+     * Returns the SceneSorter instance for managing UI scenes.
+     * @return The SceneSorter managing all application screens.
+     */
     public SceneSorter getSceneSorter() {
         return sceneSorter;
     }
 
-    // Creates and shows the main window
+    /**
+     * Creates and displays the main application window.
+     * Initializes the login screen and sets up the UI layout.
+     */
     public void createAndShow() {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setMinimumSize(new Dimension(420, 260));
@@ -54,9 +61,11 @@ public class FoodDeliveryLoginUI {
         frame.setVisible(true);
     }
 
-    // Loads the address for the given user from the database and stores it
-    // in the public 'address' field. This creates a centralized, shared
-    // Address object.
+    /**
+     * Loads the address for the given user from the database.
+     * Stores the address in the public address field for shared access.
+     * @param username Username of the user whose address to load.
+     */
     public void loadUserAddress(String username) {
         try {
             this.address = userDb.getUserAddress(username);
@@ -67,7 +76,13 @@ public class FoodDeliveryLoginUI {
         }
     }
 
-    // Shows a notification message - auto disapears
+    /**
+     * Displays a temporary notification message that automatically disappears.
+     * @param message Text to display.
+     * @param bg Background color (can be null).
+     * @param fg Foreground/text color (can be null).
+     * @param durationMs Duration in milliseconds to show the message (minimum 1000ms).
+     */
     public void showNotification(String message, Color bg, Color fg, int durationMs) {
         messageLabel.setText(message);
         messageLabel.setOpaque(true);
@@ -83,14 +98,20 @@ public class FoodDeliveryLoginUI {
         timer.start();
     }
 
-    // Closes the window
+    /**
+     * Closes the application window.
+     */
     public void closeWindow() {
         if (frame != null) {
             frame.dispose();
         }
     }
 
-    // Hashes the password using SHA-256
+    /**
+     * Hashes the input string using SHA-256 algorithm.
+     * @param input String to hash.
+     * @return Hexadecimal representation of the SHA-256 hash.
+     */
     public static String sha256Hex(String input) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");

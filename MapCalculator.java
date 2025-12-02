@@ -31,6 +31,16 @@ public class MapCalculator {
         temp=temp * 60; // Converting hours to minutes.
         return (double) Math.round(temp * 10) /10; // Rounding makes it more readable
     }
+    
+    /**
+     * Calculates the distance in miles between two coordinate pairs.
+     * Uses the Haversine formula and converts kilometers to miles.
+     * @param lat1 Latitude of the first location.
+     * @param lon1 Longitude of the first location.
+     * @param lat2 Latitude of the second location.
+     * @param lon2 Longitude of the second location.
+     * @return Distance in miles, rounded to one decimal place.
+     */
     public static double calculateMiles (double lat1, double lon1, double lat2, double lon2){
             // Redoing the first calculation prevents headaches.
         double dLat = Math.toRadians(lat2 - lat1);

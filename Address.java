@@ -27,6 +27,11 @@ public class Address {
         this.latitude = latitude;
         this.longitude = longitude;
     }
+    
+    /**
+     * Validates the address for completeness and valid coordinate ranges.
+     * @return true if all fields are valid, false otherwise.
+     */
     public boolean isValid() {
         // Check String fields for null or emptiness
         if (street == null || street.trim().isEmpty()) {
@@ -47,26 +52,50 @@ public class Address {
         return true;
     }
 
+    /**
+     * Returns the street address.
+     * @return Street address.
+     */
     public String getStreet() {
         return street;
     }
 
+    /**
+     * Returns the city name.
+     * @return City name.
+     */
     public String getCity() {
         return city;
     }
 
+    /**
+     * Returns the state code.
+     * @return State code.
+     */
     public String getState() {
         return state;
     }
 
+    /**
+     * Returns the ZIP code.
+     * @return ZIP code.
+     */
     public String getZip() {
         return zip;
     }
 
+    /**
+     * Returns the latitude coordinate.
+     * @return Latitude.
+     */
     public double getLatitude() {
         return latitude;
     }
 
+    /**
+     * Returns the longitude coordinate.
+     * @return Longitude.
+     */
     public double getLongitude() {
         return longitude;
     }

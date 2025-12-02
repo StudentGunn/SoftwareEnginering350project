@@ -26,18 +26,34 @@ public class ETA {
         return items <= 1 ? 5 : 10;
     }
     
+    /**
+     * Returns a formatted message with the estimated delivery time.
+     * @return String message with ETA in minutes.
+     */
     public String getETAMessage() {
         return String.format("Estimated delivery time: %d minutes", estimatedMinutes);
     }
     
+    /**
+     * Returns the estimated delivery time in minutes.
+     * @return Estimated minutes for delivery.
+     */
     public int getEstimatedMinutes() {
         return estimatedMinutes;
     }
     
+    /**
+     * Returns the calculated delivery date and time.
+     * @return LocalDateTime when the order is expected to be delivered.
+     */
     public LocalDateTime getDeliveryTime() {
         return orderTime.plusMinutes(estimatedMinutes);
     }
     
+    /**
+     * Returns the order ID associated with this ETA.
+     * @return The order identifier.
+     */
     public int getOrderId() {
         return orderId;
     }

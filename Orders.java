@@ -36,6 +36,10 @@ public class Orders {
 
     }
 
+    /**
+     * Returns the order ID.
+     * @return The unique order identifier.
+     */
     public int getOrderID() {
         return orderID;
     }

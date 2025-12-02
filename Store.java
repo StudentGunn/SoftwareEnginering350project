@@ -17,6 +17,11 @@ public class Store {
         this.storeName = storeName;
         this.status = status;
     }
+    
+    /**
+     * Updates the operational status of the store.
+     * @param newStatus New status (true = open, false = closed).
+     */
     public void setStatus(Boolean newStatus){
         this.status = newStatus;
     }
