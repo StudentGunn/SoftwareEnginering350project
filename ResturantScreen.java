@@ -39,7 +39,6 @@ public class ResturantScreen extends JPanel {
 
     private void initUI() {
         setLayout(new BorderLayout(5,5));
-        String zip = parent.address.getZip();
 
         // header with green style
         JPanel headerPanel = new JPanel(new BorderLayout());
@@ -308,14 +307,19 @@ public class ResturantScreen extends JPanel {
         }
 
         // Create order in database
+        String deliveryStreet = (parent.address != null && parent.address.getStreet() != null) 
+            ? parent.address.getStreet() : "Address not fully set";
+        double deliveryLat = (parent.address != null) ? parent.address.getLatitude() : 0.0;
+        double deliveryLon = (parent.address != null) ? parent.address.getLongitude() : 0.0;
+        
         long orderId = parent.orderDb.createOrder(username, restaurantName, restaurantAddress,
-            parent.address.getStreet(),
+            deliveryStreet,
             "No Special Instructions",
             total,
             totalItems,
             paymentInfo.getPaymentType(),
             restaurantLat, restaurantLon,
-            parent.address.getLatitude(), parent.address.getLongitude());
+            deliveryLat, deliveryLon);
 
         // Add items to order
         for (int i = 0; i < checkBoxes.length; i++) {

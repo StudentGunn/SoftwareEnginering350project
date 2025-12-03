@@ -211,6 +211,15 @@ public class AddressScreen extends JPanel {
             parent.loadUserAddress(username);
             
             JOptionPane.showMessageDialog(this, "Address updated successfully!");
+            
+            // Update the RestaurantScreen if it exists with the new zip code
+            ResturantScreen restaurantScreen = parent.getSceneSorter().getScene("RestaurantScreen");
+            if (restaurantScreen != null && parent.address != null) {
+                restaurantScreen.updateZipCode(parent.address.getZip());
+            }
+            
+            // Navigate back to MainScreen
+            parent.getSceneSorter().switchPage("MainScreen");
 
         } catch (SQLException ex) {
             ex.printStackTrace();

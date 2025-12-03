@@ -4,7 +4,7 @@
 		{
 			"label": "Run MainApp (with SQLite)",
 			"type": "shell",
-			"command": "javac -cp \".;lib/sqlite-jdbc-3.42.0.0.jar\" *.java; if ($?) { java -cp \".;lib/sqlite-jdbc-3.42.0.0.jar\" MainApp }",
+			"command": "javac -cp \".;lib/sqlite-jdbc-3.42.0.0.jar\" Address.java AddressScreen.java Admin.java AdminScreen.java CheckAdmin.java Customer.java CustomerOrderHistory.java Driver.java DriverDatabase.java DriverGetOrder.java DriverPaymentHistory.java DriverScreen.java DriverSetPaymentMethod.java DriveryHistory.java ETA.java FoodDeliveryLoginUI.java Item.java ListUsers.java Logger.java LoginUI.java MainApp.java MainScreen.java MapCalculator.java OrderDatabase.java OrderingSystem.java Orders.java PaymentDatabase.java PaymentInformation.java ResturantScreen.java SceneSorter.java Store.java UpdateOrderAddresses.java User.java UserDataBase.java; if ($?) { java -cp \".;lib/sqlite-jdbc-3.42.0.0.jar\" MainApp }",
 			"args": [],
 			"isBackground": false,
 			"problemMatcher": [],

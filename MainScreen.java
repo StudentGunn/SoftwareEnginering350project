@@ -77,7 +77,7 @@ public class MainScreen extends JPanel {
 
         // make the buttons
         JButton orderBtn = new JButton("Order Food");
-        JButton zipBtn = new JButton("Set Address");
+        JButton zipBtn = new JButton("Set Zip Code");
         JButton paymentBtn = new JButton("Payment Methods");
         JButton historyBtn = new JButton("Order History");
 
@@ -179,10 +179,14 @@ public class MainScreen extends JPanel {
 
     // opens order screen if zip is set
     private void openOrderScreen() {
-        if (parent.address == null || !parent.address.isValid()) {
+        // Reload address to ensure we have the latest data
+        parent.loadUserAddress(username);
+        
+        // Check if we have at least a zip code set
+        if (parent.address == null || parent.address.getZip() == null || parent.address.getZip().isEmpty()) {
             JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(this),
-                    "Please set an address before you order so we know where to deliver your food!",
-                    "Address Required", JOptionPane.WARNING_MESSAGE);
+                    "Please set a zip code before you order so we can show you nearby restaurants!",
+                    "Zip Code Required", JOptionPane.WARNING_MESSAGE);
             promptZipCode();
             return;
         }
@@ -190,8 +194,8 @@ public class MainScreen extends JPanel {
         // Check if RestaurantScreen already exists and update it
         ResturantScreen restaurantScreen = parent.getSceneSorter().getScene("RestaurantScreen");
         if (restaurantScreen != null) {
-            // Update existing screen with new zip code
-            restaurantScreen.updateZipCode(zipCode);
+            // Update existing screen with new zip code from the address
+            restaurantScreen.updateZipCode(parent.address.getZip());
         } else {
             // Create new restaurant screen with the current zip code
             restaurantScreen = new ResturantScreen(parent, username);
@@ -201,15 +205,93 @@ public class MainScreen extends JPanel {
     }
     
     private void promptZipCode() {
+        // Load current address to get the current zip code
         parent.loadUserAddress(username);
-        // Create and show the address screen
-        AddressScreen addressScreen = new AddressScreen(parent, username);
-        try {
-            parent.getSceneSorter().addScene("addressScreen", addressScreen);
-        } catch (IllegalArgumentException ex) {
-            // Scene already exists; reuse existing instance.
+        String currentZip = (parent.address != null && parent.address.getZip() != null) 
+            ? parent.address.getZip() : "";
+        
+        // Simple dialog to ask for just the zip code
+        String newZip = JOptionPane.showInputDialog(
+            SwingUtilities.getWindowAncestor(this),
+            "Enter your 5-digit ZIP code:",
+            currentZip
+        );
+        
+        // If user cancelled or entered nothing, return
+        if (newZip == null || newZip.trim().isEmpty()) {
+            return;
         }
-        parent.getSceneSorter().switchPage("addressScreen");
+        
+        newZip = newZip.trim();
+        
+        // Validate zip code format (5 digits)
+        if (!newZip.matches("\\d{5}")) {
+            JOptionPane.showMessageDialog(
+                SwingUtilities.getWindowAncestor(this),
+                "ZIP code must be exactly 5 digits.",
+                "Invalid ZIP Code",
+                JOptionPane.ERROR_MESSAGE
+            );
+            return;
+        }
+        
+        // Update the zip code in the address
+        try {
+            Address currentAddress = parent.address;
+            Address updatedAddress;
+            
+            if (currentAddress != null) {
+                // Keep existing address data, just update zip
+                updatedAddress = new Address(
+                    currentAddress.getStreet(),
+                    currentAddress.getCity(),
+                    currentAddress.getState(),
+                    newZip,
+                    currentAddress.getLatitude(),
+                    currentAddress.getLongitude()
+                );
+            } else {
+                // Create a minimal address with just the zip code
+                // Use placeholder values for other required fields
+                updatedAddress = new Address(
+                    "Address not set",
+                    "City not set",
+                    "XX",
+                    newZip,
+                    0.0,
+                    0.0
+                );
+            }
+            
+            // Save to database
+            parent.userDb.updateUserAddress(username, updatedAddress);
+            parent.loadUserAddress(username);
+            
+            // Update local zipCode variable
+            this.zipCode = newZip;
+            
+            // Update RestaurantScreen if it exists
+            ResturantScreen restaurantScreen = parent.getSceneSorter().getScene("RestaurantScreen");
+            if (restaurantScreen != null) {
+                restaurantScreen.updateZipCode(newZip);
+            }
+            
+            JOptionPane.showMessageDialog(
+                SwingUtilities.getWindowAncestor(this),
+                "ZIP code updated to: " + newZip,
+                "Success",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+            
+        } catch (SQLException ex) {
+            Logger.catchAndLogBug(ex, "MainScreen.promptZipCode");
+            JOptionPane.showMessageDialog(
+                SwingUtilities.getWindowAncestor(this),
+                "Error updating ZIP code: " + ex.getMessage(),
+                "Database Error",
+                JOptionPane.ERROR_MESSAGE
+            );
+        }
     }
 
     // shows profile info, can edit email
@@ -312,6 +394,8 @@ public class MainScreen extends JPanel {
                 parent.paymentDb.deactivateAllPaymentMethods(username);
                 parent.paymentDb.addCardPayment(username, cardNumber, expiry, name);
                 JOptionPane.showMessageDialog(this, "Credit card added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                // Re-open the payment dialog to show the updated payment method
+                openPaymentMethodDialog();
             } catch (SQLException ex) {
                 Logger.catchAndLogBug(ex, "MainScreen");
                 JOptionPane.showMessageDialog(this,
@@ -385,6 +469,8 @@ public class MainScreen extends JPanel {
                 parent.paymentDb.deactivateAllPaymentMethods(username);
                 parent.paymentDb.addBankPayment(username, routing, account, bankName);
                 JOptionPane.showMessageDialog(this, "Bank account added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                // Re-open the payment dialog to show the updated payment method
+                openPaymentMethodDialog();
             } catch (SQLException ex) {
                 Logger.catchAndLogBug(ex, "MainScreen");
                 JOptionPane.showMessageDialog(this,

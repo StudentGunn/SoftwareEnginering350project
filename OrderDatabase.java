@@ -212,10 +212,6 @@ public class OrderDatabase {
             ps.setInt(8, estimateDeliveryTime(totalAmount));
             ps.setInt(9, itemCount);
             ps.setString(10, paymentType);
-            ps.setDouble(11, restaurantLat);
-            ps.setDouble(12, restaurantLon);
-            ps.setDouble(13, deliveryLat);
-            ps.setDouble(14, deliveryLon);
             ps.executeUpdate();
 
             try (ResultSet rs = ps.getGeneratedKeys()) {

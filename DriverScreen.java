@@ -88,56 +88,6 @@ public class DriverScreen extends JPanel {
 
         contentPanel.add(buttonsPanel);
 
-        /* currentOrder Panel
-        --> Shows up on the right side of the screen
-        --> Shows the current order, order id, restaurant address, and customer address.
-        --> Collaborates with loadCurrentOrder to show oldest accepted order.
-        */
-        JPanel currentOrder = new JPanel();
-        currentOrder.setLayout(new BoxLayout(currentOrder, BoxLayout.Y_AXIS));
-        currentOrder.setBackground(new Color(245, 245, 245));
-        currentOrder.setBorder(BorderFactory.createEtchedBorder(new Color(46, 125, 50), new Color(31, 91, 34)));
-        currentOrder.add(Box.createVerticalStrut(10));
-
-        JTextArea orderID = new JTextArea("Current Order:");
-        orderID.setEditable(false);
-        orderID.setFont(new Font("Arial", Font.PLAIN, 20));
-        orderID.setForeground(new Color(46, 125, 50));
-        orderID.setBackground(new Color(245, 245, 245));
-
-        JLabel restaurantLabel = new JLabel("Restaurant Address:");
-        restaurantLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        restaurantLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        restaurantLabel.setForeground(new Color(46, 125, 50));
-
-        // Shows the street the restaurant is on for the current order.
-        JTextArea restaurantAddress = new JTextArea();
-        restaurantAddress.setAlignmentX(Component.LEFT_ALIGNMENT);
-        restaurantAddress.setEditable(false);
-        restaurantAddress.setFont(new Font("Arial", Font.PLAIN, 10));
-        restaurantAddress.setForeground(Color.BLACK);
-        restaurantAddress.setBackground(new Color(245, 245, 245));
-
-        JLabel customerLabel = new JLabel("Customer Address: ");
-        customerLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        customerLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        customerLabel.setForeground(new Color(46, 125, 50));
-
-        JTextArea customerAddress = new JTextArea();
-        customerAddress.setAlignmentX(Component.LEFT_ALIGNMENT);
-        customerAddress.setEditable(false);
-        customerAddress.setFont(new Font("Arial", Font.PLAIN, 10));
-        customerAddress.setForeground(Color.BLACK);
-        customerAddress.setBackground(new Color(245, 245, 245));
-
-        currentOrder.add(orderID);
-        currentOrder.add(restaurantLabel);
-        currentOrder.add(restaurantAddress);
-        currentOrder.add(customerLabel);
-        currentOrder.add(customerAddress);
-        currentOrder.add(Box.createVerticalStrut(10));
-        contentPanel.add(currentOrder);
-
         add(contentPanel, BorderLayout.CENTER);
 
         // button actionss
@@ -265,31 +215,7 @@ public class DriverScreen extends JPanel {
         });
 
         logoutBtn.addActionListener(e -> logout());
-
-        loadCurrentOrder(orderID, restaurantAddress, customerAddress, customerLabel);
     }
-    /*
-    --> Updates the currentOrder JPanel to show the most recent order.
-    --> Uses the oldest order the driver has accepted.
-    --> Shows the order id, restaurant address, and customer address.
-    */
-    private void loadCurrentOrder(JTextArea orderID, JTextArea restaurantAddress, JTextArea customerAddress, JLabel customerLabel) {
-        try (ResultSet rs = parent.orderDb.getOldestActiveOrder(username)) {
-            if (rs.next()) {
-                orderID.setText("Order ID: " + rs.getLong("order_id"));
-                restaurantAddress.setText(rs.getString("restaurant_address"));
-                customerAddress.setText(rs.getString("delivery_address"));
-            } else {
-                orderID.setText("No active orders");
-                restaurantAddress.setText("No active restaurants");
-                customerAddress.setText("No active customers");
-            }
-        } catch (SQLException ex) {
-            Logger.catchAndLogBug(ex, "DriverScreen");
-            orderID.setText("Error loading order");
-        }
-    }
-
     // logout and go back to login
     private void logout() {
         int confirm = JOptionPane.showConfirmDialog(this,
