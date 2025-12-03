@@ -1,99 +1,66 @@
 UI Testing Cases
+-----------------------------------
+TestID     Module         TestDescription      Steps         Expected Results                                 Status
 
-TestIDPage:
+UT-001 Login Page Check input field      Leave username Blank, Error:                                         Pass
+Please Enter username & password     
+                                Validation  “login”
 
-Test Description:
+UI-002 PaymentMethod verifyPaymentinfo  Enter:2222-2222-2222-2222 Shows Accepted                              Pass            
+				                   CCV:111
+                                                                       Exp: 08/28
+					     Name: W am
 
-Steps:
-
-Expected Result:
-
-Status:
-----------------------------------
-
-TestIDPage:
-
-Test Description:
-
-Steps:
-
-Expected Result:
-
-Status:
-----------------------------------
-
-TestIDPage:
-
-Test Description:
-
-Steps:
-
-Expected Result:
-
-Status:
-----------------------------------
+UI-003 PaymentMethod  verify field          Leave blank          Fill in details correctly                    Pass
+UI-004 BankAccount      verify field          Leave blank        Fill in all bank details correctly           Pass
+UI-005 CollectPayment   verify field          Leave blank        Please enter valid numeric orderID           Pass
+UI-006 Food-Drop off     verify field          Leave blank       Numeric orderID                              Pass
+UI-007 Zip-Code             verify field          Leave blank    Please enter a valid 5-digit zip code        Pass
 
 
-TestIDPage:
-
-Test Description:
-
-Steps:
-
-Expected Result:
-
-Status:
-
-----------------------------------
-
-TestIDPage:
-
-Test Description:
-
-Steps:
-
-Expected Result:
-
-Status:
-
-=----------------------------------
-
-
-TestIDPage:
-
-Test Description:
-
-Steps:
-
-ExpectedResult:
-
-Status:
 
 
 
 ----------------------------------
 
-TestIDPage:
+Unit Test Cases: 
 
-Test Description:
 
-Steps:
+TestID     Module         TestDescription      Input                Expected Results                   Status
 
-Expected Result:
+TUI-001      Login              verify Login             Username= W   Redirected to DriverScreen           Pass    
+                                                                           Password:123
+UI-002      Login 	verify Login                 Username: E        Redirected to MainScreen                Pass
+                                                                            Password:123
 
-Status:
+UI-003 AdminLogin verifyAdminEnter FoodDashAdmin Accepted-redirect to adminscreen                           Pass
+				          Password:admin123
+				          AdminHash:ADMIN2024
 
 ----------------------------------
+Integration Test Cases:
 
-TestIDPage:
+TestID     Module         TestDescription      Input                Expected Results                        Status
 
-Test Description:
+TI-001:  ScreenSorter verify screen change   action:OrderFood  redirect to RestaurantScreen                 Pass
+TI-002:  ZipCode        verify ZipCode            Action: 02742        Shows no restaurants                 Pass
+TI-003: Payment Method verify payment      Enter: 1111-111-111 Accepts Value                                Pass
+                                                                        Exp:07/27	
+					       CCV:111
 
-Steps:
+TI-004  OrderHistory   verify History         order food→ order history shows history                       Pass
+TI-005   Get Order       verify available       orders get Order->accept order ->order accepted             Pass
+TI-006 DeliveryHistory verifyDeliveryHistory DeliveryHistory Able to view any order taken                   Pass
 
-Expected Result:
+TI-008 ConfirmFoodDrop-Off verify Food drop off, enter Order ID:3 Mark as Delivered                         Pass
+TI-009 Collect payment verify payment Enter: Order ID:3   payment collected                                 Pass
 
-Status:
+TI-010 Refresh button verify update/refresh admin control panel active customer accepted                    Pass
+TI-011 Cancel       Cancelorder      select CurrentOrder-the click cancel accepted/removal                  Pass
 
+
+
+
+----------------------------------
 
 
