@@ -150,7 +150,7 @@ public class LoginUI {
                 JOptionPane.showMessageDialog(null, "User database not initialized.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
+            // User authentication
             boolean ok = parent.userDb.authenticate(user, hash);
             if (ok) {
                 passField.setText("");
