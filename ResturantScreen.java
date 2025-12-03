@@ -163,13 +163,13 @@ public class ResturantScreen extends JPanel {
             distanceLabel.setForeground(new Color(46, 125, 50));
             distanceLabel.setOpaque(false);
             distanceLabel.setBorder(BorderFactory.createCompoundBorder());
-            bottomPanel.add(distanceLabel);
+            //bottomPanel.add(distanceLabel);
         }
 
-        row.add(bottomPanel, BorderLayout.SOUTH);
+        //row.add(bottomPanel, BorderLayout.SOUTH);
 
-        return row;
-    }
+        return row; 
+    } 
     // shows menu and places order
     private void createOrder(String restaurantName, double restaurantLat, double restaurantLon) {
         String restaurantAddress = getRestaurantAddress(restaurantName);
